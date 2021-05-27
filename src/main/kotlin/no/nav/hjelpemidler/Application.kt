@@ -196,15 +196,5 @@ fun Application.module() {
                 call.respondText(reqBody.toJSONString(), ContentType.Application.Json, HttpStatusCode.OK)
             }
         }
-
-        // FIXME: remove
-        get("/test2") {
-            if (Configuration.application["APP_PROFILE"]!! != "dev") {
-                return@get
-            }
-
-            val reqBody = call.receive<JSONObject>()
-            call.respondText(reqBody.toJSONString(), ContentType.Application.Json, HttpStatusCode.OK)
-        }
     }
 }
