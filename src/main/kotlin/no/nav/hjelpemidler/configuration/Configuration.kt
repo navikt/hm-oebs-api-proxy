@@ -14,6 +14,8 @@ internal object Configuration {
 
     private val prodProperties = ConfigurationMap(
         mapOf(
+            "application.profile" to "prod",
+
             "HM_OEBS_API_PROXY_DB_NAME" to "abc",
 
             "HM_OEBS_API_PROXY_DB_URL" to "abc",
@@ -25,6 +27,8 @@ internal object Configuration {
 
     private val devProperties = ConfigurationMap(
         mapOf(
+            "application.profile" to "dev",
+
             "HM_OEBS_API_PROXY_DB_NAME" to "abc",
 
             "HM_OEBS_API_PROXY_DB_URL" to "abc",
@@ -36,6 +40,8 @@ internal object Configuration {
 
     private val localProperties = ConfigurationMap(
         mapOf(
+            "application.profile" to "local",
+
             "HM_OEBS_API_PROXY_DB_URL" to "abc",
             "HM_OEBS_API_PROXY_DB_USR" to "abc",
             "HM_OEBS_API_PROXY_DB_PW" to "abc",
@@ -56,6 +62,10 @@ internal object Configuration {
     val azureAD: Map<String, String> = mapOf(
         "AZURE_APP_WELL_KNOWN_URL" to config()[Key("AZURE_APP_WELL_KNOWN_URL", stringType)],
         "AZURE_APP_CLIENT_ID" to config()[Key("AZURE_APP_CLIENT_ID", stringType)],
+    )
+
+    val application: Map<String, String> = mapOf(
+        "APP_PROFILE" to config()[Key("application.profile", stringType)],
     )
 
 }
