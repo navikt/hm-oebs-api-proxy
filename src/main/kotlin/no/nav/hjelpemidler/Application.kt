@@ -1,9 +1,13 @@
 package no.nav.hjelpemidler
 
+import com.fasterxml.jackson.databind.JsonNode
 import io.ktor.application.Application
+import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.authenticate
+import io.ktor.auth.authentication
+import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.ContentType
@@ -193,7 +197,8 @@ fun Application.module() {
         authenticate("tokenX") {
             get("/hjelpemidler-bruker") {
                 // val reqBody = call.receive<JSONObject>()
-                call.respondText("""{"data": [{"id": "abc1234", "title": "Hello world", "description": "foo bar"}]}""", ContentType.Application.Json, HttpStatusCode.OK)
+                val pid = call.getTokenInfo()["pid"]?.asText() ?: error("Could not find 'pid' claim in token")
+                call.respondText("""{"data": [{"id": "abc1234", "title": "Hello world", "description": "$pid"}]}""", ContentType.Application.Json, HttpStatusCode.OK)
             }
         }
 
@@ -209,3 +214,10 @@ fun Application.module() {
 val Application.isLocal get() = Configuration.application["APP_PROFILE"]!! == "local"
 val Application.isDev get() = Configuration.application["APP_PROFILE"]!! == "dev"
 val Application.isProd get() = Configuration.application["APP_PROFILE"]!! == "prod"
+
+fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
+    .principal<JWTPrincipal>()
+    ?.let { principal ->
+        principal.payload.claims.entries
+            .associate { claim -> claim.key to claim.value.`as`(JsonNode::class.java) }
+    } ?: error("No JWT principal found in request")
