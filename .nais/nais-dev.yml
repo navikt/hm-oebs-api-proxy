@@ -33,6 +33,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: hm-oebs-api
+        - application: hm-dine-hjelpemidler
           namespace: teamdigihot
           cluster: dev-gcp
