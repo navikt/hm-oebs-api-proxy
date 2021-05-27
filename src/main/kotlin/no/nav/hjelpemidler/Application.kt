@@ -16,6 +16,7 @@ import io.ktor.jackson.JacksonConverter
 import io.ktor.metrics.micrometer.MicrometerMetrics
 import io.ktor.request.path
 import io.ktor.request.receive
+import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.get
@@ -38,6 +39,7 @@ import io.prometheus.client.exporter.common.TextFormat
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
+import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import oracle.jdbc.OracleConnection
 import oracle.jdbc.pool.OracleDataSource
 import org.json.simple.JSONObject
@@ -196,9 +198,18 @@ fun Application.module() {
         // Authenticated database proxy requests
         authenticate("tokenX") {
             get("/hjelpemidler-bruker") {
-                // val reqBody = call.receive<JSONObject>()
-                val pid = call.getTokenInfo()["pid"]?.asText() ?: error("Could not find 'pid' claim in token")
-                call.respondText("""{"data": [{"id": "abc1234", "title": "Hello world", "description": "$pid"}]}""", ContentType.Application.Json, HttpStatusCode.OK)
+                // Extract FNR to lookup from idporten logon
+                val fnr = call.getTokenInfo()["pid"]?.asText() ?: error("Could not find 'pid' claim in token")
+                if (Configuration.application["APP_PROFILE"]!! != "prod") {
+                    logg.info("Received request for /hjelpemidler-bruker on-behalf-of: $fnr")
+                }
+
+                val mock = listOf(
+                    HjelpemiddelBruker("177946", "Gemino 20", "Rullator til innendørs bruk", 1.0),
+                    HjelpemiddelBruker("021922", "Topro Troja Classic M", "Rullator til innendørs bruk", 1.0),
+                    HjelpemiddelBruker("014112", "Topro Terskeleliminator", "Terskeleliminator", 5.0),
+                )
+                call.respond(mock)
             }
         }
 
