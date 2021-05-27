@@ -36,6 +36,7 @@ import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 import oracle.jdbc.OracleConnection
 import oracle.jdbc.pool.OracleDataSource
+import org.json.simple.JSONObject
 import org.slf4j.event.Level
 import java.sql.Connection
 import java.sql.SQLException
@@ -122,9 +123,9 @@ fun <T> withRetryIfDatabaseConnectionIsStale(block: () -> T): T {
     throw lastException!! // No more attempts so we throw the last exception we had
 }
 
-@ExperimentalTime
+// @ExperimentalTime
+// @Suppress("unused") // Referenced in application.conf
 @KtorExperimentalAPI
-@Suppress("unused") // Referenced in application.conf
 fun Application.module() {
     installAuthentication()
 
@@ -166,7 +167,8 @@ fun Application.module() {
             /* if (ready.get() ) {
                 val dbValid = dbConnection!!.isValid(10)
                 if (!dbValid) {
-                    Prometheus.oebsDbAvailable.set(0.0)
+                    Prometheus.oebsDbAvailable.set(0.
+                    0)
                     return@get call.respondText("NOT ALIVE", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
                 }
                 Prometheus.oebsDbAvailable.set(1.0)
@@ -189,9 +191,9 @@ fun Application.module() {
 
         // Authenticated database proxy requests
         authenticate("aad") {
-            post("/test") {
-                val reqBody = call.receive<String>()
-                call.respondText("""{"reqBody": "$reqBody"}""", ContentType.Application.Json, HttpStatusCode.OK)
+            get("/test") {
+                val reqBody = call.receive<JSONObject>()
+                call.respondText(reqBody.toJSONString(), ContentType.Application.Json, HttpStatusCode.OK)
             }
         }
     }
