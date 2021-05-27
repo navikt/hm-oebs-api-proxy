@@ -1,0 +1,38 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: hm-oebs-api-proxy
+  namespace: teamdigihot
+  labels:
+    team: teamdigihot
+spec:
+  image: {{image}}
+  port: 8080
+  secureLogs:
+    enabled: true
+  liveness:
+    path: /isalive
+  readiness:
+    path: /isready
+  prometheus:
+    enabled: true
+    path: /metrics
+#  vault:
+#    enabled: true
+#    paths:
+#      - kvPath: oracle/data/prod/creds/<oebs database>-user
+#        mountPath: /secrets/<oebs database>/credentials
+#      - kvPath: oracle/data/prod/config/<oebs database>
+#        mountPath: /secrets/<oebs database>/config
+  ingresses:
+    - https://hm-oebs-api-proxy.prod-fss-pub.nais.io
+  azure:
+    application:
+      enabled: true
+  webproxy: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: hm-oebs-api
+          namespace: teamdigihot
+          cluster: prod-gcp
