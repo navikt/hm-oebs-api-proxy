@@ -47,6 +47,9 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_PW" to "abc",
             "HM_OEBS_API_PROXY_DB_NAME" to "abc",
 
+            "TOKEN_X_WELL_KNOWN_URL" to "abc",
+            "TOKEN_X_CLIENT_ID" to "abc",
+
             "AZURE_APP_WELL_KNOWN_URL" to "abc",
             "AZURE_APP_CLIENT_ID" to "abc",
         )
@@ -57,6 +60,11 @@ internal object Configuration {
         "HM_OEBS_API_PROXY_DB_USR" to config()[Key("HM_OEBS_API_PROXY_DB_USR", stringType)],
         "HM_OEBS_API_PROXY_DB_PW" to config()[Key("HM_OEBS_API_PROXY_DB_PW", stringType)],
         "HM_OEBS_API_PROXY_DB_NAME" to config()[Key("HM_OEBS_API_PROXY_DB_NAME", stringType)],
+    )
+
+    val tokenX: Map<String, String> = mapOf(
+        "TOKEN_X_WELL_KNOWN_URL" to config()[Key("TOKEN_X_WELL_KNOWN_URL", stringType)],
+        "TOKEN_X_CLIENT_ID" to config()[Key("TOKEN_X_CLIENT_ID", stringType)],
     )
 
     val azureAD: Map<String, String> = mapOf(

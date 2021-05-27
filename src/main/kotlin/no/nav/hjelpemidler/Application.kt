@@ -190,6 +190,13 @@ fun Application.module() {
         }
 
         // Authenticated database proxy requests
+        authenticate("tokenX") {
+            get("/hjelpemidler-bruker") {
+                // val reqBody = call.receive<JSONObject>()
+                call.respondText("""{"data": [{"id": "abc1234", "title": "Hello world", "description": "foo bar"}]}""", ContentType.Application.Json, HttpStatusCode.OK)
+            }
+        }
+
         authenticate("aad") {
             get("/test") {
                 val reqBody = call.receive<JSONObject>()
@@ -198,3 +205,7 @@ fun Application.module() {
         }
     }
 }
+
+val Application.isLocal get() = Configuration.application["APP_PROFILE"]!! == "local"
+val Application.isDev get() = Configuration.application["APP_PROFILE"]!! == "dev"
+val Application.isProd get() = Configuration.application["APP_PROFILE"]!! == "prod"
