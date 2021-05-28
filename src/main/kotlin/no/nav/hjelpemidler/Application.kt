@@ -60,7 +60,7 @@ private val ready = AtomicBoolean(false)
 fun main(args: Array<String>) {
     logg.info("OEBS api proxy - Starting...")
 
-    //connectToOebsDB()
+    connectToOebsDB()
 
     // Serve http REST API requests
     EngineMain.main(args)
@@ -80,7 +80,7 @@ fun connectToOebsDB() {
 
     // Set up a new connection
     try {
-        sikkerlogg.info("Connecting to OEBS database with db-config-url=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_URL"]}, db-config-username=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_USR"]}")
+        /*sikkerlogg.info("Connecting to OEBS database with db-config-url=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_URL"]}, db-config-username=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_USR"]}")
 
         // Set up database connection
         val info = Properties()
@@ -101,6 +101,7 @@ fun connectToOebsDB() {
         logg.info("Driver Version: " + dbmd.driverVersion)
 
         logg.info("Database connected, hm-oebs-api-proxy ready")
+        */
         ready.set(true)
 
     }catch(e: Exception) {
@@ -205,10 +206,74 @@ fun Application.module() {
                 }
 
                 val mock = listOf(
-                    HjelpemiddelBruker("177946", "Gemino 20", "Rullator til innendørs bruk", 1.0),
-                    HjelpemiddelBruker("021922", "Topro Troja Classic M", "Rullator til innendørs bruk", 1.0),
-                    HjelpemiddelBruker("014112", "Topro Terskeleliminator", "Terskeleliminator", 5.0),
+                    HjelpemiddelBruker(
+                        "177946",
+                        "1234",
+                        "1",
+                        "",
+                        "Rullator til innendørs bruk",
+                        "I utlån",
+                        "2000-01-01",
+                        "",
+                        "Gemino 20",
+                        "1000",
+                        "",
+                        fnr,
+                        "Installasjonsveien 1",
+                        "Installasjonskommunen",
+                        "1234",
+                        "Installsjonsbyen",
+                        "Bostedsveien 2",
+                        "Bostedskommunen",
+                        "4321",
+                        "Bostedsbyen",
+                    ),
+                    HjelpemiddelBruker(
+                        "021922",
+                        "2345",
+                        "2",
+                        "",
+                        "Rullator til innendørs bruk",
+                        "I utlån",
+                        "2001-02-02",
+                        "771044",
+                        "Topro Troja Classic M",
+                        "1001",
+                        "",
+                        fnr,
+                        "Installasjonsveien 1",
+                        "Installasjonskommunen",
+                        "1234",
+                        "Installsjonsbyen",
+                        "Bostedsveien 2",
+                        "Bostedskommunen",
+                        "4321",
+                        "Bostedsbyen",
+                    ),
+                    HjelpemiddelBruker(
+                        "014112",
+                        "3456",
+                        "5",
+                        "",
+                        "Terskeleliminator",
+                        "I utlån",
+                        "2002-03-03",
+                        "",
+                        "Topro Terskeleliminator",
+                        "1002",
+                        "",
+                        fnr,
+                        "Installasjonsveien 1",
+                        "Installasjonskommunen",
+                        "1234",
+                        "Installsjonsbyen",
+                        "Bostedsveien 2",
+                        "Bostedskommunen",
+                        "4321",
+                        "Bostedsbyen",
+                    ),
                 )
+
                 call.respond(mock)
             }
         }
