@@ -5,7 +5,7 @@ data class HjelpemiddelBruker (
     val kategori: String,
     val artikkelBeskrivelse: String,
     val artikkelNr: String,
-    val serieNr: String,
+    val serieNr: String?,
     val datoUtsendelse: String,
 )
 
