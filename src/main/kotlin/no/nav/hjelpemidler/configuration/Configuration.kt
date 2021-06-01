@@ -31,9 +31,11 @@ internal object Configuration {
 
             "HM_OEBS_API_PROXY_DB_NAME" to "abc",
 
-            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@d26dbfl027.test.local:1521/XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",
-            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm07db04.adeo.no:1521/XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",
-            "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm09db08.adeo.no:1521/XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",
+            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@d26dbfl027.test.local:1521/XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",  // T-env
+            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm07db04.adeo.no:1521/XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",       // Q-env
+            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm09db08.adeo.no:1521/XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",       // P-env
+
+            "HM_OEBS_API_PROXY_DB_URL" to "abc",
             "HM_OEBS_API_PROXY_DB_USR" to "abc",
             "HM_OEBS_API_PROXY_DB_PW" to "abc",
             "HM_OEBS_API_PROXY_DB_NAME" to "XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",
