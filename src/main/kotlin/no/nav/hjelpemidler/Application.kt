@@ -196,107 +196,118 @@ fun Application.module() {
             }
         }
 
-        get("/oebs-test") {
-            val query = """
-                SELECT *
-                FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
-                WHERE FNR IN (
-                    '15084300133',
-                    '10127622634',
-                    '03116423242'
-                )
-            """.trimIndent()
-
-            dbConnection!!.prepareStatement(query).use { pstmt ->
-                pstmt.executeQuery().use { rs ->
-                    while (rs.next()) {
-                        logg.info("Item: antall=${rs.getString("ANTALL")}, kategori=${rs.getString("KATEGORI3_BESKRIVELSE")}, artikkelBeskrivelse=${rs.getString("ARTIKKEL_BESKRIVELSE")}, artikkelNr=${rs.getString("ARTIKKELNUMMER")}, serieNr=${rs.getString("SERIE_NUMMER")}, datoUtsendelse=${rs.getString("FØRSTE_UTSENDELSE")}")
-                    }
-                }
-            }
-
-            call.respondText("READY", ContentType.Text.Plain)
-        }
-
         // Authenticated database proxy requests
         authenticate("tokenX") {
             get("/hjelpemidler-bruker") {
                 // Extract FNR to lookup from idporten logon
                 val fnr = call.getTokenInfo()["pid"]?.asText() ?: error("Could not find 'pid' claim in token")
                 if (Configuration.application["APP_PROFILE"]!! != "prod") {
-                    logg.info("Received request for /hjelpemidler-bruker on-behalf-of: $fnr")
+                    logg.info("Processing request for /hjelpemidler-bruker (on-behalf-of: $fnr)")
+                }else{
+                    logg.info("Processing request for /hjelpemidler-bruker")
                 }
 
-                val mock = listOf(
-                    HjelpemiddelBrukerOEBS(
-                        "177946",
-                        "1234",
-                        "1",
-                        "",
-                        "Rullator til innendørs bruk",
-                        "I utlån",
-                        "2000-01-01",
-                        "",
-                        "Gemino 20",
-                        "1000",
-                        "",
-                        fnr,
-                        "Installasjonsveien 1",
-                        "Installasjonskommunen",
-                        "1234",
-                        "Installsjonsbyen",
-                        "Bostedsveien 2",
-                        "Bostedskommunen",
-                        "4321",
-                        "Bostedsbyen",
-                    ).toHjelpemiddelBruker(),
-                    HjelpemiddelBrukerOEBS(
-                        "021922",
-                        "2345",
-                        "2",
-                        "",
-                        "Rullator til innendørs bruk",
-                        "I utlån",
-                        "2001-02-02",
-                        "771044",
-                        "Topro Troja Classic M",
-                        "1001",
-                        "",
-                        fnr,
-                        "Installasjonsveien 1",
-                        "Installasjonskommunen",
-                        "1234",
-                        "Installsjonsbyen",
-                        "Bostedsveien 2",
-                        "Bostedskommunen",
-                        "4321",
-                        "Bostedsbyen",
-                    ).toHjelpemiddelBruker(),
-                    HjelpemiddelBrukerOEBS(
-                        "014112",
-                        "3456",
-                        "5",
-                        "",
-                        "Terskeleliminator",
-                        "I utlån",
-                        "2002-03-03",
-                        "",
-                        "Topro Terskeleliminator",
-                        "1002",
-                        "",
-                        fnr,
-                        "Installasjonsveien 1",
-                        "Installasjonskommunen",
-                        "1234",
-                        "Installsjonsbyen",
-                        "Bostedsveien 2",
-                        "Bostedskommunen",
-                        "4321",
-                        "Bostedsbyen",
-                    ).toHjelpemiddelBruker(),
-                )
+                // Handle the easy mock case
+                if (Configuration.application["APP_PROFILE"]!! == "local") {
+                    val mock = listOf(
+                        HjelpemiddelBrukerOEBS(
+                            "177946",
+                            "1234",
+                            "1",
+                            "",
+                            "Rullator til innendørs bruk",
+                            "I utlån",
+                            "2000-01-01",
+                            "",
+                            "Gemino 20",
+                            "1000",
+                            "",
+                            fnr,
+                            "Installasjonsveien 1",
+                            "Installasjonskommunen",
+                            "1234",
+                            "Installsjonsbyen",
+                            "Bostedsveien 2",
+                            "Bostedskommunen",
+                            "4321",
+                            "Bostedsbyen",
+                        ).toHjelpemiddelBruker(),
+                        HjelpemiddelBrukerOEBS(
+                            "021922",
+                            "2345",
+                            "2",
+                            "",
+                            "Rullator til innendørs bruk",
+                            "I utlån",
+                            "2001-02-02",
+                            "771044",
+                            "Topro Troja Classic M",
+                            "1001",
+                            "",
+                            fnr,
+                            "Installasjonsveien 1",
+                            "Installasjonskommunen",
+                            "1234",
+                            "Installsjonsbyen",
+                            "Bostedsveien 2",
+                            "Bostedskommunen",
+                            "4321",
+                            "Bostedsbyen",
+                        ).toHjelpemiddelBruker(),
+                        HjelpemiddelBrukerOEBS(
+                            "014112",
+                            "3456",
+                            "5",
+                            "",
+                            "Terskeleliminator",
+                            "I utlån",
+                            "2002-03-03",
+                            "",
+                            "Topro Terskeleliminator",
+                            "1002",
+                            "",
+                            fnr,
+                            "Installasjonsveien 1",
+                            "Installasjonskommunen",
+                            "1234",
+                            "Installsjonsbyen",
+                            "Bostedsveien 2",
+                            "Bostedskommunen",
+                            "4321",
+                            "Bostedsbyen",
+                        ).toHjelpemiddelBruker(),
+                    )
+                    call.respond(mock)
+                    return@get
+                }
 
-                call.respond(mock)
+                // Query database and return results
+                val query = """
+                    SELECT ANTALL, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, SERIE_NUMMER, FØRSTE_UTSENDELSE
+                    FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+                    WHERE FNR = ?
+                """.trimIndent()
+
+                var items = mutableListOf<HjelpemiddelBruker>()
+                dbConnection!!.prepareStatement(query).use { pstmt ->
+                    pstmt.clearParameters()
+                    pstmt.setString(1, fnr)
+                    pstmt.executeQuery().use { rs ->
+                        while (rs.next()) {
+                            items.add(
+                                HjelpemiddelBruker(
+                                    rs.getString("ANTALL"),
+                                    rs.getString("KATEGORI3_BESKRIVELSE"),
+                                    rs.getString("ARTIKKEL_BESKRIVELSE"),
+                                    rs.getString("ARTIKKELNUMMER"),
+                                    rs.getString("SERIE_NUMMER"),
+                                    rs.getString("FØRSTE_UTSENDELSE"),
+                                )
+                            )
+                        }
+                    }
+                }
+                call.respond(items)
             }
         }
 
