@@ -22,8 +22,12 @@ spec:
     paths:
       - kvPath: oracle/data/dev/creds/oebst1-dhotuser
         mountPath: /secrets/oebst1/credentials
+      - kvPath: oracle/data/dev/config/oebst1
+        mountPath: /secrets/oebst1/config
       - kvPath: oracle/data/dev/creds/oebsq1-dhotuser
         mountPath: /secrets/oebsq1/credentials
+      - kvPath: oracle/data/dev/config/oebsq1
+        mountPath: /secrets/oebsq1/config
   ingresses:
     - https://hm-oebs-api-proxy.dev-fss-pub.nais.io
   azure:
