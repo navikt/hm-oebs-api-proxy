@@ -1,6 +1,16 @@
 package no.nav.hjelpemidler.models
 
 data class HjelpemiddelBruker (
+    val serviceForespørselNr: String,
+    val ordreNr: String,
+    val antall: String,
+    val kategori: String,
+    val artikkelStatus: String,
+    val artikkelBeskrivelse: String,
+    val artikkelNr: String,
+)
+
+data class HjelpemiddelBrukerOEBS (
     val FOREKOMST_NUMMER: String,
     val ORDRE_NUMMER: String,
 
@@ -30,3 +40,15 @@ data class HjelpemiddelBruker (
     val BOSTEDS_POSTNUMMER: String,
     val BOSTEDS_BY: String,
 )
+
+fun HjelpemiddelBrukerOEBS.toHjelpemiddelBruker(): HjelpemiddelBruker {
+    return HjelpemiddelBruker(
+        serviceForespørselNr = this.FOREKOMST_NUMMER,
+        ordreNr = this.ORDRE_NUMMER,
+        antall = this.ANTALL,
+        kategori = this.KATEGORI3_BESKRIVELSE,
+        artikkelStatus = this.ARTIKKELSTATUS,
+        artikkelBeskrivelse = this.ARTIKKEL_BESKRIVELSE,
+        artikkelNr = this.ARTIKKELNUMMER,
+    )
+}

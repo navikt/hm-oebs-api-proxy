@@ -40,6 +40,8 @@ import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
+import no.nav.hjelpemidler.models.HjelpemiddelBrukerOEBS
+import no.nav.hjelpemidler.models.toHjelpemiddelBruker
 import oracle.jdbc.OracleConnection
 import oracle.jdbc.pool.OracleDataSource
 import org.json.simple.JSONObject
@@ -206,7 +208,7 @@ fun Application.module() {
                 }
 
                 val mock = listOf(
-                    HjelpemiddelBruker(
+                    HjelpemiddelBrukerOEBS(
                         "177946",
                         "1234",
                         "1",
@@ -227,8 +229,8 @@ fun Application.module() {
                         "Bostedskommunen",
                         "4321",
                         "Bostedsbyen",
-                    ),
-                    HjelpemiddelBruker(
+                    ).toHjelpemiddelBruker(),
+                    HjelpemiddelBrukerOEBS(
                         "021922",
                         "2345",
                         "2",
@@ -249,8 +251,8 @@ fun Application.module() {
                         "Bostedskommunen",
                         "4321",
                         "Bostedsbyen",
-                    ),
-                    HjelpemiddelBruker(
+                    ).toHjelpemiddelBruker(),
+                    HjelpemiddelBrukerOEBS(
                         "014112",
                         "3456",
                         "5",
@@ -271,7 +273,7 @@ fun Application.module() {
                         "Bostedskommunen",
                         "4321",
                         "Bostedsbyen",
-                    ),
+                    ).toHjelpemiddelBruker(),
                 )
 
                 call.respond(mock)
