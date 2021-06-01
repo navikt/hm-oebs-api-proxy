@@ -210,11 +210,12 @@ fun Application.module() {
             dbConnection!!.prepareStatement(query).use { pstmt ->
                 pstmt.executeQuery().use { rs ->
 
+                    logg.info("Rows:")
                     while (rs.next()) {
                         logg.info("Row labels:")
                         for (i in 1 until rs.metaData.columnCount) {
                             logg.info("- Column idx: $i")
-                            logg.info("- ${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)}, label=${rs.metaData.getColumnLabel(0)})")
+                            logg.info("- ${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)})")
                         }
                     }
                 }
