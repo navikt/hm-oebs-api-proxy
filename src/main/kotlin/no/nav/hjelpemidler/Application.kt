@@ -172,20 +172,19 @@ fun Application.module() {
 
         get("/isalive") {
             // If we have gotten ready=true we check that dbConnection is still valid, or else we are ALIVE (so we don't get our pod restarted during startup)
-            /* if (ready.get() ) {
+            if (ready.get() ) {
                 val dbValid = dbConnection!!.isValid(10)
                 if (!dbValid) {
-                    Prometheus.oebsDbAvailable.set(0.
-                    0)
+                    Prometheus.oebsDbAvailable.set(0.0)
                     return@get call.respondText("NOT ALIVE", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
                 }
                 Prometheus.oebsDbAvailable.set(1.0)
-            } */
+            }
             call.respondText("ALIVE", ContentType.Text.Plain)
         }
 
         get("/isready") {
-            // if (!ready.get()) return@get call.respondText("NOT READY", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
+            if (!ready.get()) return@get call.respondText("NOT READY", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
             call.respondText("READY", ContentType.Text.Plain)
         }
 
@@ -195,6 +194,33 @@ fun Application.module() {
             call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
                 TextFormat.write004(this, CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(names))
             }
+        }
+
+        get("/oebs-test") {
+            val query = """
+                SELECT *
+                FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+                WHERE FNR IN (
+                    '15084300133',
+                    '10127622634',
+                    '03116423242'
+                )
+            """.trimIndent()
+
+            dbConnection!!.prepareStatement(query).use { pstmt ->
+                pstmt.executeQuery().use { rs ->
+
+                    while (rs.next()) {
+                        logg.info("Row labels:")
+                        for (i in 0..rs.metaData.columnCount) {
+                            rs.metaData.getColumnLabel(0)
+                            logg.info("- ${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)}, label=${rs.metaData.getColumnLabel(0)})")
+                        }
+                    }
+                }
+            }
+
+            call.respondText("READY", ContentType.Text.Plain)
         }
 
         // Authenticated database proxy requests
