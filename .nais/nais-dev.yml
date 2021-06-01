@@ -21,9 +21,9 @@ spec:
     enabled: true
     paths:
       - kvPath: oracle/data/dev/creds/oebst1-dhotuser
-        mountPath: /secrets/oebst1-dhotuser/credentials
+        mountPath: /secrets/oebst1/credentials
       - kvPath: oracle/data/dev/creds/oebsq1-dhotuser
-        mountPath: /secrets/oebsq1-dhotuser/credentials
+        mountPath: /secrets/oebsq1/credentials
   ingresses:
     - https://hm-oebs-api-proxy.dev-fss-pub.nais.io
   azure:

@@ -6,6 +6,7 @@ data class HjelpemiddelBruker (
     val artikkelBeskrivelse: String,
     val artikkelNr: String,
     val serieNr: String,
+    val datoUtsendelse: String,
 )
 
 data class HjelpemiddelBrukerOEBS (
@@ -46,5 +47,6 @@ fun HjelpemiddelBrukerOEBS.toHjelpemiddelBruker(): HjelpemiddelBruker {
         artikkelBeskrivelse = this.ARTIKKEL_BESKRIVELSE,
         artikkelNr = this.ARTIKKELNUMMER,
         serieNr = this.SERIE_NUMMER,
+        datoUtsendelse = this.FØRSTE_UTSENDELSE,
     )
 }

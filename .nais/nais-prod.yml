@@ -21,7 +21,7 @@ spec:
     enabled: true
     paths:
       - kvPath: oracle/data/prod/creds/oebsp-dhotuser
-        mountPath: /secrets/oebsp-dhotuser/credentials
+        mountPath: /secrets/oebsp/credentials
   ingresses:
     - https://hm-oebs-api-proxy.prod-fss-pub.nais.io
   azure:
