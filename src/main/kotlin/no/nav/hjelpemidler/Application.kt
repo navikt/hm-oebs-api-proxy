@@ -82,7 +82,7 @@ fun connectToOebsDB() {
 
     // Set up a new connection
     try {
-        /*sikkerlogg.info("Connecting to OEBS database with db-config-url=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_URL"]}, db-config-username=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_USR"]}")
+        sikkerlogg.info("Connecting to OEBS database with db-config-url=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_URL"]}, db-config-username=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_USR"]}")
 
         // Set up database connection
         val info = Properties()
@@ -103,7 +103,6 @@ fun connectToOebsDB() {
         logg.info("Driver Version: " + dbmd.driverVersion)
 
         logg.info("Database connected, hm-oebs-api-proxy ready")
-         */
         ready.set(true)
 
     }catch(e: Exception) {

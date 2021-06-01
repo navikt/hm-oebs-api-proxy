@@ -16,12 +16,10 @@ internal object Configuration {
         mapOf(
             "application.profile" to "prod",
 
-            "HM_OEBS_API_PROXY_DB_NAME" to "abc",
-
-            "HM_OEBS_API_PROXY_DB_URL" to "abc",
-            "HM_OEBS_API_PROXY_DB_USR" to "abc",
-            "HM_OEBS_API_PROXY_DB_PW" to "abc",
-            "HM_OEBS_API_PROXY_DB_NAME" to "abc",
+            "HM_OEBS_API_PROXY_DB_NAME" to "XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",
+            "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm09db08.adeo.no:1521",    // P-env
+            "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_P"),
+            "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_P"),
         )
     )
 
@@ -29,16 +27,13 @@ internal object Configuration {
         mapOf(
             "application.profile" to "dev",
 
-            "HM_OEBS_API_PROXY_DB_NAME" to "abc",
-
-            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@d26dbfl027.test.local:1521/XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",  // T-env
-            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm07db04.adeo.no:1521/XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",       // Q-env
-            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm09db08.adeo.no:1521/XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",       // P-env
-
-            "HM_OEBS_API_PROXY_DB_URL" to "abc",
-            "HM_OEBS_API_PROXY_DB_USR" to "abc",
-            "HM_OEBS_API_PROXY_DB_PW" to "abc",
             "HM_OEBS_API_PROXY_DB_NAME" to "XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",
+            "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@d26dbfl027.test.local:1521",  // T-env
+            "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_T1"),
+            "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_T1"),
+            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm07db04.adeo.no:1521",    // Q-env
+            // "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_Q1"),
+            // "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_Q1"),
         )
     )
 
@@ -60,10 +55,10 @@ internal object Configuration {
     )
 
     val oracleDatabaseConfig: Map<String, String> = mapOf(
+        "HM_OEBS_API_PROXY_DB_NAME" to config()[Key("HM_OEBS_API_PROXY_DB_NAME", stringType)],
         "HM_OEBS_API_PROXY_DB_URL" to config()[Key("HM_OEBS_API_PROXY_DB_URL", stringType)],
         "HM_OEBS_API_PROXY_DB_USR" to config()[Key("HM_OEBS_API_PROXY_DB_USR", stringType)],
         "HM_OEBS_API_PROXY_DB_PW" to config()[Key("HM_OEBS_API_PROXY_DB_PW", stringType)],
-        "HM_OEBS_API_PROXY_DB_NAME" to config()[Key("HM_OEBS_API_PROXY_DB_NAME", stringType)],
     )
 
     val tokenX: Map<String, String> = mapOf(
