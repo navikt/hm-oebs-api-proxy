@@ -17,13 +17,13 @@ spec:
   prometheus:
     enabled: true
     path: /metrics
-#  vault:
-#    enabled: true
-#    paths:
-#      - kvPath: oracle/data/dev/creds/<oebs database>-user
-#        mountPath: /secrets/<oebs database>/credentials
-#      - kvPath: oracle/data/dev/config/<oebs database>
-#        mountPath: /secrets/<oebs database>/config
+  vault:
+    enabled: true
+    paths:
+      - kvPath: oracle/data/dev/creds/oebst1-dhotuser
+        mountPath: /secrets/oebst1-dhotuser/credentials
+      - kvPath: oracle/data/dev/creds/oebsq1-dhotuser
+        mountPath: /secrets/oebsq1-dhotuser/credentials
   ingresses:
     - https://hm-oebs-api-proxy.dev-fss-pub.nais.io
   azure:
