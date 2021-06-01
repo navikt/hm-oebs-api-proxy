@@ -212,8 +212,7 @@ fun Application.module() {
 
                     while (rs.next()) {
                         logg.info("Row labels:")
-                        for (i in 0..rs.metaData.columnCount) {
-                            rs.metaData.getColumnLabel(0)
+                        for (i in 1..rs.metaData.columnCount) {
                             logg.info("- ${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)}, label=${rs.metaData.getColumnLabel(0)})")
                         }
                     }
