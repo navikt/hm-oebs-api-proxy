@@ -16,8 +16,8 @@ internal object Configuration {
         mapOf(
             "application.profile" to "prod",
 
-            "HM_OEBS_API_PROXY_DB_NAME" to "XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",
-            "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm09db08.adeo.no:1521",    // P-env
+            "HM_OEBS_API_PROXY_DB_NAME" to "oebsp",
+            "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm09db08.adeo.no:1521/oebsp",    // P-env
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_P"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_P"),
         )
@@ -27,11 +27,13 @@ internal object Configuration {
         mapOf(
             "application.profile" to "dev",
 
-            "HM_OEBS_API_PROXY_DB_NAME" to "XXRTV_DIGIHOT_HJM_UTLAN_FNR_V",
-            "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@d26dbfl027.test.local:1521",  // T-env
+            "HM_OEBS_API_PROXY_DB_NAME" to "oebst1",
+            "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@d26dbfl027.test.local:1607/oebst1",  // T-env
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_T1"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_T1"),
-            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm07db04.adeo.no:1521",    // Q-env
+
+            // "HM_OEBS_API_PROXY_DB_NAME" to "oebsq1",
+            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm07db04.adeo.no:1521/oebsq1",    // Q-env
             // "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_Q1"),
             // "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_Q1"),
         )

@@ -82,7 +82,7 @@ fun connectToOebsDB() {
 
     // Set up a new connection
     try {
-        sikkerlogg.info("Connecting to OEBS database with db-config-url=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_URL"]}/${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_NAME"]}, db-config-username=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_USR"]}")
+        sikkerlogg.info("Connecting to OEBS database with db-config-url=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_URL"]}, db-config-username=${Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_USR"]}")
 
         // Set up database connection
         val info = Properties()
@@ -91,7 +91,7 @@ fun connectToOebsDB() {
         info[OracleConnection.CONNECTION_PROPERTY_DEFAULT_ROW_PREFETCH] = "20"
 
         val ods = OracleDataSource()
-        ods.url = Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_URL"]!! + "/" + Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_NAME"]!!
+        ods.url = Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_URL"]!!
         ods.connectionProperties = info
 
         logg.info("Connecting to database")
