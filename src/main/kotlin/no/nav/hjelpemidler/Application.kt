@@ -209,12 +209,8 @@ fun Application.module() {
 
             dbConnection!!.prepareStatement(query).use { pstmt ->
                 pstmt.executeQuery().use { rs ->
-                    logg.info("Rows:")
                     while (rs.next()) {
-                        logg.info("Row labels:")
-                        for (i in 1..rs.metaData.columnCount) {
-                            logg.info("- Column idx: $i: ${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)})")
-                        }
+                        logg.info("Item: antall=${rs.getString("ANTALL")}, kategori=${rs.getString("KATEGORI3_BESKRIVELSE")}, artikkelBeskrivelse=${rs.getString("ARTIKKEL_BESKRIVELSE")}, artikkelNr=${rs.getString("ARTIKKELNUMMER")}, serieNr=${rs.getString("SERIE_NUMMER")}, datoUtsendelse=${rs.getString("FØRSTE_UTSENDELSE")}")
                     }
                 }
             }
