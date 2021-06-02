@@ -40,6 +40,7 @@ import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
+import no.nav.hjelpemidler.models.HjelpemiddelBrukerMocks
 import no.nav.hjelpemidler.models.HjelpemiddelBrukerOEBS
 import no.nav.hjelpemidler.models.toHjelpemiddelBruker
 import oracle.jdbc.OracleConnection
@@ -207,77 +208,14 @@ fun Application.module() {
                     logg.info("Processing request for /hjelpemidler-bruker")
                 }
 
+                // Extra sanity check of FNR
+                if (!"\\d{11}".toRegex().matches(fnr)) {
+                    error("invalid fnr in 'pid', does not match regex")
+                }
+
                 // Handle the easy mock case
                 if (Configuration.application["APP_PROFILE"]!! == "local") {
-                    val mock = listOf(
-                        HjelpemiddelBrukerOEBS(
-                            "177946",
-                            "1234",
-                            "1",
-                            "",
-                            "Rullator til innendørs bruk",
-                            "I utlån",
-                            "2000-01-01",
-                            "",
-                            "Gemino 20",
-                            "1000",
-                            "",
-                            fnr,
-                            "Installasjonsveien 1",
-                            "Installasjonskommunen",
-                            "1234",
-                            "Installsjonsbyen",
-                            "Bostedsveien 2",
-                            "Bostedskommunen",
-                            "4321",
-                            "Bostedsbyen",
-                        ).toHjelpemiddelBruker(),
-                        HjelpemiddelBrukerOEBS(
-                            "021922",
-                            "2345",
-                            "2",
-                            "",
-                            "Rullator til innendørs bruk",
-                            "I utlån",
-                            "2001-02-02",
-                            "771044",
-                            "Topro Troja Classic M",
-                            "1001",
-                            "",
-                            fnr,
-                            "Installasjonsveien 1",
-                            "Installasjonskommunen",
-                            "1234",
-                            "Installsjonsbyen",
-                            "Bostedsveien 2",
-                            "Bostedskommunen",
-                            "4321",
-                            "Bostedsbyen",
-                        ).toHjelpemiddelBruker(),
-                        HjelpemiddelBrukerOEBS(
-                            "014112",
-                            "3456",
-                            "5",
-                            "",
-                            "Terskeleliminator",
-                            "I utlån",
-                            "2002-03-03",
-                            "",
-                            "Topro Terskeleliminator",
-                            "1002",
-                            "",
-                            fnr,
-                            "Installasjonsveien 1",
-                            "Installasjonskommunen",
-                            "1234",
-                            "Installsjonsbyen",
-                            "Bostedsveien 2",
-                            "Bostedskommunen",
-                            "4321",
-                            "Bostedsbyen",
-                        ).toHjelpemiddelBruker(),
-                    )
-                    call.respond(mock)
+                    call.respond(HjelpemiddelBrukerMocks(fnr))
                     return@get
                 }
 
