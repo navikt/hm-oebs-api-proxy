@@ -288,22 +288,24 @@ fun Application.module() {
                     WHERE FNR = ?
                 """.trimIndent()
 
-                var items = mutableListOf<HjelpemiddelBruker>()
-                dbConnection!!.prepareStatement(query).use { pstmt ->
-                    pstmt.clearParameters()
-                    pstmt.setString(1, fnr)
-                    pstmt.executeQuery().use { rs ->
-                        while (rs.next()) {
-                            items.add(
-                                HjelpemiddelBruker(
-                                    rs.getString("ANTALL"),
-                                    rs.getString("KATEGORI3_BESKRIVELSE"),
-                                    rs.getString("ARTIKKEL_BESKRIVELSE"),
-                                    rs.getString("ARTIKKELNUMMER"),
-                                    rs.getString("SERIE_NUMMER"),
-                                    rs.getString("FØRSTE_UTSENDELSE"),
+                val items = mutableListOf<HjelpemiddelBruker>()
+                withRetryIfDatabaseConnectionIsStale {
+                    dbConnection!!.prepareStatement(query).use { pstmt ->
+                        pstmt.clearParameters()
+                        pstmt.setString(1, fnr)
+                        pstmt.executeQuery().use { rs ->
+                            while (rs.next()) {
+                                items.add(
+                                    HjelpemiddelBruker(
+                                        rs.getString("ANTALL"),
+                                        rs.getString("KATEGORI3_BESKRIVELSE"),
+                                        rs.getString("ARTIKKEL_BESKRIVELSE"),
+                                        rs.getString("ARTIKKELNUMMER"),
+                                        rs.getString("SERIE_NUMMER"),
+                                        rs.getString("FØRSTE_UTSENDELSE"),
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }
