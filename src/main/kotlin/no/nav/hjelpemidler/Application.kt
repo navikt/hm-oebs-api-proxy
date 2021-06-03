@@ -213,12 +213,6 @@ fun Application.module() {
                     error("invalid fnr in 'pid', does not match regex")
                 }
 
-                // Handle the easy mock case
-                if (Configuration.application["APP_PROFILE"]!! == "local") {
-                    call.respond(HjelpemiddelBrukerMocks(fnr))
-                    return@get
-                }
-
                 // Query database and return results
                 val query = """
                     SELECT ANTALL, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, SERIE_NUMMER, FØRSTE_UTSENDELSE
