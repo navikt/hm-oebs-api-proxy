@@ -40,9 +40,6 @@ import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
-import no.nav.hjelpemidler.models.HjelpemiddelBrukerMocks
-import no.nav.hjelpemidler.models.HjelpemiddelBrukerOEBS
-import no.nav.hjelpemidler.models.toHjelpemiddelBruker
 import oracle.jdbc.OracleConnection
 import oracle.jdbc.pool.OracleDataSource
 import org.json.simple.JSONObject
