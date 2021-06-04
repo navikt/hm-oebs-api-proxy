@@ -214,8 +214,8 @@ fun Application.module() {
                 val query = """
                     SELECT ANTALL, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, SERIE_NUMMER, FØRSTE_UTSENDELSE
                     FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
-                    ORDER BY KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE
                     WHERE FNR = ?
+                    ORDER BY KATEGORI3_BESKRIVELSE ASC, ARTIKKEL_BESKRIVELSE ASC
                 """.trimIndent()
 
                 val items = mutableListOf<HjelpemiddelBruker>()
