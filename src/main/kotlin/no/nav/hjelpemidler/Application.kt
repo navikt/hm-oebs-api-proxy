@@ -212,7 +212,7 @@ fun Application.module() {
 
                 // Query database and return results
                 val query = """
-                    SELECT ANTALL, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, SERIE_NUMMER, FØRSTE_UTSENDELSE
+                    SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, SERIE_NUMMER, FØRSTE_UTSENDELSE
                     FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
                     WHERE FNR = ?
                     ORDER BY KATEGORI3_BESKRIVELSE ASC, ARTIKKEL_BESKRIVELSE ASC
@@ -228,6 +228,7 @@ fun Application.module() {
                                 items.add(
                                     HjelpemiddelBruker(
                                         rs.getString("ANTALL"),
+                                        rs.getString("ENHET"),
                                         rs.getString("KATEGORI3_BESKRIVELSE"),
                                         rs.getString("ARTIKKEL_BESKRIVELSE"),
                                         rs.getString("ARTIKKELNUMMER"),

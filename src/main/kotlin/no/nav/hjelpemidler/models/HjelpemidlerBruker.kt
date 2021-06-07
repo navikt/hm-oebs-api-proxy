@@ -2,6 +2,7 @@ package no.nav.hjelpemidler.models
 
 data class HjelpemiddelBruker (
     val antall: String,
+    val antallEnhet: String,
     val kategori: String,
     val artikkelBeskrivelse: String,
     val artikkelNr: String,
@@ -24,9 +25,12 @@ data class HjelpemiddelBruker (
 
         val ARTIKKEL_BESKRIVELSE: String,
         val ARTIKKELNUMMER: String,
+        val ENHET: String,
 
         val BRUKER_NUMMER: String,
         val FNR: String,
+
+        val EGEN_ANSATT: String,
 
         val INSTALLASJONS_ADDRESSE: String,
         val INSTALLASJONS_KOMMUNE: String,
