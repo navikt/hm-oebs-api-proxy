@@ -23,10 +23,10 @@ class Hjelpemiddeldatabase {
 
         fun loadDatabase() {
             if (database == null) {
-                val apiURL = Configuration.application["HJELPEMIDDELDATABASEN_API"]!!
+                val apiURL = "${Configuration.application["HJELPEMIDDELDATABASEN_API"]!!}/produkter/alle-aktive-med-nav-avtale"
                 val client = HttpClient.newBuilder().build()
                 val request = HttpRequest.newBuilder()
-                    .uri(URI.create(apiURL + "/produkter/alle-aktive-med-nav-avtale"))
+                    .uri(URI.create(apiURL))
                     .timeout(Duration.ofSeconds(30))
                     .header("Accepts", "application/json")
                     .GET()
@@ -35,7 +35,7 @@ class Hjelpemiddeldatabase {
                 if (response.statusCode() == 200) {
                     database = mapperJson.readValue(response.body().toString())
                 }else{
-                    logg.error("Unable to download the hjelpemiddel-database: statusCode=${response.statusCode()}")
+                    logg.error("Unable to download the hjelpemiddel-database: statusCode=${response.statusCode()} url=$apiURL")
                 }
             }
         }
