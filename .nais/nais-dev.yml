@@ -42,3 +42,6 @@ spec:
         - application: hm-dinehjelpemidler
           namespace: teamdigihot
           cluster: dev-gcp
+    outbound:
+      external:
+        - host: hm-produktinfo-api-poc.nais.preprod.local/api

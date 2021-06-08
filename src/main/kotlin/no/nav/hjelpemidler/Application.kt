@@ -153,7 +153,8 @@ fun Application.module() {
         filter { call ->
             !call.request.path().startsWith("/internal") &&
             !call.request.path().startsWith("/isalive") &&
-            !call.request.path().startsWith("/isready")
+            !call.request.path().startsWith("/isready") &&
+            !call.request.path().startsWith("/metrics")
         }
     }
 

@@ -3,6 +3,7 @@ package no.nav.hjelpemidler.service.hjelpemiddeldatabase
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.models.HjelpemiddelProdukt
 import java.net.URI
@@ -12,6 +13,9 @@ import java.net.http.HttpResponse
 import java.time.Duration
 
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
+
+private val logg = KotlinLogging.logger {}
+private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 class Hjelpemiddeldatabase {
     companion object {
@@ -28,7 +32,11 @@ class Hjelpemiddeldatabase {
                     .GET()
                     .build()
                 val response: HttpResponse<String> = client.send(request, HttpResponse.BodyHandlers.ofString())
-                database = mapperJson.readValue(response.body().toString())
+                if (response.statusCode() == 200) {
+                    database = mapperJson.readValue(response.body().toString())
+                }else{
+                    logg.error("Unable to download the hjelpemiddel-database: statusCode=${response.statusCode()}")
+                }
             }
         }
 
