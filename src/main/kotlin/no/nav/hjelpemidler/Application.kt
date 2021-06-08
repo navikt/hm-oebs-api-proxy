@@ -1,6 +1,8 @@
 package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -20,7 +22,6 @@ import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.get
-import io.ktor.routing.post
 import io.ktor.routing.routing
 import io.ktor.server.netty.EngineMain
 import io.ktor.util.KtorExperimentalAPI
@@ -40,6 +41,8 @@ import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
+import no.nav.hjelpemidler.models.HjelpemiddelProdukt
+import no.nav.hjelpemidler.service.hjelpemiddeldatabase.Hjelpemiddeldatabase
 import oracle.jdbc.OracleConnection
 import oracle.jdbc.pool.OracleDataSource
 import org.json.simple.JSONObject
@@ -49,7 +52,6 @@ import java.sql.SQLException
 import java.util.Properties
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.set
-import kotlin.time.ExperimentalTime
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
@@ -57,12 +59,19 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private var dbConnection: Connection? = null
 private val ready = AtomicBoolean(false)
 
+private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
+
 fun main(args: Array<String>) {
     logg.info("OEBS api proxy - Starting...")
 
+    logg.info("Loading hjelpemiddel-database")
+    Hjelpemiddeldatabase.loadDatabase()
+
+    logg.info("Connecting to OEBS-database")
     connectToOebsDB()
 
     // Serve http REST API requests
+    logg.info("Starting up ktor")
     EngineMain.main(args)
 
     // Note: We do not want to set ready=false again, dbConnection.isValid() will have kubernetes restart our entire pod as it is closed below.
@@ -225,17 +234,29 @@ fun Application.module() {
                         pstmt.setString(1, fnr)
                         pstmt.executeQuery().use { rs ->
                             while (rs.next()) {
-                                items.add(
-                                    HjelpemiddelBruker(
-                                        rs.getString("ANTALL"),
-                                        rs.getString("ENHET"),
-                                        rs.getString("KATEGORI3_BESKRIVELSE"),
-                                        rs.getString("ARTIKKEL_BESKRIVELSE"),
-                                        rs.getString("ARTIKKELNUMMER"),
-                                        rs.getString("SERIE_NUMMER"),
-                                        rs.getString("FØRSTE_UTSENDELSE"),
-                                    )
+                                val item = HjelpemiddelBruker(
+                                    antall = rs.getString("ANTALL"),
+                                    antallEnhet = rs.getString("ENHET"),
+                                    kategori = rs.getString("KATEGORI3_BESKRIVELSE"),
+                                    artikkelBeskrivelse = rs.getString("ARTIKKEL_BESKRIVELSE"),
+                                    artikkelNr = rs.getString("ARTIKKELNUMMER"),
+                                    serieNr = rs.getString("SERIE_NUMMER"),
+                                    datoUtsendelse = rs.getString("FØRSTE_UTSENDELSE"),
+                                    hmdbBeriket = false,
+                                    hmdbProduktNavn = null,
+                                    hmdbBeskrivelse = null,
+                                    hmdbKategori = null,
+                                    hmdbBilde = null,
                                 )
+                                val hmdbItem = Hjelpemiddeldatabase.findByHmsNr(item.artikkelNr)
+                                if (hmdbItem != null) {
+                                    item.hmdbBeriket = true
+                                    item.hmdbProduktNavn = hmdbItem.artname
+                                    item.hmdbBeskrivelse = hmdbItem.adescshort
+                                    item.hmdbKategori = hmdbItem.kategori
+                                    item.hmdbBilde = hmdbItem.blobfileURL
+                                }
+                                items.add(item)
                             }
                         }
                     }

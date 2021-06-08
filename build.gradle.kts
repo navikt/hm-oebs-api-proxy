@@ -12,6 +12,7 @@ val ojdbc_version: String by project
 val ktor_version: String by project
 val unleash_version: String by project
 val prometheus_version: String by project
+val jackson_version: String by project
 
 group = "no.nav.hjelpemidler"
 version = "1.0-SNAPSHOT"
@@ -35,6 +36,8 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.4.2")
     implementation("no.finn.unleash:unleash-client-java:$unleash_version")
     implementation("io.micrometer:micrometer-registry-prometheus:$prometheus_version")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson_version")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version")
 
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-client-core:$ktor_version")

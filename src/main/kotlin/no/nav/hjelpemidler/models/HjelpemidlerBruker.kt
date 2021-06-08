@@ -9,6 +9,12 @@ data class HjelpemiddelBruker (
     val serieNr: String?,
     val datoUtsendelse: String,
 
+    var hmdbBeriket: Boolean,
+    var hmdbProduktNavn: String?,
+    var hmdbBeskrivelse: String?,
+    var hmdbKategori: String?,
+    var hmdbBilde: String?,
+
     /*
         val FOREKOMST_NUMMER: String,
         val ORDRE_NUMMER: String,
