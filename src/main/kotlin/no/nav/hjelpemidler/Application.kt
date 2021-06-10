@@ -52,6 +52,7 @@ import java.sql.SQLException
 import java.util.Properties
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.set
+import kotlin.time.ExperimentalTime
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
@@ -61,6 +62,7 @@ private val ready = AtomicBoolean(false)
 
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
+@ExperimentalTime
 fun main(args: Array<String>) {
     logg.info("OEBS api proxy - Starting...")
 
@@ -138,8 +140,7 @@ fun <T> withRetryIfDatabaseConnectionIsStale(block: () -> T): T {
     throw lastException!! // No more attempts so we throw the last exception we had
 }
 
-// @ExperimentalTime
-// @Suppress("unused") // Referenced in application.conf
+@ExperimentalTime
 @KtorExperimentalAPI
 fun Application.module() {
     installAuthentication()
@@ -251,6 +252,10 @@ fun Application.module() {
                                 )
                                 val hmdbItem = Hjelpemiddeldatabase.findByHmsNr(item.artikkelNr)
                                 if (hmdbItem != null) {
+                                    if (Configuration.application["APP_PROFILE"]!! != "prod") {
+                                        val hmdbItemJson = jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(hmdbItem)
+                                        logg.info("DEBUG: HMDB item found: $hmdbItemJson")
+                                    }
                                     item.hmdbBeriket = true
                                     item.hmdbProduktNavn = hmdbItem.artname
                                     item.hmdbBeskrivelse = hmdbItem.adescshort
