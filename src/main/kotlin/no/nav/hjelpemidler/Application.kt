@@ -258,8 +258,8 @@ fun Application.module() {
                                     }
                                     item.hmdbBeriket = true
                                     item.hmdbProduktNavn = hmdbItem.artname
-                                    item.hmdbBeskrivelse = hmdbItem.adescshort
-                                    item.hmdbKategori = hmdbItem.kategori
+                                    item.hmdbBeskrivelse = hmdbItem.pshortdesc
+                                    item.hmdbKategori = hmdbItem.isotitle
                                     item.hmdbBilde = hmdbItem.blobfileURL
                                 }
                                 items.add(item)

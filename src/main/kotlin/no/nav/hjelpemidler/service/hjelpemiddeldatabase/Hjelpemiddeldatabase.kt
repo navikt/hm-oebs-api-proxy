@@ -27,7 +27,7 @@ class Hjelpemiddeldatabase {
         fun loadDatabase() {
             if (database == null) {
                 var statusCode = 0
-                val apiURL = "${Configuration.application["HJELPEMIDDELDATABASEN_API"]!!}/produkter/alle"
+                val apiURL = "${Configuration.application["HJELPEMIDDELDATABASEN_API"]!!}/produkter/alle-aktive-med-nav-avtale"
                 val elapsed: kotlin.time.Duration = measureTime {
                     val client = HttpClient.newBuilder().build()
                     val request = HttpRequest.newBuilder()
