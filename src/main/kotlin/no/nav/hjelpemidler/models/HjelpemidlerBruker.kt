@@ -14,6 +14,7 @@ data class HjelpemiddelBruker (
     var hmdbBeskrivelse: String?,
     var hmdbKategori: String?,
     var hmdbBilde: String?,
+    var hmdbURL: String?,
 
     /*
         val FOREKOMST_NUMMER: String,

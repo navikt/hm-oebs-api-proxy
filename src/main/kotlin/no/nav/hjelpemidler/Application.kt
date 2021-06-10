@@ -249,6 +249,7 @@ fun Application.module() {
                                     hmdbBeskrivelse = null,
                                     hmdbKategori = null,
                                     hmdbBilde = null,
+                                    hmdbURL = null,
                                 )
                                 val hmdbItem = Hjelpemiddeldatabase.findByHmsNr(item.artikkelNr)
                                 if (hmdbItem != null) {
@@ -261,6 +262,9 @@ fun Application.module() {
                                     item.hmdbBeskrivelse = hmdbItem.pshortdesc
                                     item.hmdbKategori = hmdbItem.isotitle
                                     item.hmdbBilde = hmdbItem.blobfileURL
+                                    if (hmdbItem.prodid != null && hmdbItem.artid != null) {
+                                        item.hmdbURL = "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${hmdbItem.prodid}&art0=${hmdbItem.artid}&nart=1"
+                                    }
                                 }
                                 items.add(item)
                             }
