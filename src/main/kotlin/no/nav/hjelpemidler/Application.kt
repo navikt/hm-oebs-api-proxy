@@ -283,7 +283,6 @@ fun Application.module() {
             }
             get("/test-ny-tabell3") {
                 val items = listOf(
-                    "XXRTV_DIGIHOT_OEBS_ADR_FNR_V",
                     "XXRTV_CS_DIGIHOT_SF_OPPRETT",
                 )
 
