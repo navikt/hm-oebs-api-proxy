@@ -282,31 +282,24 @@ fun Application.module() {
                 call.respond(items)
             }
             get("/test-ny-tabell3") {
-                val items = listOf(
-                    "XXRTV_CS_DIGIHOT_SF_OPPRETT",
-                )
-
-                for (table in items) {
-                    val query = """
-                        DESCRIBE ${table}
-                    """.trimIndent()
-                    logg.info("Describe: $table")
-                    withRetryIfDatabaseConnectionIsStale {
-                        dbConnection!!.prepareStatement(query).use { pstmt ->
-                            pstmt.clearParameters()
-                            // pstmt.setString(1, somevar)
-                            pstmt.executeQuery().use { rs ->
-                                while (rs.next()) {
-                                    for (i in 1 until rs.metaData.columnCount+1) {
-                                        logg.info("${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)}): ${rs.getString(rs.metaData.getColumnName(i))}")
-                                    }
+                val query = """
+                    DESC XXRTV_CS_DIGIHOT_SF_OPPRETT
+                """.trimIndent()
+                logg.info("Query: $query")
+                withRetryIfDatabaseConnectionIsStale {
+                    dbConnection!!.prepareStatement(query).use { pstmt ->
+                        pstmt.clearParameters()
+                        // pstmt.setString(1, somevar)
+                        pstmt.executeQuery().use { rs ->
+                            while (rs.next()) {
+                                for (i in 1 until rs.metaData.columnCount+1) {
+                                    logg.info("${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)}): ${rs.getString(rs.metaData.getColumnName(i))}")
                                 }
                             }
                         }
                     }
                 }
-
-                call.respond(items)
+                call.respond("DONE")
             }
             get("/test-ny-tabell4") {
                 val query = """
