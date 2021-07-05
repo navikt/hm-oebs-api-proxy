@@ -258,11 +258,11 @@ fun Application.module() {
             get("/test-ny-tabell22") {
                 val query = """
                     SELECT
-                    column_name "Name",
-                    nullable "Null?",
-                    concat(concat(concat(data_type,'('),data_length),')') "Type"
+                    column_name,
+                    nullable,
+                    concat(concat(concat(data_type,'('),data_length),')') AS type
                     FROM user_tab_columns
-                    WHERE table_name='XXRTV_CS_DIGIHOT_SF_OPPRETT';
+                    WHERE table_name = ?
                 """.trimIndent()
 
                 val items = mutableListOf<HjelpemiddelBruker>()
@@ -270,10 +270,11 @@ fun Application.module() {
                     dbConnection!!.prepareStatement(query).use { pstmt ->
                         pstmt.clearParameters()
                         // pstmt.setString(1, somevar)
+                        pstmt.setString(1, "XXRTV_CS_DIGIHOT_SF_OPPRETT")
                         pstmt.executeQuery().use { rs ->
-                            logg.info("Rows: Name, Null?")
+                            logg.info("Rows: Name, Null?, Type")
                             while (rs.next()) {
-                                logg.info("- Name=${rs.getInt(1)}, Null?=${rs.getString(2)}")
+                                logg.info("- Name=${rs.getInt(1)}, Null?=${rs.getString(2)}, Type=${rs.getString(3)}")
                             }
                         }
                     }
