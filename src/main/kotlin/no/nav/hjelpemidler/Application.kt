@@ -256,24 +256,10 @@ fun Application.module() {
                 call.respond(items)
             }
             get("/test-ny-tabell3") {
-                val query = """
-                    SELECT owner, table_name FROM all_tables ORDER BY table_name
-                """.trimIndent()
-
-                val items = mutableListOf<String>()
-                withRetryIfDatabaseConnectionIsStale {
-                    dbConnection!!.prepareStatement(query).use { pstmt ->
-                        pstmt.clearParameters()
-                        // pstmt.setString(1, somevar)
-                        pstmt.executeQuery().use { rs ->
-                            logg.info("Owner, table_name:")
-                            while (rs.next()) {
-                                items.add(rs.getString("table_name"))
-                                logg.info("- ${rs.getString("owner")}, ${rs.getString("table_name")}")
-                            }
-                        }
-                    }
-                }
+                val items = listOf(
+                    "XXRTV_DIGIHOT_OEBS_ADR_FNR_V",
+                    "XXRTV_CS_DIGIHOT_SF_OPPRETT",
+                )
 
                 for (table in items) {
                     val query = """
