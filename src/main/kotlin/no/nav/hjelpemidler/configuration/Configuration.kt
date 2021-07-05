@@ -30,15 +30,15 @@ internal object Configuration {
         mapOf(
             "application.profile" to "dev",
 
-            // "HM_OEBS_API_PROXY_DB_NAME" to "oebst1",
-            // "HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_T1"),
-            // "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_T1"),
-            // "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_T1"),
+             "HM_OEBS_API_PROXY_DB_NAME" to "oebst1",
+             "HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_T1"),
+             "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_T1"),
+             "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_T1"),
 
-            "HM_OEBS_API_PROXY_DB_NAME" to "oebsq1",
-            "HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_Q1"),
-            "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_Q1"),
-            "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_Q1"),
+//            "HM_OEBS_API_PROXY_DB_NAME" to "oebsq1",
+//            "HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_Q1"),
+//            "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_Q1"),
+//            "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_Q1"),
 
             // "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api-poc.nais.preprod.local/api",
             "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api.dev.intern.nav.no/api",
