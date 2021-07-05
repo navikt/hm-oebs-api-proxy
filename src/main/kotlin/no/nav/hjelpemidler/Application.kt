@@ -230,6 +230,31 @@ fun Application.module() {
                 }
                 call.respond(items)
             }
+            get("/test-ny-tabell2") {
+                val query = """
+                    SELECT * FROM XXRTV_DIGIHOT_OEBS_ADR_FNR_V WHERE FNR = ?
+                """.trimIndent()
+
+                val items = mutableListOf<HjelpemiddelBruker>()
+                withRetryIfDatabaseConnectionIsStale {
+                    dbConnection!!.prepareStatement(query).use { pstmt ->
+                        pstmt.clearParameters()
+                        // pstmt.setString(1, somevar)
+                        pstmt.setString(1, "10127622634")
+                        pstmt.executeQuery().use { rs ->
+                            logg.info("Rows:")
+                            while (rs.next()) {
+                                logg.info("Row labels:")
+                                for (i in 1 until rs.metaData.columnCount) {
+                                    logg.info("- Column idx: $i")
+                                    logg.info("- ${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)})")
+                                }
+                            }
+                        }
+                    }
+                }
+                call.respond(items)
+            }
         }
 
         // Authenticated database proxy requests
