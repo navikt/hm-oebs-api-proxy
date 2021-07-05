@@ -255,6 +255,36 @@ fun Application.module() {
                 }
                 call.respond(items)
             }
+            get("/test-ny-tabell22") {
+                val query = """
+                    SELECT * FROM XXRTV_CS_DIGIHOT_SF_OPPRETT
+                """.trimIndent()
+
+                val items = mutableListOf<HjelpemiddelBruker>()
+                withRetryIfDatabaseConnectionIsStale {
+                    dbConnection!!.prepareStatement(query).use { pstmt ->
+                        pstmt.clearParameters()
+                        // pstmt.setString(1, somevar)
+                        pstmt.executeQuery().use { rs ->
+                            logg.info("Rows:")
+                            var first_row = true
+                            while (rs.next()) {
+                                if (first_row) {
+                                    first_row = false
+                                    logg.info("Row labels:")
+                                    for (i in 1 until rs.metaData.columnCount+1) {
+                                        logg.info("- Column idx: $i")
+                                        logg.info("- ${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)})")
+                                    }
+                                    logg.info("Rows:")
+                                }
+                                logg.info("- Row: id=${rs.getInt("ID")}, brukernr=${rs.getString("BRUKER_NUMMER")}")
+                            }
+                        }
+                    }
+                }
+                call.respond(items)
+            }
             get("/test-ny-tabell3") {
                 val items = listOf(
                     "XXRTV_DIGIHOT_OEBS_ADR_FNR_V",
