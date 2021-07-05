@@ -245,10 +245,72 @@ fun Application.module() {
                             logg.info("Rows:")
                             while (rs.next()) {
                                 logg.info("Row labels:")
-                                for (i in 1 until rs.metaData.columnCount) {
+                                for (i in 1 until rs.metaData.columnCount+1) {
                                     logg.info("- Column idx: $i")
                                     logg.info("- ${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)})")
                                 }
+                            }
+                        }
+                    }
+                }
+                call.respond(items)
+            }
+            get("/test-ny-tabell3") {
+                val query = """
+                    SELECT owner, table_name FROM all_tables ORDER BY table_name
+                """.trimIndent()
+
+                val items = mutableListOf<String>()
+                withRetryIfDatabaseConnectionIsStale {
+                    dbConnection!!.prepareStatement(query).use { pstmt ->
+                        pstmt.clearParameters()
+                        // pstmt.setString(1, somevar)
+                        pstmt.executeQuery().use { rs ->
+                            logg.info("Owner, table_name:")
+                            while (rs.next()) {
+                                items.add(rs.getString("table_name"))
+                                logg.info("- ${rs.getString("owner")}, ${rs.getString("table_name")}")
+                            }
+                        }
+                    }
+                }
+
+                for (table in items) {
+                    val query = """
+                        DESCRIBE ${table}
+                    """.trimIndent()
+                    logg.info("Describe: $table")
+                    withRetryIfDatabaseConnectionIsStale {
+                        dbConnection!!.prepareStatement(query).use { pstmt ->
+                            pstmt.clearParameters()
+                            // pstmt.setString(1, somevar)
+                            pstmt.executeQuery().use { rs ->
+                                while (rs.next()) {
+                                    for (i in 1 until rs.metaData.columnCount+1) {
+                                        logg.info("${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)}): ${rs.getString(rs.metaData.getColumnName(i))}")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                call.respond(items)
+            }
+            get("/test-ny-tabell4") {
+                val query = """
+                    SELECt owner AS schema_name, view_name FROM sys.all_views ORDER BY owner, view_name
+                """.trimIndent()
+
+                val items = mutableListOf<HjelpemiddelBruker>()
+                withRetryIfDatabaseConnectionIsStale {
+                    dbConnection!!.prepareStatement(query).use { pstmt ->
+                        pstmt.clearParameters()
+                        // pstmt.setString(1, somevar)
+                        pstmt.executeQuery().use { rs ->
+                            logg.info("schema_name, view_name:")
+                            while (rs.next()) {
+                                logg.info("- ${rs.getString("schema_name")}, ${rs.getString("view_name")}")
                             }
                         }
                     }
