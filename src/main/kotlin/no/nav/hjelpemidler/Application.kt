@@ -205,6 +205,33 @@ fun Application.module() {
             }
         }
 
+        if (Configuration.application["APP_PROFILE"]!! == "dev") {
+            get("/test-ny-tabell") {
+                val query = """
+                    SELECT * FROM XXRTV_DIGIHOT_OEBS_ADR_FNR_V FETCH FIRST 1 ROWS ONLY
+                """.trimIndent()
+
+                val items = mutableListOf<HjelpemiddelBruker>()
+                withRetryIfDatabaseConnectionIsStale {
+                    dbConnection!!.prepareStatement(query).use { pstmt ->
+                        pstmt.clearParameters()
+                        // pstmt.setString(1, somevar)
+                        pstmt.executeQuery().use { rs ->
+                            logg.info("Rows:")
+                            while (rs.next()) {
+                                logg.info("Row labels:")
+                                for (i in 1 until rs.metaData.columnCount) {
+                                    logg.info("- Column idx: $i")
+                                    logg.info("- ${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)})")
+                                }
+                            }
+                        }
+                    }
+                }
+                call.respond(items)
+            }
+        }
+
         // Authenticated database proxy requests
         authenticate("tokenX") {
             get("/hjelpemidler-bruker") {
