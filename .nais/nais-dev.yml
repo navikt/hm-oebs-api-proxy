@@ -17,6 +17,13 @@ spec:
   prometheus:
     enabled: true
     path: /metrics
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 3000Mi
+    requests:
+      cpu: 500m
+      memory: 600Mi
   vault:
     enabled: true
     paths:
