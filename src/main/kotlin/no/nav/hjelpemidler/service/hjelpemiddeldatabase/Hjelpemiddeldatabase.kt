@@ -27,7 +27,7 @@ class Hjelpemiddeldatabase {
         fun loadDatabase() {
             if (database == null) {
                 var statusCode = 0
-                val apiURL = "${Configuration.application["HJELPEMIDDELDATABASEN_API"]!!}/produkter/alle-aktive-med-nav-avtale"
+                val apiURL = "${Configuration.application["HJELPEMIDDELDATABASEN_API"]!!}/produkter/alle-var-godkjent"
                 val elapsed: kotlin.time.Duration = measureTime {
                     val client = HttpClient.newBuilder().build()
                     val request = HttpRequest.newBuilder()
@@ -43,7 +43,7 @@ class Hjelpemiddeldatabase {
                     }
                 }
                 if (statusCode == 200) {
-                    logg.info("Hjelpemiddel-database download successful: timeElapsed=${elapsed.inMilliseconds}ms url=$apiURL")
+                    logg.info("Hjelpemiddel-database download successful: timeElapsed=${elapsed.inMilliseconds}ms url=$apiURL antallProdukter=${database!!.size}stk.")
                 }else{
                     logg.error("Unable to download the hjelpemiddel-database: statusCode=$statusCode url=$apiURL")
                 }
