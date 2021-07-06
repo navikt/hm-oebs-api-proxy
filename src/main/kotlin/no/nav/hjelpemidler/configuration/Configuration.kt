@@ -22,7 +22,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_P"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_P"),
 
-            "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api.nais.oera.no/api",
+            "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api.intern.nav.no/api",
         )
     )
 
