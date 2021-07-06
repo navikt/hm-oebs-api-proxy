@@ -301,6 +301,29 @@ fun Application.module() {
                 }
                 call.respond("DONE")
             }
+            get("/test-ny-tabell33") {
+                val query = """
+                    SELECT * FROM xxrtv_cs_digihot_sf_opprett
+                """.trimIndent()
+                logg.info("Query: $query")
+                withRetryIfDatabaseConnectionIsStale {
+                    dbConnection!!.prepareStatement(query).use { pstmt ->
+                        pstmt.clearParameters()
+                        // pstmt.setString(1, somevar)
+                        pstmt.executeQuery().use { rs ->
+                            while (rs.next()) {
+                                logg.info("Row headers:")
+                                for (i in 1 until rs.metaData.columnCount+1) {
+                                    logg.info("${rs.metaData.getColumnName(i)} (type=${rs.metaData.getColumnTypeName(i)}): ${rs.getString(rs.metaData.getColumnName(i))}")
+                                }
+                                logg.info("Data:")
+                                logg.info("ID=${rs.getInt("ID")} BRUKERNUMMER=${rs.getString("BRUKER_NUMMER")} NAVN=${rs.getInt("NAVN")} BOSTEDS_BY=${rs.getInt("BOSTEDS_BY")}")
+                            }
+                        }
+                    }
+                }
+                call.respond("DONE")
+            }
             get("/test-ny-tabell4") {
                 val query = """
                     SELECt owner AS schema_name, view_name FROM sys.all_views ORDER BY owner, view_name
