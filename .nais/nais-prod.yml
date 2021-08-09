@@ -45,3 +45,6 @@ spec:
         - application: hm-dinehjelpemidler
           namespace: teamdigihot
           cluster: prod-gcp
+        - application: hm-forslagsmotor-tilbehoer
+          namespace: teamdigihot
+          cluster: prod-gcp
