@@ -276,9 +276,9 @@ fun Application.module() {
         }
 
         authenticate("aad") {
-            get("/test") {
-                val reqBody = call.receive<JSONObject>()
-                call.respondText(reqBody.toJSONString(), ContentType.Application.Json, HttpStatusCode.OK)
+            get("/getTitleForHmsNr/{hmsNr}") {
+                val hmsNr = call.parameters["hmsNr"]!!
+                call.respondText("""{"hmrNr": "$hmsNr", "title": "Mottaker Aurora Flexiblink Life symboldisplay lyd tale lys"}""", ContentType.Application.Json, HttpStatusCode.OK)
             }
         }
     }
