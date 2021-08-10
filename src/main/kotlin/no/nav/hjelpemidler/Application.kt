@@ -279,7 +279,7 @@ fun Application.module() {
         authenticate("aad") {
             get("/getTitleForHmsNr/{hmsNr}") {
                 val hmsNr = call.parameters["hmsNr"]!!
-                call.respondText("""{"hmrNr": "$hmsNr", "title": "Mottaker Aurora Flexiblink Life symboldisplay lyd tale lys"}""", ContentType.Application.Json, HttpStatusCode.OK)
+                call.respondText("""{"hmsNr": "$hmsNr", "title": "Mottaker Aurora Flexiblink Life symboldisplay lyd tale lys"}""", ContentType.Application.Json, HttpStatusCode.OK)
             }
         }
     }
