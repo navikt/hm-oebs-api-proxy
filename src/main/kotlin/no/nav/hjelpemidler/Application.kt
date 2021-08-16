@@ -304,58 +304,6 @@ fun Application.module() {
                 call.respond(results)
             }
         }
-
-        get("/getTitleForHmsNr2/{hmsNr}") {
-            val query = """
-                    SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
-                    FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
-                    WHERE ARTIKKEL = ?
-                """.trimIndent()
-
-            val hmsNr = call.parameters["hmsNr"]!!
-            val results = mutableListOf<TittelForHmsNr>()
-            withRetryIfDatabaseConnectionIsStale {
-                dbConnection!!.prepareStatement(query).use { pstmt ->
-                    pstmt.clearParameters()
-                    pstmt.setString(1, hmsNr)
-                    pstmt.executeQuery().use { rs ->
-                        while (rs.next()) {
-                            results.add(TittelForHmsNr(
-                                hmsNr = rs.getString("ARTIKKEL"),
-                                title = rs.getString("ARTIKKEL_BESKRIVELSE"),
-                            ))
-                        }
-                    }
-                }
-            }
-
-            call.respond(results)
-        }
-
-        get ("/testTitleForHmsNr") {
-            val query = """
-                SELECT artikkel, artikkel_beskrivelse
-                FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
-                WHERE ARTIKKEL like '07321%'
-            """.trimIndent()
-
-            var result = ""
-            withRetryIfDatabaseConnectionIsStale {
-                dbConnection!!.prepareStatement(query).use { pstmt ->
-                    pstmt.clearParameters()
-                    // pstmt.setString(1, hmsNr)
-                    pstmt.executeQuery().use { rs ->
-                        while (rs.next()) {
-                            val artikkel = rs.getString("artikkel")
-                            val artikkelBeskrivelse = rs.getString("artikkel_beskrivelse")
-                            result += "- artikkel=$artikkel artikkelBeskrivelse=$artikkelBeskrivelse\n"
-                        }
-                    }
-                }
-            }
-
-            call.respond(result)
-        }
     }
 }
 
