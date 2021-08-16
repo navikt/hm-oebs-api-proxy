@@ -304,7 +304,7 @@ fun Application.module() {
                 }
             }
 
-            call.respond("Thank you!")
+            call.respond(result)
         }
     }
 }
