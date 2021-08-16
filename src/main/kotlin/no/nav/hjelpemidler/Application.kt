@@ -42,6 +42,7 @@ import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.HjelpemiddelProdukt
+import no.nav.hjelpemidler.models.TittelForHmsNr
 import no.nav.hjelpemidler.service.hjelpemiddeldatabase.Hjelpemiddeldatabase
 import oracle.jdbc.OracleConnection
 import oracle.jdbc.pool.OracleDataSource
@@ -277,9 +278,58 @@ fun Application.module() {
 
         authenticate("aad") {
             get("/getTitleForHmsNr/{hmsNr}") {
+                val query = """
+                    SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
+                    FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
+                    WHERE ARTIKKEL = ?
+                """.trimIndent()
+
                 val hmsNr = call.parameters["hmsNr"]!!
-                call.respondText("""{"hmsNr": "$hmsNr", "title": "Mottaker Aurora Flexiblink Life symboldisplay lyd tale lys"}""", ContentType.Application.Json, HttpStatusCode.OK)
+                val results = mutableListOf<TittelForHmsNr>()
+                withRetryIfDatabaseConnectionIsStale {
+                    dbConnection!!.prepareStatement(query).use { pstmt ->
+                        pstmt.clearParameters()
+                        pstmt.setString(1, hmsNr)
+                        pstmt.executeQuery().use { rs ->
+                            while (rs.next()) {
+                                results.add(TittelForHmsNr(
+                                    hmsNr = rs.getString("ARTIKKEL"),
+                                    title = rs.getString("ARTIKKEL_BESKRIVELSE"),
+                                ))
+                            }
+                        }
+                    }
+                }
+
+                call.respond(results)
             }
+        }
+
+        get("/getTitleForHmsNr2/{hmsNr}") {
+            val query = """
+                    SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
+                    FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
+                    WHERE ARTIKKEL = ?
+                """.trimIndent()
+
+            val hmsNr = call.parameters["hmsNr"]!!
+            val results = mutableListOf<TittelForHmsNr>()
+            withRetryIfDatabaseConnectionIsStale {
+                dbConnection!!.prepareStatement(query).use { pstmt ->
+                    pstmt.clearParameters()
+                    pstmt.setString(1, hmsNr)
+                    pstmt.executeQuery().use { rs ->
+                        while (rs.next()) {
+                            results.add(TittelForHmsNr(
+                                hmsNr = rs.getString("ARTIKKEL"),
+                                title = rs.getString("ARTIKKEL_BESKRIVELSE"),
+                            ))
+                        }
+                    }
+                }
+            }
+
+            call.respond(results)
         }
 
         get ("/testTitleForHmsNr") {
