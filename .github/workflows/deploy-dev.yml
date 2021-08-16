@@ -7,7 +7,7 @@ on:
       - "LICENCE"
       - "CODEOWNERS"
     branches:
-      - temp-disable-db
+      - main
 env:
   docker_image: docker.pkg.github.com/${{ github.repository }}/hm-oebs-api-proxy:${{ github.sha }}
 jobs:
@@ -52,17 +52,17 @@ jobs:
           CLUSTER: dev-fss
           RESOURCE: .nais/nais-dev.yml
           VAR: image=${{ env.docker_image }}
-#      - name: post-deploy
-#        uses: navikt/digihot-deploy/actions/post-deploy@v2
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      - name: draft release
-#        uses: actions/create-release@latest
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          tag_name: ${{ env.VERSION_TAG }}
-#          release_name: ${{ env.APPLICATION }} ${{ env.VERSION_TAG }}
-#          body: ${{ env.CHANGE_LOG }}
-#          draft: true
-#          prerelease: false
+      - name: post-deploy
+        uses: navikt/digihot-deploy/actions/post-deploy@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: draft release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION_TAG }}
+          release_name: ${{ env.APPLICATION }} ${{ env.VERSION_TAG }}
+          body: ${{ env.CHANGE_LOG }}
+          draft: true
+          prerelease: false
