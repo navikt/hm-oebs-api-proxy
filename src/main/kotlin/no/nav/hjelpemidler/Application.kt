@@ -281,6 +281,31 @@ fun Application.module() {
                 call.respondText("""{"hmsNr": "$hmsNr", "title": "Mottaker Aurora Flexiblink Life symboldisplay lyd tale lys"}""", ContentType.Application.Json, HttpStatusCode.OK)
             }
         }
+
+        get ("/testTitleForHmsNr") {
+            val query = """
+                SELECT artikkel, artikkel_beskrivelse
+                FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
+                WHERE ARTIKKEL like '07321%'
+            """.trimIndent()
+
+            var result = ""
+            withRetryIfDatabaseConnectionIsStale {
+                dbConnection!!.prepareStatement(query).use { pstmt ->
+                    pstmt.clearParameters()
+                    // pstmt.setString(1, hmsNr)
+                    pstmt.executeQuery().use { rs ->
+                        while (rs.next()) {
+                            val artikkel = rs.getString("artikkel")
+                            val artikkelBeskrivelse = rs.getString("artikkel_beskrivelse")
+                            result += "- artikkel=$artikkel artikkelBeskrivelse=$artikkelBeskrivelse\n"
+                        }
+                    }
+                }
+            }
+
+            call.respond("Thank you!")
+        }
     }
 }
 
