@@ -70,8 +70,7 @@ fun main(args: Array<String>) {
     Hjelpemiddeldatabase.loadDatabase()
 
     logg.info("Connecting to OEBS-database")
-    // connectToOebsDB()
-    ready.set(true) // FIXME: Reenable database above, remove this line.
+    connectToOebsDB()
 
     // Serve http REST API requests
     logg.info("Starting up ktor")
@@ -182,14 +181,14 @@ fun Application.module() {
 
         get("/isalive") {
             // If we have gotten ready=true we check that dbConnection is still valid, or else we are ALIVE (so we don't get our pod restarted during startup)
-            /*if (ready.get() ) {
+            if (ready.get() ) {
                 val dbValid = dbConnection!!.isValid(10)
                 if (!dbValid) {
                     Prometheus.oebsDbAvailable.set(0.0)
                     return@get call.respondText("NOT ALIVE", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
                 }
                 Prometheus.oebsDbAvailable.set(1.0)
-            }*/
+            }
             call.respondText("ALIVE", ContentType.Text.Plain)
         }
 
@@ -231,7 +230,7 @@ fun Application.module() {
                 """.trimIndent()
 
                 val items = mutableListOf<HjelpemiddelBruker>()
-                /*withRetryIfDatabaseConnectionIsStale {
+                withRetryIfDatabaseConnectionIsStale {
                     dbConnection!!.prepareStatement(query).use { pstmt ->
                         pstmt.clearParameters()
                         pstmt.setString(1, fnr)
@@ -271,7 +270,7 @@ fun Application.module() {
                             }
                         }
                     }
-                }*/
+                }
                 call.respond(items)
             }
         }
