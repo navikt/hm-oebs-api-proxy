@@ -276,7 +276,7 @@ fun Application.module() {
             }
         }
 
-        //authenticate("aad") {
+        authenticate("aad") {
             get("/getTitleForHmsNr/{hmsNr}") {
                 val query = """
                     SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
@@ -303,7 +303,7 @@ fun Application.module() {
 
                 call.respond(results)
             }
-        //}
+        }
     }
 }
 
