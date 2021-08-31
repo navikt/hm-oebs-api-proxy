@@ -316,20 +316,6 @@ fun Application.module() {
 
                 call.respond(results)
             }
-
-            post("/getLeveringsaddresse") {
-
-                val fnr = call.receiveText()
-
-                // Extra sanity check of FNR
-                if (!"\\d{11}".toRegex().matches(fnr)) {
-                    error("invalid fnr in 'pid', does not match regex")
-                }
-
-                val personinformasjonListe = personinformasjonDao.hentPersoninformasjon(fnr)
-
-                call.respond(personinformasjonListe)
-            }
         }
 
         post("/getLeveringsaddresse") {
