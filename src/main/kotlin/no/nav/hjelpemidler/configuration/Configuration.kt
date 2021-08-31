@@ -74,15 +74,15 @@ internal object Configuration {
 
     val dataSource by lazy {
         HikariDataSource().apply {
-            jdbcUrl =  config()[Key("HM_OEBS_API_PROXY_DB_URL", stringType)]
-            dataSourceClassName = "oracle.jdbc.pool.OracleDataSource"
-            addDataSourceProperty("user", config()[Key("HM_OEBS_API_PROXY_DB_USR", stringType)])
-            addDataSourceProperty("password", config()[Key("HM_OEBS_API_PROXY_DB_PW", stringType)])
+            username = config()[Key("HM_OEBS_API_PROXY_DB_USR", stringType)]
+            password = config()[Key("HM_OEBS_API_PROXY_DB_PW", stringType)]
             maximumPoolSize = 10
             minimumIdle = 1
             idleTimeout = 10001
             connectionTimeout = 1000
             maxLifetime = 30001
+            driverClassName = "oracle.jdbc.driver.OracleDriver";
+            jdbcUrl = "jdbc:oracle:thin:@localhost:1521:XE"; ;
         }
     }
 
