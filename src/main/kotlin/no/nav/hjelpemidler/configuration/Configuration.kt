@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler.configuration
 
 import com.natpryce.konfig.*
+import com.zaxxer.hikari.HikariDataSource
 
 internal object Configuration {
 
@@ -70,6 +71,20 @@ internal object Configuration {
         "HM_OEBS_API_PROXY_DB_USR" to config()[Key("HM_OEBS_API_PROXY_DB_USR", stringType)],
         "HM_OEBS_API_PROXY_DB_PW" to config()[Key("HM_OEBS_API_PROXY_DB_PW", stringType)],
     )
+
+    val dataSource by lazy {
+        HikariDataSource().apply {
+            jdbcUrl =  config()[Key("HM_OEBS_API_PROXY_DB_URL", stringType)]
+            dataSourceClassName = "oracle.jdbc.pool.OracleDataSource"
+            addDataSourceProperty("user", config()[Key("HM_OEBS_API_PROXY_DB_USR", stringType)])
+            addDataSourceProperty("password", config()[Key("HM_OEBS_API_PROXY_DB_PW", stringType)])
+            maximumPoolSize = 10
+            minimumIdle = 1
+            idleTimeout = 10001
+            connectionTimeout = 1000
+            maxLifetime = 30001
+        }
+    }
 
     val tokenX: Map<String, String> = mapOf(
         "TOKEN_X_WELL_KNOWN_URL" to config()[Key("TOKEN_X_WELL_KNOWN_URL", stringType)],

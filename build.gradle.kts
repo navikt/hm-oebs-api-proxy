@@ -27,6 +27,8 @@ repositories {
 dependencies {
     testImplementation(kotlin("test-junit"))
 
+    implementation("com.zaxxer:HikariCP:3.4.1")
+    implementation("com.github.seratch:kotliquery:1.3.1")
     implementation("io.github.microutils:kotlin-logging:$logging_version")
     implementation("com.natpryce:konfig:$konfig_version")
     implementation("com.beust:klaxon:$klaxon_version")
@@ -50,6 +52,9 @@ dependencies {
     implementation("io.ktor:ktor-auth-jwt:$ktor_version")
     implementation("io.ktor:ktor-jackson:$ktor_version")
     implementation("io.ktor:ktor-metrics-micrometer:$ktor_version")
+
+    testImplementation("org.testcontainers:oracle-xe:1.16.0")
+    testImplementation("io.mockk:mockk:1.10.0")
 }
 
 tasks.withType<KotlinCompile>() {

@@ -1,8 +1,8 @@
 package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -17,11 +17,12 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.JacksonConverter
 import io.ktor.metrics.micrometer.MicrometerMetrics
 import io.ktor.request.path
-import io.ktor.request.receive
+import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.get
+import io.ktor.routing.post
 import io.ktor.routing.routing
 import io.ktor.server.netty.EngineMain
 import io.ktor.util.KtorExperimentalAPI
@@ -41,12 +42,12 @@ import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
-import no.nav.hjelpemidler.models.HjelpemiddelProdukt
+import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.TittelForHmsNr
 import no.nav.hjelpemidler.service.hjelpemiddeldatabase.Hjelpemiddeldatabase
+import no.nav.hjelpemidler.service.hjelpemiddeldatabase.PersoninformasjonDao
 import oracle.jdbc.OracleConnection
 import oracle.jdbc.pool.OracleDataSource
-import org.json.simple.JSONObject
 import org.slf4j.event.Level
 import java.sql.Connection
 import java.sql.SQLException
@@ -62,6 +63,8 @@ private var dbConnection: Connection? = null
 private val ready = AtomicBoolean(false)
 
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
+
+private val personinformasjonDao = PersoninformasjonDao()
 
 @ExperimentalTime
 fun main(args: Array<String>) {
@@ -96,8 +99,10 @@ fun connectToOebsDB() {
 
         // Set up database connection
         val info = Properties()
-        info[OracleConnection.CONNECTION_PROPERTY_USER_NAME] = Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_USR"]!!
-        info[OracleConnection.CONNECTION_PROPERTY_PASSWORD] = Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_PW"]!!
+        info[OracleConnection.CONNECTION_PROPERTY_USER_NAME] =
+            Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_USR"]!!
+        info[OracleConnection.CONNECTION_PROPERTY_PASSWORD] =
+            Configuration.oracleDatabaseConfig["HM_OEBS_API_PROXY_DB_PW"]!!
         info[OracleConnection.CONNECTION_PROPERTY_DEFAULT_ROW_PREFETCH] = "20"
 
         val ods = OracleDataSource()
@@ -115,7 +120,7 @@ fun connectToOebsDB() {
         logg.info("Database connected, hm-oebs-api-proxy ready")
         ready.set(true)
 
-    }catch(e: Exception) {
+    } catch (e: Exception) {
         logg.info("Exception while connecting to database: $e")
         e.printStackTrace()
         throw e
@@ -128,7 +133,7 @@ fun <T> withRetryIfDatabaseConnectionIsStale(block: () -> T): T {
     for (attempt in 1..3) { // We get three attempts
         try {
             return block() // Success
-        }catch(e: SQLException) {
+        } catch (e: SQLException) {
             lastException = e
             if (e.toString().contains("ORA-02399")) {
                 logg.warn("Oracle database closed the connection due to their connection-max-life deadline, we reconnect and try again: $e")
@@ -154,9 +159,9 @@ fun Application.module() {
         level = Level.TRACE
         filter { call ->
             !call.request.path().startsWith("/internal") &&
-            !call.request.path().startsWith("/isalive") &&
-            !call.request.path().startsWith("/isready") &&
-            !call.request.path().startsWith("/metrics")
+                !call.request.path().startsWith("/isalive") &&
+                !call.request.path().startsWith("/isready") &&
+                !call.request.path().startsWith("/metrics")
         }
     }
 
@@ -182,7 +187,7 @@ fun Application.module() {
 
         get("/isalive") {
             // If we have gotten ready=true we check that dbConnection is still valid, or else we are ALIVE (so we don't get our pod restarted during startup)
-            if (ready.get() ) {
+            if (ready.get()) {
                 val dbValid = dbConnection!!.isValid(10)
                 if (!dbValid) {
                     Prometheus.oebsDbAvailable.set(0.0)
@@ -194,7 +199,11 @@ fun Application.module() {
         }
 
         get("/isready") {
-            if (!ready.get()) return@get call.respondText("NOT READY", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
+            if (!ready.get()) return@get call.respondText(
+                "NOT READY",
+                ContentType.Text.Plain,
+                HttpStatusCode.ServiceUnavailable
+            )
             call.respondText("READY", ContentType.Text.Plain)
         }
 
@@ -213,7 +222,7 @@ fun Application.module() {
                 val fnr = call.getTokenInfo()["pid"]?.asText() ?: error("Could not find 'pid' claim in token")
                 if (Configuration.application["APP_PROFILE"]!! != "prod") {
                     logg.info("Processing request for /hjelpemidler-bruker (on-behalf-of: $fnr)")
-                }else{
+                } else {
                     logg.info("Processing request for /hjelpemidler-bruker")
                 }
 
@@ -255,7 +264,8 @@ fun Application.module() {
                                 val hmdbItem = Hjelpemiddeldatabase.findByHmsNr(item.artikkelNr)
                                 if (hmdbItem != null) {
                                     if (Configuration.application["APP_PROFILE"]!! != "prod") {
-                                        val hmdbItemJson = jacksonObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(hmdbItem)
+                                        val hmdbItemJson = jacksonObjectMapper().writerWithDefaultPrettyPrinter()
+                                            .writeValueAsString(hmdbItem)
                                         logg.info("DEBUG: HMDB item found: $hmdbItemJson")
                                     }
                                     item.hmdbBeriket = true
@@ -264,7 +274,8 @@ fun Application.module() {
                                     item.hmdbKategori = hmdbItem.isotitle
                                     item.hmdbBilde = hmdbItem.blobfileURL
                                     if (hmdbItem.prodid != null && hmdbItem.artid != null) {
-                                        item.hmdbURL = "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${hmdbItem.prodid}&art0=${hmdbItem.artid}&nart=1"
+                                        item.hmdbURL =
+                                            "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${hmdbItem.prodid}&art0=${hmdbItem.artid}&nart=1"
                                     }
                                 }
                                 items.add(item)
@@ -292,10 +303,12 @@ fun Application.module() {
                         pstmt.setString(1, hmsNr)
                         pstmt.executeQuery().use { rs ->
                             while (rs.next()) {
-                                results.add(TittelForHmsNr(
-                                    hmsNr = rs.getString("ARTIKKEL"),
-                                    title = rs.getString("ARTIKKEL_BESKRIVELSE"),
-                                ))
+                                results.add(
+                                    TittelForHmsNr(
+                                        hmsNr = rs.getString("ARTIKKEL"),
+                                        title = rs.getString("ARTIKKEL_BESKRIVELSE"),
+                                    )
+                                )
                             }
                         }
                     }
@@ -303,6 +316,34 @@ fun Application.module() {
 
                 call.respond(results)
             }
+
+            post("/getLeveringsaddresse") {
+
+                val fnr = call.receiveText()
+
+                // Extra sanity check of FNR
+                if (!"\\d{11}".toRegex().matches(fnr)) {
+                    error("invalid fnr in 'pid', does not match regex")
+                }
+
+                val personinformasjonListe = personinformasjonDao.hentPersoninformasjon(fnr)
+
+                call.respond(personinformasjonListe)
+            }
+        }
+
+        post("/getLeveringsaddresse") {
+
+            val fnr = call.receiveText()
+
+            // Extra sanity check of FNR
+            if (!"\\d{11}".toRegex().matches(fnr)) {
+                error("invalid fnr in 'pid', does not match regex")
+            }
+
+            val personinformasjonListe = personinformasjonDao.hentPersoninformasjon(fnr)
+
+            call.respond(personinformasjonListe)
         }
     }
 }
