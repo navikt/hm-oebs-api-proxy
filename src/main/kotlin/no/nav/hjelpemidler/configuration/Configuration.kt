@@ -73,6 +73,7 @@ internal object Configuration {
     )
 
     val dataSource by lazy {
+        println("ORACLE URL " + config()[Key("HM_OEBS_API_PROXY_DB_URL", stringType)])
         HikariDataSource().apply {
             username = config()[Key("HM_OEBS_API_PROXY_DB_USR", stringType)]
             password = config()[Key("HM_OEBS_API_PROXY_DB_PW", stringType)]
