@@ -82,7 +82,7 @@ internal object Configuration {
             connectionTimeout = 1000
             maxLifetime = 30001
             driverClassName = "oracle.jdbc.driver.OracleDriver";
-            jdbcUrl = "jdbc:oracle:thin:@" + config()[Key("HM_OEBS_API_PROXY_DB_URL", stringType)]
+            jdbcUrl = config()[Key("HM_OEBS_API_PROXY_DB_URL", stringType)]
         }
     }
 
