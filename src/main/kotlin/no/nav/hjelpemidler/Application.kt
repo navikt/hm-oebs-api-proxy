@@ -326,7 +326,12 @@ fun Application.module() {
                     }
                 }
 
-                call.respond(results)
+                if (results.size == 0) {
+                    call.respond(HttpStatusCode.NotFound, """{"error": "product not found"}""")
+                    return@get
+                }
+
+                call.respond(results[0])
             }
         }
     }
