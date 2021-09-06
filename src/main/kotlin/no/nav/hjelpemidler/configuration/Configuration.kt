@@ -22,7 +22,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_P"),
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_P"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_P"),
-
+            "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81760"),
             "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api.intern.nav.no/api",
         )
     )
@@ -35,6 +35,7 @@ internal object Configuration {
              "HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_T1"),
              "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_T1"),
              "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_T1"),
+                "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81400"),
 
 //            "HM_OEBS_API_PROXY_DB_NAME" to "oebsq1",
 //            "HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_Q1"),
@@ -100,6 +101,7 @@ internal object Configuration {
     val application: Map<String, String> = mapOf(
         "APP_PROFILE" to config()[Key("application.profile", stringType)],
         "HJELPEMIDDELDATABASEN_API" to config()[Key("HJELPEMIDDELDATABASEN_API", stringType)],
+        "OEBS_BRUKER_ID" to config()[Key("HM_OEBS_OPPRETT_SF_BRUKEROD", stringType)]
     )
 
 }

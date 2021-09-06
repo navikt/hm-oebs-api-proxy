@@ -17,6 +17,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.JacksonConverter
 import io.ktor.metrics.micrometer.MicrometerMetrics
 import io.ktor.request.path
+import io.ktor.request.receive
 import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.response.respondText
@@ -42,10 +43,11 @@ import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
-import no.nav.hjelpemidler.models.Personinformasjon
+import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.TittelForHmsNr
 import no.nav.hjelpemidler.service.hjelpemiddeldatabase.Hjelpemiddeldatabase
 import no.nav.hjelpemidler.service.hjelpemiddeldatabase.PersoninformasjonDao
+import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
 import oracle.jdbc.OracleConnection
 import oracle.jdbc.pool.OracleDataSource
 import org.slf4j.event.Level
@@ -65,6 +67,7 @@ private val ready = AtomicBoolean(false)
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
 private val personinformasjonDao = PersoninformasjonDao()
+private val opprettServiceforespørselDao = ServiceforespørselDao()
 
 @ExperimentalTime
 fun main(args: Array<String>) {
@@ -288,6 +291,12 @@ fun Application.module() {
         }
 
         authenticate("aad") {
+            post("/opprettSF") {
+                val sf = call.receive<Serviceforespørsel>()
+                opprettServiceforespørselDao.opprettServiceforespørsel(sf)
+
+                call.respond(201)
+            }
 
             post("/getLeveringsaddresse") {
                 val fnr = call.receiveText()

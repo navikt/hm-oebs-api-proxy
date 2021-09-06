@@ -58,6 +58,9 @@ spec:
         - application: hm-saksberiker
           namespace: teamdigihot
           cluster: dev-gcp
+        - application: hm-oebs-sink
+          namespace: teamdigihot
+          cluster: dev-gcp
     outbound:
       external:
         - host: hm-produktinfo-api-poc.nais.preprod.local/api
