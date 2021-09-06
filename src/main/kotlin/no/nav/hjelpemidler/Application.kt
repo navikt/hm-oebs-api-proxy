@@ -292,10 +292,16 @@ fun Application.module() {
 
         authenticate("aad") {
             post("/opprettSF") {
-                val sf = call.receive<Serviceforespørsel>()
-                opprettServiceforespørselDao.opprettServiceforespørsel(sf)
+                try {
+                    val sf = call.receive<Serviceforespørsel>()
+                    opprettServiceforespørselDao.opprettServiceforespørsel(sf)
+                    logg.info("Serviceforspørsel for sak ${sf.referansenummer} opprettet")
+                    call.respond(201)
+                } catch (e: Exception) {
+                    logg.error("Noe gikk feil med opprettelse av SF", e)
+                    throw e
+                }
 
-                call.respond(201)
             }
 
             post("/getLeveringsaddresse") {
