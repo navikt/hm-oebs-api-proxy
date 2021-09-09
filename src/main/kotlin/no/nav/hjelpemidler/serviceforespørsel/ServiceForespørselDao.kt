@@ -15,9 +15,9 @@ class ServiceforespørselDao (private val dataSource: DataSource = Configuration
         val opprettSFQuery = """
             
             insert into xxrtv_cs_digihot_sf_opprett 
-            (ID, FNR, NAVN, STONADSKLASS,SAKSTYPE,RESULTAT,SFDATO ,REFERANSENUMMER,KILDE,PROCESSED,LAST_UPDATE_DATE,LAST_UPDATED_BY,CREATION_DATE,CREATED_BY, JOB_ID)
+            (ID, FNR, NAVN, STONADSKLASS,SAKSTYPE,RESULTAT,SFDATO ,REFERANSENUMMER,KILDE,PROCESSED,LAST_UPDATE_DATE,LAST_UPDATED_BY,CREATION_DATE,CREATED_BY, JOB_ID, SAKSBLOKK)
             values 
-            (XXRTV_CS_DIGIHOT_SF_OPPRETT_S.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, sysdate, :referansenummer, :kilde, :processed, sysdate, :oppdatertAv, sysdate, :oppdatertAv, :jobId)
+            (XXRTV_CS_DIGIHOT_SF_OPPRETT_S.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, sysdate, :referansenummer, :kilde, :processed, sysdate, :oppdatertAv, sysdate, :oppdatertAv, :jobId, 'X')
         """.trimIndent()
 
         sessionOf(dataSource).use {
