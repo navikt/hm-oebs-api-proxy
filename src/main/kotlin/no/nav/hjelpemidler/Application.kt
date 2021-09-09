@@ -218,6 +218,13 @@ fun Application.module() {
             }
         }
 
+        post("/opprettSF") {
+            val sf = call.receive<Serviceforespørsel>()
+            opprettServiceforespørselDao.opprettServiceforespørsel(sf)
+
+            call.respond(201)
+        }
+
         // Authenticated database proxy requests
         authenticate("tokenX") {
             get("/hjelpemidler-bruker") {
@@ -291,12 +298,7 @@ fun Application.module() {
         }
 
         authenticate("aad") {
-            post("/opprettSF") {
-                val sf = call.receive<Serviceforespørsel>()
-                opprettServiceforespørselDao.opprettServiceforespørsel(sf)
 
-                call.respond(201)
-            }
 
             post("/getLeveringsaddresse") {
                 val fnr = call.receiveText()
