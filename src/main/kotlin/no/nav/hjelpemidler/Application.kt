@@ -223,7 +223,7 @@ fun Application.module() {
                 val sf = call.receive<Serviceforespørsel>()
                 opprettServiceforespørselDao.opprettServiceforespørsel(sf)
                 logg.info("Serviceforspørsel for sak ${sf.referansenummer} opprettet")
-                call.respond(201)
+                call.respond(HttpStatusCode.Created)
             } catch (e: Exception) {
                 logg.error("Noe gikk feil med opprettelse av SF", e)
                 throw e
