@@ -218,20 +218,6 @@ fun Application.module() {
             }
         }
 
-        post("/opprettSF") {
-            try {
-                val sf = call.receive<Serviceforespørsel>()
-                opprettServiceforespørselDao.opprettServiceforespørsel(sf)
-                logg.info("Serviceforspørsel for sak ${sf.referansenummer} opprettet")
-                call.respond(HttpStatusCode.Created)
-            } catch (e: Exception) {
-                logg.error("Noe gikk feil med opprettelse av SF", e)
-                throw e
-            }
-
-        }
-
-
         // Authenticated database proxy requests
         authenticate("tokenX") {
             get("/hjelpemidler-bruker") {
@@ -305,6 +291,19 @@ fun Application.module() {
         }
 
         authenticate("aad") {
+
+            post("/opprettSF") {
+                try {
+                    val sf = call.receive<Serviceforespørsel>()
+                    opprettServiceforespørselDao.opprettServiceforespørsel(sf)
+                    logg.info("Serviceforspørsel for sak ${sf.referansenummer} opprettet")
+                    call.respond(HttpStatusCode.Created)
+                } catch (e: Exception) {
+                    logg.error("Noe gikk feil med opprettelse av SF", e)
+                    throw e
+                }
+
+            }
 
             post("/getLeveringsaddresse") {
                 val fnr = call.receiveText()
