@@ -24,7 +24,7 @@ class PersoninformasjonDao (private val dataSource: DataSource = Configuration.d
                 Personinformasjon(
                     brukerNr = row.string("BRUKER_NUMMER"),
                     leveringAddresse = row.string("LEVERINGS_ADDRESSE"),
-                    leveringPostnr = row.string("LEVERINGS_POSTNUMMER"),
+                    leveringPostnr = row.stringOrNull("LEVERINGS_POSTNUMMER") ?: "" ,
                     leveringKommune = row.string("LEVERINGS_KOMMUNE"),
                     leveringBy = row.string("LEVERINGS_BY"),
                     primaerAdr = row.string("PRIMAER_ADR")
