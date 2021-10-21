@@ -316,7 +316,7 @@ fun Application.module() {
                 call.respond(personinformasjonListe)
             }
 
-            get("/getTitleForHmsNr/{hmsNr}") {
+            get("/get-title-for-hmsnr/{hmsNr}") {
                 val query = """
                     SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
                     FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
@@ -343,7 +343,7 @@ fun Application.module() {
                 }
 
                 if (results.size == 0) {
-                    call.respond(HttpStatusCode.NotFound, """{"error": "product not found"}""")
+                    call.respond(HttpStatusCode.NotFound, """{"error": "product or accessory not found"}""")
                     return@get
                 }
 
