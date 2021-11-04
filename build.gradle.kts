@@ -216,16 +216,16 @@ tasks.named("compileKotlin") {
     dependsOn("spotlessCheck")
 }
 
-/*graphql {
+graphql {
     client {
         schemaFile = file("src/main/resources/hmdb/schema.graphql")
         queryFileDirectory = "src/main/resources/hmdb"
-        packageName = "no.nav.hjelpemidler.service.hmdb"
+        packageName = "no.nav.hjelpemidler.client.hmdb"
     }
 }
 
 val graphqlIntrospectSchema by tasks.getting(GraphQLIntrospectSchemaTask::class) {
-    endpoint.set("https://hm-grunndata-api.dev.intern.nav.no/graphql")
+   // endpoint.set("https://hm-grunndata-api.dev.intern.nav.no/graphql")
+    endpoint.set("http://localhost:8880/graphql")
     outputFile.set(file("src/main/resources/hmdb/schema.graphql"))
 }
-*/
