@@ -66,7 +66,7 @@ internal object Configuration {
 
             "HJELPEMIDDELDATABASEN_API" to "abc",
 
-            "GRUNNDATA_API_URL" to "http://host.docker.internal",
+            "GRUNNDATA_API_URL" to "http://host.docker.internal:8880",
         )
     )
 

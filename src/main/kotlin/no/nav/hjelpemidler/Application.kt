@@ -267,25 +267,7 @@ fun Application.module() {
                                     hmdbURL = null,
                                 )
                                 // val hmdbItem = Hjelpemiddeldatabase.findByHmsNr(item.artikkelNr)
-                                val hmdbItem = berikOrdrelinje(item).toString()
-
-                              if (hmdbItem != null) {
-                                    if (Configuration.application["APP_PROFILE"]!! != "prod") {
-                                        val hmdbItemJson = jacksonObjectMapper().writerWithDefaultPrettyPrinter()
-                                            .writeValueAsString(hmdbItem)
-                                        logg.info("DEBUG: HMDB item found: $hmdbItemJson")
-                                    }
-                                /*    item.hmdbBeriket = true
-                                    item.hmdbProduktNavn = hmdbItem.artname
-                                    item.hmdbBeskrivelse = hmdbItem.pshortdesc
-                                    item.hmdbKategori = hmdbItem.isotitle
-                                    item.hmdbBilde = hmdbItem.blobfileURL
-                                    if (hmdbItem.prodid != null && hmdbItem.artid != null) {
-                                        item.hmdbURL =
-                                            "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${hmdbItem.prodid}&art0=${hmdbItem.artid}&nart=1"
-                                    }*/
-                                }
-                                items.add(item)
+                                items.add(berikOrdrelinje(item))
                             }
                         }
                     }

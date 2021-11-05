@@ -15,8 +15,8 @@ object HjelpemiddeldatabaseClient {
     private val logg = KotlinLogging.logger {}
     private val client =
         GraphQLKtorClient(
-            // url = URL("${Configuration.application["GRUNNDATA_API_URL"]!!}/graphql"),
-            url = URL("http://localhost:8880/graphql"),
+           url = URL("${Configuration.application["GRUNNDATA_API_URL"]!!}/graphql"),
+            // url = URL("http://localhost:8880/graphql"),
             httpClient = HttpClient(engineFactory = Apache),
             serializer = GraphQLClientJacksonSerializer()
         )
