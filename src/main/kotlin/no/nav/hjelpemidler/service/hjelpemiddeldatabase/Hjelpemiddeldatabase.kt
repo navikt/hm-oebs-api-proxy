@@ -1,4 +1,5 @@
 package no.nav.hjelpemidler.service.hjelpemiddeldatabase
+/*
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -60,4 +61,4 @@ class Hjelpemiddeldatabase {
             return null
         }
     }
-}
+}*/

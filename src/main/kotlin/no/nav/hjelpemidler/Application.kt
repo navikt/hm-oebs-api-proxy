@@ -39,13 +39,15 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
+import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.TittelForHmsNr
-import no.nav.hjelpemidler.service.hjelpemiddeldatabase.Hjelpemiddeldatabase
+// import no.nav.hjelpemidler.service.hjelpemiddeldatabase.Hjelpemiddeldatabase
 import no.nav.hjelpemidler.service.hjelpemiddeldatabase.PersoninformasjonDao
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
 import oracle.jdbc.OracleConnection
@@ -74,7 +76,7 @@ fun main(args: Array<String>) {
     logg.info("OEBS api proxy - Starting...")
 
     logg.info("Loading hjelpemiddel-database")
-    Hjelpemiddeldatabase.loadDatabase()
+    // Hjelpemiddeldatabase.loadDatabase()
 
     logg.info("Connecting to OEBS-database")
     connectToOebsDB()
@@ -264,14 +266,16 @@ fun Application.module() {
                                     hmdbBilde = null,
                                     hmdbURL = null,
                                 )
-                                val hmdbItem = Hjelpemiddeldatabase.findByHmsNr(item.artikkelNr)
-                                if (hmdbItem != null) {
+                                // val hmdbItem = Hjelpemiddeldatabase.findByHmsNr(item.artikkelNr)
+                                val hmdbItem = berikOrdrelinje(item).toString()
+
+                              if (hmdbItem != null) {
                                     if (Configuration.application["APP_PROFILE"]!! != "prod") {
                                         val hmdbItemJson = jacksonObjectMapper().writerWithDefaultPrettyPrinter()
                                             .writeValueAsString(hmdbItem)
                                         logg.info("DEBUG: HMDB item found: $hmdbItemJson")
                                     }
-                                    item.hmdbBeriket = true
+                                /*    item.hmdbBeriket = true
                                     item.hmdbProduktNavn = hmdbItem.artname
                                     item.hmdbBeskrivelse = hmdbItem.pshortdesc
                                     item.hmdbKategori = hmdbItem.isotitle
@@ -279,7 +283,7 @@ fun Application.module() {
                                     if (hmdbItem.prodid != null && hmdbItem.artid != null) {
                                         item.hmdbURL =
                                             "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${hmdbItem.prodid}&art0=${hmdbItem.artid}&nart=1"
-                                    }
+                                    }*/
                                 }
                                 items.add(item)
                             }
@@ -289,6 +293,7 @@ fun Application.module() {
                 call.respond(items)
             }
         }
+
 
         authenticate("aad") {
 
@@ -363,3 +368,27 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
         principal.payload.claims.entries
             .associate { claim -> claim.key to claim.value.`as`(JsonNode::class.java) }
     } ?: error("No JWT principal found in request")
+
+
+
+//graphQl
+
+private fun berikOrdrelinje(item: HjelpemiddelBruker): HjelpemiddelBruker  = runBlocking {
+    HjelpemiddeldatabaseClient
+        .hentProdukterMedHmsnr(item.artikkelNr)
+        .firstOrNull()?.let { produkt ->
+            item.apply {
+                item.hmdbBeriket  = true
+                item.hmdbProduktNavn = produkt.artikkelnavn
+                item.hmdbBeskrivelse= produkt.produktbeskrivelse
+                item.hmdbKategori = produkt.isotittel
+                item.hmdbBilde = produkt.blobUrlLite
+
+                if (produkt.produktId != null && produkt.artikkelId != null) {
+                    item.hmdbURL  =
+                        "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${produkt.produktId}&art0=${produkt.artikkelId}&nart=1"
+                }
+            }
+        }
+    item
+}
