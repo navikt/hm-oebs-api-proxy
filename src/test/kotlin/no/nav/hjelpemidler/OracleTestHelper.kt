@@ -5,7 +5,6 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import org.testcontainers.containers.OracleContainer
 
-
 internal object OracleTestHelper {
 
     val instance by lazy {
@@ -35,6 +34,4 @@ internal object OracleTestHelper {
     fun withDb(block: () -> Unit) {
         dataSource.run { block() }
     }
-
 }
-

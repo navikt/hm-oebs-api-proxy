@@ -124,7 +124,6 @@ fun connectToOebsDB() {
 
         logg.info("Database connected, hm-oebs-api-proxy ready")
         ready.set(true)
-
     } catch (e: Exception) {
         logg.info("Exception while connecting to database: $e")
         e.printStackTrace()
@@ -237,12 +236,13 @@ fun Application.module() {
                 }
 
                 // Query database and return results
-                val query = """
+                val query =
+                    """
                     SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, SERIE_NUMMER, FØRSTE_UTSENDELSE
                     FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
                     WHERE FNR = ?
                     ORDER BY FØRSTE_UTSENDELSE DESC
-                """.trimIndent()
+                    """.trimIndent()
 
                 val items = mutableListOf<HjelpemiddelBruker>()
                 withRetryIfDatabaseConnectionIsStale {
@@ -266,7 +266,6 @@ fun Application.module() {
                                     hmdbBilde = null,
                                     hmdbURL = null,
                                 )
-                                // val hmdbItem = Hjelpemiddeldatabase.findByHmsNr(item.artikkelNr)
                                 items.add(berikOrdrelinje(item))
                             }
                         }
@@ -275,7 +274,6 @@ fun Application.module() {
                 call.respond(items)
             }
         }
-
 
         authenticate("aad") {
 
@@ -289,7 +287,6 @@ fun Application.module() {
                     logg.error("Noe gikk feil med opprettelse av SF", e)
                     throw e
                 }
-
             }
 
             post("/getLeveringsaddresse") {
@@ -304,11 +301,12 @@ fun Application.module() {
             }
 
             get("/get-title-for-hmsnr/{hmsNr}") {
-                val query = """
+                val query =
+                    """
                     SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
                     FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
                     WHERE ARTIKKEL = ?
-                """.trimIndent()
+                    """.trimIndent()
 
                 val hmsNr = call.parameters["hmsNr"]!!
                 val results = mutableListOf<TittelForHmsNr>()
@@ -351,23 +349,19 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
             .associate { claim -> claim.key to claim.value.`as`(JsonNode::class.java) }
     } ?: error("No JWT principal found in request")
 
-
-
-//graphQl
-
-private fun berikOrdrelinje(item: HjelpemiddelBruker): HjelpemiddelBruker  = runBlocking {
+private fun berikOrdrelinje(item: HjelpemiddelBruker): HjelpemiddelBruker = runBlocking {
     HjelpemiddeldatabaseClient
         .hentProdukterMedHmsnr(item.artikkelNr)
         .firstOrNull()?.let { produkt ->
             item.apply {
-                item.hmdbBeriket  = true
+                item.hmdbBeriket = true
                 item.hmdbProduktNavn = produkt.artikkelnavn
-                item.hmdbBeskrivelse= produkt.produktbeskrivelse
+                item.hmdbBeskrivelse = produkt.produktbeskrivelse
                 item.hmdbKategori = produkt.isotittel
                 item.hmdbBilde = produkt.blobUrlLite
 
                 if (produkt.produktId != null && produkt.artikkelId != null) {
-                    item.hmdbURL  =
+                    item.hmdbURL =
                         "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${produkt.produktId}&art0=${produkt.artikkelId}&nart=1"
                 }
             }

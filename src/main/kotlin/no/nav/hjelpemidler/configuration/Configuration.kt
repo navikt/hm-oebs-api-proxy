@@ -1,6 +1,11 @@
 package no.nav.hjelpemidler.configuration
 
-import com.natpryce.konfig.*
+import com.natpryce.konfig.ConfigurationMap
+import com.natpryce.konfig.ConfigurationProperties
+import com.natpryce.konfig.EnvironmentVariables
+import com.natpryce.konfig.Key
+import com.natpryce.konfig.overriding
+import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
 
 internal object Configuration {
@@ -19,9 +24,9 @@ internal object Configuration {
 
             "HM_OEBS_API_PROXY_DB_NAME" to "oebsp",
             // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm09db08.adeo.no:1521/oebsp",    // P-env
-            "HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_P"),
-            "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_P"),
-            "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_P"),
+            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_P"),
+            "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_P"),
+            "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_P"),
             "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81760"),
             "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api.intern.nav.no/api",
             "GRUNNDATA_API_URL" to "http://hm-grunndata-api",
@@ -32,16 +37,16 @@ internal object Configuration {
         mapOf(
             "application.profile" to "dev",
 
-             //"HM_OEBS_API_PROXY_DB_NAME" to "oebst1",
-             //"HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_T1"),
-             //"HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_T1"),
-             //"HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_T1"),
-             "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81400"),
+            // "HM_OEBS_API_PROXY_DB_NAME" to "oebst1",
+            // "HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_T1"),
+            // "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_T1"),
+            // "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_T1"),
+            "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81400"),
 
             "HM_OEBS_API_PROXY_DB_NAME" to "oebsq1",
-            "HM_OEBS_API_PROXY_DB_URL" to System.getenv ("HM_OEBS_API_PROXY_DB_URL_Q1"),
-            "HM_OEBS_API_PROXY_DB_USR" to System.getenv ("HM_OEBS_API_PROXY_DB_USR_Q1"),
-            "HM_OEBS_API_PROXY_DB_PW" to System.getenv ("HM_OEBS_API_PROXY_DB_PW_Q1"),
+            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_Q1"),
+            "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_Q1"),
+            "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
 
             // "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api-poc.nais.preprod.local/api",
             "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api.dev.intern.nav.no/api",
@@ -49,7 +54,7 @@ internal object Configuration {
         )
     )
 
-    private val localProperties = ConfigurationMap (
+    private val localProperties = ConfigurationMap(
         mapOf(
             "application.profile" to "local",
 
@@ -87,7 +92,7 @@ internal object Configuration {
             idleTimeout = 10001
             connectionTimeout = 1000
             maxLifetime = 30001
-            driverClassName = "oracle.jdbc.driver.OracleDriver";
+            driverClassName = "oracle.jdbc.driver.OracleDriver"
             jdbcUrl = config()[Key("HM_OEBS_API_PROXY_DB_URL", stringType)]
         }
     }
@@ -108,5 +113,4 @@ internal object Configuration {
         "GRUNNDATA_API_URL" to config()[Key("GRUNNDATA_API_URL", stringType)],
         "OEBS_BRUKER_ID" to config()[Key("HM_OEBS_OPPRETT_SF_BRUKEROD", stringType)]
     )
-
 }

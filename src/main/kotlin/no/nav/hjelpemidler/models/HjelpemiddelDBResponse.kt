@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 // commented out unused fields. Removed from backend service to reduce file size
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class HjelpemiddelProdukt(
-        val stockid: String?,
-        val artid: String?,
-        val prodid: String?,
-        val artno: String?,
-        val artname: String?,
-        val adescshort: String?,
-        val prodname: String?,
-        val pshortdesc: String?,
+    val stockid: String?,
+    val artid: String?,
+    val prodid: String?,
+    val artno: String?,
+    val artname: String?,
+    val adescshort: String?,
+    val prodname: String?,
+    val pshortdesc: String?,
 //        val aindate: String?,
 //        val aoutdate: String?,
 //        val ldbid: String?,
@@ -20,28 +20,28 @@ data class HjelpemiddelProdukt(
 //        val aisapproved: String?,
 //        val anbudid: String?,
 //        val hasanbud: String?,
-        val adraft: String?,
-        val artpostid: String?,
-        val apostid: String?,
-        val postrank: String?,
-        val apostnr: String?,
-        val aposttitle: String?,
+    val adraft: String?,
+    val artpostid: String?,
+    val apostid: String?,
+    val postrank: String?,
+    val apostnr: String?,
+    val aposttitle: String?,
 //        val apostdesc: String?,
-        val newsid: String?,
-        val blobfileURL: String?,
+    val newsid: String?,
+    val blobfileURL: String?,
 //        val blobfileURL_snet: String?,
 //        val blobtype: String?,
 //        val blobuse: String?,
 //        val supplier: String?,
 //        val pisapproved: String?,
-        val isocode: String?,
-        val isotitle: String?,
+    val isocode: String?,
+    val isotitle: String?,
 //        val isotextshort: String?,
 //        val isactive: String?,
-        var kategori: String?,
-        var techdataAsText: String?,
-        val cleanTechdataAsText: String?,
-        val cleanposttitle: String?
+    var kategori: String?,
+    var techdataAsText: String?,
+    val cleanTechdataAsText: String?,
+    val cleanposttitle: String?
 )
 
 /*
@@ -81,18 +81,18 @@ data class HjelpemiddelProdukt(
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class HjelpemiddelProduktTechDataAttribute(
-        val prodid: String,
-        val artid: String,
-        val techlabeldk: String?,
-        val datavalue: String?,
-        val techdataunit: String?
+    val prodid: String,
+    val artid: String,
+    val techlabeldk: String?,
+    val datavalue: String?,
+    val techdataunit: String?
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class HjelpemiddelProduktTechDataAttributesInWords(
-        val prodid: String?,
-        val artid: String?,
-        val techdata: String?
+    val prodid: String?,
+    val artid: String?,
+    val techdata: String?
 )
 
 /*{

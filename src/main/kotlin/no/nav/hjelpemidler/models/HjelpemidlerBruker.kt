@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.models
 
-data class HjelpemiddelBruker (
+data class HjelpemiddelBruker(
     val antall: String,
     val antallEnhet: String,
     val kategori: String,

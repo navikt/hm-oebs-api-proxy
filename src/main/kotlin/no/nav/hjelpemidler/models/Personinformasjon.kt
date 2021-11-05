@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.models
 
-data class Personinformasjon (
+data class Personinformasjon(
     val brukerNr: String,
     val leveringAddresse: String,
     val leveringKommune: String,
