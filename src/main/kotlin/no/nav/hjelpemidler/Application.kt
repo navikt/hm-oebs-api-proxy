@@ -48,6 +48,7 @@ import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.TittelForHmsNr
+import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
 import no.nav.hjelpemidler.service.oebsdatabase.PersoninformasjonDao
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
 import oracle.jdbc.OracleConnection
@@ -68,6 +69,7 @@ private val ready = AtomicBoolean(false)
 
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
+private val hjelpemiddeloversiktDao = HjelpemiddeloversiktDao()
 private val personinformasjonDao = PersoninformasjonDao()
 private val opprettServiceforespørselDao = ServiceforespørselDao()
 
@@ -232,45 +234,7 @@ fun Application.module() {
                     error("invalid fnr in 'pid', does not match regex")
                 }
 
-                // Query database and return results
-                val query =
-                    """
-                    SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, SERIE_NUMMER, FØRSTE_UTSENDELSE
-                    FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
-                    WHERE FNR = ?
-                    ORDER BY FØRSTE_UTSENDELSE DESC
-                    """.trimIndent()
-
-                val items = mutableListOf<HjelpemiddelBruker>()
-                withRetryIfDatabaseConnectionIsStale {
-                    dbConnection!!.prepareStatement(query).use { pstmt ->
-                        pstmt.clearParameters()
-                        pstmt.setString(1, fnr)
-                        pstmt.executeQuery().use { rs ->
-                            while (rs.next()) {
-                                val item = HjelpemiddelBruker(
-                                    antall = rs.getString("ANTALL"),
-                                    antallEnhet = rs.getString("ENHET"),
-                                    kategori = rs.getString("KATEGORI3_BESKRIVELSE"),
-                                    artikkelBeskrivelse = rs.getString("ARTIKKEL_BESKRIVELSE"),
-                                    artikkelNr = rs.getString("ARTIKKELNUMMER"),
-                                    serieNr = rs.getString("SERIE_NUMMER"),
-                                    datoUtsendelse = rs.getString("FØRSTE_UTSENDELSE"),
-                                    hmdbBeriket = false,
-                                    hmdbProduktNavn = null,
-                                    hmdbBeskrivelse = null,
-                                    hmdbKategori = null,
-                                    hmdbBilde = null,
-                                    hmdbURL = null,
-                                )
-                                items.add(item)
-                            }
-                        }
-                    }
-                }
-
-                // Berik liste med hmdb data og returner
-                call.respond(berikOrdrelinjer(items))
+                call.respond(hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr))
             }
         }
 
@@ -347,38 +311,3 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
         principal.payload.claims.entries
             .associate { claim -> claim.key to claim.value.`as`(JsonNode::class.java) }
     } ?: error("No JWT principal found in request")
-
-private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
-    // Unique list of hmsnrs to fetch data for
-    val hmsNrs = items.filter{ it.artikkelNr.isNotEmpty() }.map{ it.artikkelNr }.toSet().toList()
-
-    // Fetch data for hmsnrs from hm-grunndata-api
-    val produkter: List<Produkt> = HjelpemiddeldatabaseClient.hentProdukterMedHmsnrs(hmsNrs)
-
-    // Apply data to items
-    val produkterByHmsnr = produkter.groupBy { it.hmsnr }
-    items.map { item ->
-        val produkt = produkterByHmsnr[item.artikkelNr]?.firstOrNull()
-        if (produkt == null) {
-            item
-        } else {
-            berikOrdrelinje(item, produkt)
-        }
-    }
-}
-
-private fun berikOrdrelinje(item: HjelpemiddelBruker, produkt: Produkt): HjelpemiddelBruker {
-    item.apply {
-        item.hmdbBeriket = true
-        item.hmdbProduktNavn = produkt.artikkelnavn
-        item.hmdbBeskrivelse = produkt.produktbeskrivelse
-        item.hmdbKategori = produkt.isotittel
-        item.hmdbBilde = produkt.blobUrlLite
-
-        if (produkt.produktId != null && produkt.artikkelId != null) {
-            item.hmdbURL =
-                "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${produkt.produktId}&art0=${produkt.artikkelId}&nart=1"
-        }
-    }
-    return item
-}
