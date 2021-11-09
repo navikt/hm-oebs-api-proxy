@@ -28,8 +28,8 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_P"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_P"),
             "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81760"),
-            "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api.intern.nav.no/api",
-            "GRUNNDATA_API_URL" to "http://hm-grunndata-api",
+
+                "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.nav.no",
         )
     )
 
@@ -48,9 +48,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_Q1"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
 
-            // "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api-poc.nais.preprod.local/api",
-            "HJELPEMIDDELDATABASEN_API" to "https://hm-produktinfo-api.dev.intern.nav.no/api",
-            "GRUNNDATA_API_URL" to "http://hm-grunndata-api",
+            "GRUNNDATA_API_URL" to "https://hm-grunndata-api.dev.intern.nav.no",
         )
     )
 
@@ -68,8 +66,6 @@ internal object Configuration {
 
             "AZURE_APP_WELL_KNOWN_URL" to "abc",
             "AZURE_APP_CLIENT_ID" to "abc",
-
-            "HJELPEMIDDELDATABASEN_API" to "abc",
 
             "GRUNNDATA_API_URL" to "http://host.docker.internal:8880",
         )
@@ -109,7 +105,6 @@ internal object Configuration {
 
     val application: Map<String, String> = mapOf(
         "APP_PROFILE" to config()[Key("application.profile", stringType)],
-        "HJELPEMIDDELDATABASEN_API" to config()[Key("HJELPEMIDDELDATABASEN_API", stringType)],
         "GRUNNDATA_API_URL" to config()[Key("GRUNNDATA_API_URL", stringType)],
         "OEBS_BRUKER_ID" to config()[Key("HM_OEBS_OPPRETT_SF_BRUKEROD", stringType)]
     )
