@@ -9,6 +9,7 @@ on:
     branches:
       - main
       - graphql_hmd_klient
+      - graphql_hmd_klient_kristoffer_kotlinquery
 env:
   docker_image: docker.pkg.github.com/${{ github.repository }}/hm-oebs-api-proxy:${{ github.sha }}
 jobs:
