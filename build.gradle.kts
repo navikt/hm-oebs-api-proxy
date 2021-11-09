@@ -11,11 +11,11 @@ val logback_version: String by project
 val konfig_version: String by project
 val klaxon_version: String by project
 val ojdbc_version: String by project
-val ktor_version: String by project
 val unleash_version: String by project
 val prometheus_version: String by project
 val jackson_version: String by project
 val junit_version: String by project
+val ktor_version = Ktor.version
 
 plugins {
     application
