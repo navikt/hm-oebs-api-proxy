@@ -7,16 +7,14 @@ import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.hentproduktermedhmsnrs.Produkt
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
-import no.nav.hjelpemidler.models.Personinformasjon
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
 class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration.dataSource) {
 
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
-
         @Language("OracleSQL")
-        val hentPersoninfoQuery =
+        val query =
             """
                 SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, SERIE_NUMMER, FØRSTE_UTSENDELSE
                 FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
@@ -26,7 +24,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
 
         val items = sessionOf(dataSource).use {
             it.run(
-                queryOf(hentPersoninfoQuery, fnr).map { row ->
+                queryOf(query, fnr).map { row ->
                     HjelpemiddelBruker(
                         antall = row.string("ANTALL"),
                         antallEnhet = row.string("ENHET"),
@@ -44,7 +42,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
 
     private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
         // Unique list of hmsnrs to fetch data for
-        val hmsNrs = items.filter{ it.artikkelNr.isNotEmpty() }.map{ it.artikkelNr }.toSet().toList()
+        val hmsNrs = items.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet().toList()
 
         // Fetch data for hmsnrs from hm-grunndata-api
         val produkter: List<Produkt> = HjelpemiddeldatabaseClient.hentProdukterMedHmsnrs(hmsNrs)
@@ -76,4 +74,5 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         }
         return item
     }
+
 }

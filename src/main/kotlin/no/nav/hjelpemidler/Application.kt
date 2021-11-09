@@ -39,17 +39,13 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
-import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
-import no.nav.hjelpemidler.client.hmdb.hentproduktermedhmsnrs.Produkt
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
-import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Serviceforespørsel
-import no.nav.hjelpemidler.models.TittelForHmsNr
 import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
 import no.nav.hjelpemidler.service.oebsdatabase.PersoninformasjonDao
+import no.nav.hjelpemidler.service.oebsdatabase.TittelForHmsnrDao
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
 import oracle.jdbc.OracleConnection
 import oracle.jdbc.pool.OracleDataSource
@@ -70,6 +66,7 @@ private val ready = AtomicBoolean(false)
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
 private val hjelpemiddeloversiktDao = HjelpemiddeloversiktDao()
+private val tittleForHmsnrDao = TittelForHmsnrDao()
 private val personinformasjonDao = PersoninformasjonDao()
 private val opprettServiceforespørselDao = ServiceforespørselDao()
 
@@ -162,9 +159,9 @@ fun Application.module() {
         level = Level.TRACE
         filter { call ->
             !call.request.path().startsWith("/internal") &&
-                !call.request.path().startsWith("/isalive") &&
-                !call.request.path().startsWith("/isready") &&
-                !call.request.path().startsWith("/metrics")
+                    !call.request.path().startsWith("/isalive") &&
+                    !call.request.path().startsWith("/isready") &&
+                    !call.request.path().startsWith("/metrics")
         }
     }
 
@@ -259,51 +256,20 @@ fun Application.module() {
                     error("invalid fnr in 'pid', does not match regex")
                 }
                 val personinformasjonListe = personinformasjonDao.hentPersoninformasjon(fnr)
-
                 call.respond(personinformasjonListe)
             }
 
             get("/get-title-for-hmsnr/{hmsNr}") {
-                val query =
-                    """
-                    SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
-                    FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
-                    WHERE ARTIKKEL = ?
-                    """.trimIndent()
-
-                val hmsNr = call.parameters["hmsNr"]!!
-                val results = mutableListOf<TittelForHmsNr>()
-                withRetryIfDatabaseConnectionIsStale {
-                    dbConnection!!.prepareStatement(query).use { pstmt ->
-                        pstmt.clearParameters()
-                        pstmt.setString(1, hmsNr)
-                        pstmt.executeQuery().use { rs ->
-                            while (rs.next()) {
-                                results.add(
-                                    TittelForHmsNr(
-                                        hmsNr = rs.getString("ARTIKKEL"),
-                                        title = rs.getString("ARTIKKEL_BESKRIVELSE"),
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }
-
-                if (results.size == 0) {
+                val result = tittleForHmsnrDao.hentTittelForHmsnr(call.parameters["hmsNr"]!!)
+                if (result == null) {
                     call.respond(HttpStatusCode.NotFound, """{"error": "product or accessory not found"}""")
                     return@get
                 }
-
-                call.respond(results[0])
+                call.respond(result)
             }
         }
     }
 }
-
-val Application.isLocal get() = Configuration.application["APP_PROFILE"]!! == "local"
-val Application.isDev get() = Configuration.application["APP_PROFILE"]!! == "dev"
-val Application.isProd get() = Configuration.application["APP_PROFILE"]!! == "prod"
 
 fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
     .principal<JWTPrincipal>()
