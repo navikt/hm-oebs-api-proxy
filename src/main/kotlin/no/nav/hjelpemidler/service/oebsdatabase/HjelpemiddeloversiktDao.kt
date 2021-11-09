@@ -24,7 +24,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                 ORDER BY FØRSTE_UTSENDELSE DESC
             """.trimIndent()
 
-        val hjelpemiddeloversiktListe = sessionOf(dataSource).use {
+        val items = sessionOf(dataSource).use {
             it.run(
                 queryOf(hentPersoninfoQuery, fnr).map { row ->
                     HjelpemiddelBruker(
@@ -33,13 +33,13 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                         kategori = row.string("KATEGORI3_BESKRIVELSE"),
                         artikkelBeskrivelse = row.string("ARTIKKEL_BESKRIVELSE"),
                         artikkelNr = row.string("ARTIKKELNUMMER"),
-                        serieNr = row.string("SERIE_NUMMER"),
+                        serieNr = row.stringOrNull("SERIE_NUMMER"),
                         datoUtsendelse = row.string("FØRSTE_UTSENDELSE"),
                     )
                 }.asList
             )
         }
-        return berikOrdrelinjer(hjelpemiddeloversiktListe)
+        return berikOrdrelinjer(items)
     }
 
     private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
