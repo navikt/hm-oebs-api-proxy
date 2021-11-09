@@ -362,7 +362,7 @@ private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<Hjelpemiddel
 
     // Apply data to items
     val items2 = items.map { item ->
-        val produkt = produkter.filter { it.artikkelId == item.artikkelNr }.firstOrNull()
+        val produkt = produkter.filter { it.hmsnr == item.artikkelNr }.firstOrNull()
         if (produkt == null) {
             item
         } else {
