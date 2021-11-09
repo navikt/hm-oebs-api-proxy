@@ -159,9 +159,9 @@ fun Application.module() {
         level = Level.TRACE
         filter { call ->
             !call.request.path().startsWith("/internal") &&
-                    !call.request.path().startsWith("/isalive") &&
-                    !call.request.path().startsWith("/isready") &&
-                    !call.request.path().startsWith("/metrics")
+                !call.request.path().startsWith("/isalive") &&
+                !call.request.path().startsWith("/isready") &&
+                !call.request.path().startsWith("/metrics")
         }
     }
 

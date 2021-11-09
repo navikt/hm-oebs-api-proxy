@@ -29,5 +29,4 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
             )
         }
     }
-
 }

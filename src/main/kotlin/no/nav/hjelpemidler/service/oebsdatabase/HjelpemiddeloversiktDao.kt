@@ -74,5 +74,4 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         }
         return item
     }
-
 }
