@@ -8,6 +8,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
+      - graphql_hmd_klient
 env:
   docker_image: docker.pkg.github.com/${{ github.repository }}/hm-oebs-api-proxy:${{ github.sha }}
 jobs:
