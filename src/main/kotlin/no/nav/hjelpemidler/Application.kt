@@ -266,6 +266,7 @@ fun Application.module() {
                                     hmdbBilde = null,
                                     hmdbURL = null,
                                 )
+                                items.add(item)
                             }
                         }
                     }
