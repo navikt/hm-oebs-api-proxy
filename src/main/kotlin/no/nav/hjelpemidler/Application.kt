@@ -75,9 +75,6 @@ private val opprettServiceforespørselDao = ServiceforespørselDao()
 fun main(args: Array<String>) {
     logg.info("OEBS api proxy - Starting...")
 
-    logg.info("Loading hjelpemiddel-database")
-    // Hjelpemiddeldatabase.loadDatabase()
-
     logg.info("Connecting to OEBS-database")
     connectToOebsDB()
 
