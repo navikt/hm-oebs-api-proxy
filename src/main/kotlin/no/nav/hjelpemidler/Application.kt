@@ -354,24 +354,20 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
 private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
     // Unique list of hmsnrs to fetch data for
     val hmsNrs = items.filter{ it.artikkelNr.isNotEmpty() }.map{ it.artikkelNr }.toSet().toList()
-    logg.info("DEBUG: berikOrdrelinjer: hmsnrs=$hmsNrs")
-    logg.info("DEBUG: berikOrdrelinjer: items=$items")
 
     // Fetch data for hmsnrs from hm-grunndata-api
     val produkter: List<Produkt> = HjelpemiddeldatabaseClient.hentProdukterMedHmsnrs(hmsNrs)
 
     // Apply data to items
-    val items2 = items.map { item ->
-        val produkt = produkter.filter { it.hmsnr == item.artikkelNr }.firstOrNull()
+    val produkterByHmsnr = produkter.groupBy { it.hmsnr }
+    items.map { item ->
+        val produkt = produkterByHmsnr[item.artikkelNr]?.firstOrNull()
         if (produkt == null) {
             item
         } else {
             berikOrdrelinje(item, produkt)
         }
     }
-
-    logg.info("DEBUG: berikOrdrelinjer: items2=$items2")
-    items2
 }
 
 private fun berikOrdrelinje(item: HjelpemiddelBruker, produkt: Produkt): HjelpemiddelBruker {
