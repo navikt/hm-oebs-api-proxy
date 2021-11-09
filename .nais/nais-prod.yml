@@ -57,3 +57,6 @@ spec:
         - application: hm-oebs-sink
           namespace: teamdigihot
           cluster: prod-gcp
+    outbound:
+      external:
+        - host: hm-grunndata-api.intern.nav.no
