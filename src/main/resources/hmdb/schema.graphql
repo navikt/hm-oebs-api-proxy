@@ -64,6 +64,8 @@ type Query {
   hentAlleProdukter(filter: ProduktfilterInput!): [Produkt!]!
   "Hent produkter med hmsnr"
   hentProdukterMedHmsnr(hmsnr: String!): [Produkt!]!
+  "Hent produkter med hmsnrs"
+  hentProdukterMedHmsnrs(hmsnrs: [String!]!): [Produkt!]!
 }
 
 type TekniskeDataTriple {

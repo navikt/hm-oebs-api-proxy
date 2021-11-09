@@ -29,7 +29,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_P"),
             "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81760"),
 
-                "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.nav.no",
+            "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.nav.no",
         )
     )
 

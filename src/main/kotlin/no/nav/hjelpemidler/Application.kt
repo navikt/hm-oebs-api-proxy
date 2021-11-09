@@ -42,12 +42,12 @@ import io.prometheus.client.exporter.common.TextFormat
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
+import no.nav.hjelpemidler.client.hmdb.hentproduktermedhmsnrs.Produkt
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.TittelForHmsNr
-// import no.nav.hjelpemidler.service.hjelpemiddeldatabase.Hjelpemiddeldatabase
 import no.nav.hjelpemidler.service.hjelpemiddeldatabase.PersoninformasjonDao
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
 import oracle.jdbc.OracleConnection
@@ -266,12 +266,13 @@ fun Application.module() {
                                     hmdbBilde = null,
                                     hmdbURL = null,
                                 )
-                                items.add(berikOrdrelinje(item))
                             }
                         }
                     }
                 }
-                call.respond(items)
+
+                // Berik liste med hmdb data og returner
+                call.respond(berikOrdrelinjer(items))
             }
         }
 
@@ -349,22 +350,39 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
             .associate { claim -> claim.key to claim.value.`as`(JsonNode::class.java) }
     } ?: error("No JWT principal found in request")
 
-private fun berikOrdrelinje(item: HjelpemiddelBruker): HjelpemiddelBruker = runBlocking {
-    HjelpemiddeldatabaseClient
-        .hentProdukterMedHmsnr(item.artikkelNr)
-        .firstOrNull()?.let { produkt ->
-            item.apply {
-                item.hmdbBeriket = true
-                item.hmdbProduktNavn = produkt.artikkelnavn
-                item.hmdbBeskrivelse = produkt.produktbeskrivelse
-                item.hmdbKategori = produkt.isotittel
-                item.hmdbBilde = produkt.blobUrlLite
+private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
+    // Unique list of hmsnrs to fetch data for
+    val hmsNrs = mutableListOf<String>()
+    for (item in items) {
+        if (hmsNrs.filter { it == item.artikkelNr }.isEmpty()) hmsNrs.add(item.artikkelNr)
+    }
 
-                if (produkt.produktId != null && produkt.artikkelId != null) {
-                    item.hmdbURL =
-                        "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${produkt.produktId}&art0=${produkt.artikkelId}&nart=1"
-                }
-            }
+    // Fetch data for hmsnrs from hm-grunndata-api
+    val produkter: List<Produkt> = HjelpemiddeldatabaseClient.hentProdukterMedHmsnrs(hmsNrs)
+
+    // Apply data to items
+    items.map { item ->
+        val produkt = produkter.filter { it.artikkelId == item.artikkelNr }[0] ?: null
+        if (produkt == null) {
+            item
+        } else {
+            berikOrdrelinje(item, produkt)
         }
-    item
+    }
+}
+
+private fun berikOrdrelinje(item: HjelpemiddelBruker, produkt: Produkt): HjelpemiddelBruker {
+    item.apply {
+        item.hmdbBeriket = true
+        item.hmdbProduktNavn = produkt.artikkelnavn
+        item.hmdbBeskrivelse = produkt.produktbeskrivelse
+        item.hmdbKategori = produkt.isotittel
+        item.hmdbBilde = produkt.blobUrlLite
+
+        if (produkt.produktId != null && produkt.artikkelId != null) {
+            item.hmdbURL =
+                "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${produkt.produktId}&art0=${produkt.artikkelId}&nart=1"
+        }
+    }
+    return item
 }

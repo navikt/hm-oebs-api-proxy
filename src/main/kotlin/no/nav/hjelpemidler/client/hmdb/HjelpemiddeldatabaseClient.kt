@@ -35,4 +35,22 @@ object HjelpemiddeldatabaseClient {
             return emptyList()
         }
     }
+
+    suspend fun hentProdukterMedHmsnrs(hmsnrs: List<String>): List<no.nav.hjelpemidler.client.hmdb.hentproduktermedhmsnrs.Produkt> {
+        val request = HentProdukterMedHmsnrs(variables = HentProdukterMedHmsnrs.Variables(hmsnrs = hmsnrs))
+        return try {
+            val response = client.execute(request)
+            when {
+                response.errors != null -> {
+                    logg.error("Feil under henting av data fra hjelpemiddeldatabasen, hmsnrs=$hmsnrs, errors=${response.errors?.map { it.message }}")
+                    emptyList()
+                }
+                response.data != null -> response.data?.produkter ?: emptyList()
+                else -> emptyList()
+            }
+        } catch (e: Exception) {
+            logg.error("Feil under henting av data fra hjelpemiddeldatabasen, hmsnrs=$hmsnrs", e)
+            return emptyList()
+        }
+    }
 }
