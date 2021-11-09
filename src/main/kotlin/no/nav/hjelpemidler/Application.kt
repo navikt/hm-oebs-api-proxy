@@ -48,7 +48,7 @@ import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.TittelForHmsNr
 // import no.nav.hjelpemidler.service.hjelpemiddeldatabase.Hjelpemiddeldatabase
-import no.nav.hjelpemidler.service.hjelpemiddeldatabase.PersoninformasjonDao
+import no.nav.hjelpemidler.service.oebsdatabase.PersoninformasjonDao
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
 import oracle.jdbc.OracleConnection
 import oracle.jdbc.pool.OracleDataSource

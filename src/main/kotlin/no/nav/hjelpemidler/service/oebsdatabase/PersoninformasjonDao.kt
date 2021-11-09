@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.service.hjelpemiddeldatabase
+package no.nav.hjelpemidler.service.oebsdatabase
 
 import kotliquery.queryOf
 import kotliquery.sessionOf
