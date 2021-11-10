@@ -23,7 +23,7 @@ fun Route.internal() {
 
     get("/isready") {
         // Let's check if the datasource is still valid and working
-        if (!Configuration.dataSource.getConnection().isValid(10)) {
+        if (!Configuration.dataSource.getConnection().isValid(20)) {
             Prometheus.oebsDbAvailable.set(0.0)
             return@get call.respondText("NOT READY", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
         }
