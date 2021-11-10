@@ -63,4 +63,4 @@ spec:
           cluster: dev-gcp
     outbound:
       external:
-        - host: hm-produktinfo-api-poc.nais.preprod.local/api
+        - host: hm-grunndata-api.dev.intern.nav.no

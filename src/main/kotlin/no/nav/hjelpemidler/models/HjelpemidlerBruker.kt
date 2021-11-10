@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.models
 
-data class HjelpemiddelBruker (
+data class HjelpemiddelBruker(
     val antall: String,
     val antallEnhet: String,
     val kategori: String,
@@ -9,12 +9,12 @@ data class HjelpemiddelBruker (
     val serieNr: String?,
     val datoUtsendelse: String,
 
-    var hmdbBeriket: Boolean,
-    var hmdbProduktNavn: String?,
-    var hmdbBeskrivelse: String?,
-    var hmdbKategori: String?,
-    var hmdbBilde: String?,
-    var hmdbURL: String?,
+    var hmdbBeriket: Boolean = false,
+    var hmdbProduktNavn: String? = null,
+    var hmdbBeskrivelse: String? = null,
+    var hmdbKategori: String? = null,
+    var hmdbBilde: String? = null,
+    var hmdbURL: String? = null,
 
     /*
         val FOREKOMST_NUMMER: String,
