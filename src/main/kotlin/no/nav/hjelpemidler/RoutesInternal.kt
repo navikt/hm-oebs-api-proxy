@@ -11,6 +11,7 @@ import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
+import java.sql.Connection
 
 fun Route.internal() {
     get("/isalive") {
@@ -23,7 +24,13 @@ fun Route.internal() {
 
     get("/isready") {
         // Let's check if the datasource is still valid and working
-        if (!Configuration.dataSource.getConnection().isValid(20)) {
+        var dbConnectionValid = false
+        Configuration.dataSource.getConnection().use { connection ->
+            if (connection.isValid(20)) {
+                dbConnectionValid = true
+            }
+        }
+        if (!dbConnectionValid) {
             Prometheus.oebsDbAvailable.set(0.0)
             return@get call.respondText("NOT READY", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
         }
