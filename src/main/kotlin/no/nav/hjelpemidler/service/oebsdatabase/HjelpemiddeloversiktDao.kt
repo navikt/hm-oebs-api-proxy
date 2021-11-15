@@ -42,7 +42,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
 
     private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
         // Unique list of hmsnrs to fetch data for
-        val hmsNrs = items.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet().toList()
+        val hmsNrs = items.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet()
 
         // Fetch data for hmsnrs from hm-grunndata-api
         val produkter: List<Produkt> = HjelpemiddeldatabaseClient.hentProdukterMedHmsnrs(hmsNrs)

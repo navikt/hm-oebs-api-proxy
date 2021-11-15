@@ -36,8 +36,9 @@ object HjelpemiddeldatabaseClient {
         }
     }
 
-    suspend fun hentProdukterMedHmsnrs(hmsnrs: List<String>): List<no.nav.hjelpemidler.client.hmdb.hentproduktermedhmsnrs.Produkt> {
-        val request = HentProdukterMedHmsnrs(variables = HentProdukterMedHmsnrs.Variables(hmsnrs = hmsnrs))
+    suspend fun hentProdukterMedHmsnrs(hmsnrs: Set<String>): List<no.nav.hjelpemidler.client.hmdb.hentproduktermedhmsnrs.Produkt> {
+        if (hmsnrs.isEmpty()) return emptyList()
+        val request = HentProdukterMedHmsnrs(variables = HentProdukterMedHmsnrs.Variables(hmsnrs = hmsnrs.toList()))
         return try {
             val response = client.execute(request)
             when {
