@@ -10,21 +10,42 @@ import javax.sql.DataSource
 class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun hentTittelForHmsnr(hmsnr: String): TittelForHmsNr? {
         @Language("OracleSQL")
-        val query =
+        val query_dev =
             """
                 SELECT ARTIKKEL, BRUKERARTIKKELTYPE, ARTIKKEL_BESKRIVELSE
                 FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
                 WHERE ARTIKKEL = ?
             """.trimIndent()
 
+        @Language("OracleSQL")
+        val query_prod =
+            """
+                SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
+                FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
+                WHERE ARTIKKEL = ?
+            """.trimIndent()
+
+        var query = query_prod
+        if (Configuration.application["APP_PROFILE"]!! != "prod") {
+            query = query_dev
+        }
+
         return sessionOf(dataSource).use {
             it.run(
                 queryOf(query, hmsnr).map { row ->
-                    TittelForHmsNr(
-                        hmsNr = row.string("ARTIKKEL"),
-                        type = row.string("BRUKERARTIKKELTYPE"),
-                        title = row.string("ARTIKKEL_BESKRIVELSE"),
-                    )
+                    if (Configuration.application["APP_PROFILE"]!! != "prod") {
+                        TittelForHmsNr(
+                            hmsNr = row.string("ARTIKKEL"),
+                            type = row.string("BRUKERARTIKKELTYPE"),
+                            title = row.string("ARTIKKEL_BESKRIVELSE"),
+                        )
+                    }else{
+                        TittelForHmsNr(
+                            hmsNr = row.string("ARTIKKEL"),
+                            type = "<none>",
+                            title = row.string("ARTIKKEL_BESKRIVELSE"),
+                        )
+                    }
                 }.asSingle
             )
         }
