@@ -8,9 +8,7 @@ import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
 class PersoninformasjonDao(private val dataSource: DataSource = Configuration.dataSource) {
-
     fun hentPersoninformasjon(fnr: String): List<Personinformasjon> {
-
         @Language("OracleSQL")
         val hentPersoninfoQuery =
             """

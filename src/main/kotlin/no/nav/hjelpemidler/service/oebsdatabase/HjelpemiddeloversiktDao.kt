@@ -11,7 +11,6 @@ import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
 class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration.dataSource) {
-
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
         @Language("OracleSQL")
         val query =

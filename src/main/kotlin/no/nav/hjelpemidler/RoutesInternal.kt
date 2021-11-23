@@ -11,7 +11,6 @@ import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
-import java.sql.Connection
 
 fun Route.internal() {
     get("/isalive") {

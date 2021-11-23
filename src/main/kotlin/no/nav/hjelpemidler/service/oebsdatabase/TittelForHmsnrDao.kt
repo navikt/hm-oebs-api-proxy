@@ -8,12 +8,11 @@ import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
 class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataSource) {
-
     fun hentTittelForHmsnr(hmsnr: String): TittelForHmsNr? {
         @Language("OracleSQL")
         val query =
             """
-                SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
+                SELECT ARTIKKEL, BRUKERARTIKKELTYPE, ARTIKKEL_BESKRIVELSE
                 FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
                 WHERE ARTIKKEL = ?
             """.trimIndent()
@@ -23,6 +22,7 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
                 queryOf(query, hmsnr).map { row ->
                     TittelForHmsNr(
                         hmsNr = row.string("ARTIKKEL"),
+                        type = row.string("BRUKERARTIKKELTYPE"),
                         title = row.string("ARTIKKEL_BESKRIVELSE"),
                     )
                 }.asSingle
