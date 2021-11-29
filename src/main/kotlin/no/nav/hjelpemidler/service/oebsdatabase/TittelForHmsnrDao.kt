@@ -39,7 +39,7 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
                             type = row.string("BRUKERARTIKKELTYPE"),
                             title = row.string("ARTIKKEL_BESKRIVELSE"),
                         )
-                    }else{
+                    } else {
                         TittelForHmsNr(
                             hmsNr = row.string("ARTIKKEL"),
                             type = "<none>",
