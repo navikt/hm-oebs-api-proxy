@@ -18,7 +18,7 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
             """
                 SELECT ARTIKKEL, BRUKERARTIKKELTYPE, ARTIKKEL_BESKRIVELSE
                 FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
-                WHERE ARTIKKEL IN ?
+                WHERE ARTIKKEL IN (?)
             """.trimIndent()
 
         @Language("OracleSQL")
@@ -26,7 +26,7 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
             """
                 SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
                 FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
-                WHERE ARTIKKEL IN ?
+                WHERE ARTIKKEL IN (?)
             """.trimIndent()
 
         var query = query_prod
@@ -34,9 +34,9 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
             query = query_dev
         }
 
-        return sessionOf(dataSource).use {
+        return sessionOf(dataSource).use { it ->
             it.run(
-                queryOf(query, hmsnrs.toList()).map { row ->
+                queryOf(query, hmsnrs.toList().joinToString { "'$it'" }).map { row ->
                     if (Configuration.application["APP_PROFILE"]!! != "prod") {
                         TittelForHmsNr(
                             hmsNr = row.string("ARTIKKEL"),
