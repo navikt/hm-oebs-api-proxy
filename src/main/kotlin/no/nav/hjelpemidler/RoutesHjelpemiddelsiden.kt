@@ -3,9 +3,11 @@ package no.nav.hjelpemidler
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
+import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
+import io.ktor.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
@@ -47,6 +49,11 @@ fun Route.hjelpemiddelsiden() {
                 return@get
             }
             call.respond(result)
+        }
+
+        post("/get-title-for-hmsnrs") {
+            val hmsnrs = call.receive<Array<String>>().toList().toSet()
+            call.respond(tittleForHmsnrDao.hentTittelForHmsnrs(hmsnrs))
         }
     }
 }
