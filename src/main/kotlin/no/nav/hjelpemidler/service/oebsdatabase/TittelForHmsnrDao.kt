@@ -34,9 +34,12 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
             query = query_dev
         }
 
+        // Put hmsnrs.count() number of comma separated question marks in the query IN-clause
+        query = query.replace("(?)", "(" + (0 until hmsnrs.count()).joinToString { "?" } + ")")
+
         return sessionOf(dataSource).use { it ->
             it.run(
-                queryOf(query, hmsnrs.toList().joinToString { "'$it'" }).map { row ->
+                queryOf(query, params = hmsnrs.toTypedArray()).map { row ->
                     if (Configuration.application["APP_PROFILE"]!! != "prod") {
                         TittelForHmsNr(
                             hmsNr = row.string("ARTIKKEL"),
