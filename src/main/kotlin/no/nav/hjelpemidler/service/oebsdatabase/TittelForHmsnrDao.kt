@@ -14,25 +14,12 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
 
     fun hentTittelForHmsnrs(hmsnrs: Set<String>): List<TittelForHmsNr> {
         @Language("OracleSQL")
-        val query_dev =
+        var query =
             """
                 SELECT ARTIKKEL, BRUKERARTIKKELTYPE, ARTIKKEL_BESKRIVELSE
                 FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
                 WHERE ARTIKKEL IN (?)
             """.trimIndent()
-
-        @Language("OracleSQL")
-        val query_prod =
-            """
-                SELECT ARTIKKEL, ARTIKKEL_BESKRIVELSE
-                FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
-                WHERE ARTIKKEL IN (?)
-            """.trimIndent()
-
-        var query = query_prod
-        if (Configuration.application["APP_PROFILE"]!! != "prod") {
-            query = query_dev
-        }
 
         // Put hmsnrs.count() number of comma separated question marks in the query IN-clause
         query = query.replace("(?)", "(" + (0 until hmsnrs.count()).joinToString { "?" } + ")")
