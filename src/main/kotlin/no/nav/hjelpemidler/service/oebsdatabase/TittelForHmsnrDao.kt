@@ -38,19 +38,11 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
         return sessionOf(dataSource).use { it ->
             it.run(
                 queryOf(query, params = hmsnrs.toTypedArray()).map { row ->
-                    if (Configuration.application["APP_PROFILE"]!! != "prod") {
-                        TittelForHmsNr(
-                            hmsNr = row.string("ARTIKKEL"),
-                            type = row.string("BRUKERARTIKKELTYPE"),
-                            title = row.string("ARTIKKEL_BESKRIVELSE"),
-                        )
-                    } else {
-                        TittelForHmsNr(
-                            hmsNr = row.string("ARTIKKEL"),
-                            type = "<none>",
-                            title = row.string("ARTIKKEL_BESKRIVELSE"),
-                        )
-                    }
+                    TittelForHmsNr(
+                        hmsNr = row.string("ARTIKKEL"),
+                        type = row.string("BRUKERARTIKKELTYPE"),
+                        title = row.string("ARTIKKEL_BESKRIVELSE"),
+                    )
                 }.asList
             )
         }
