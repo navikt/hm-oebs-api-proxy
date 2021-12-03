@@ -3,6 +3,7 @@ package no.nav.hjelpemidler.service.oebsdatabase
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.configuration.Configuration.dataSource
 import no.nav.hjelpemidler.models.TittelForHmsNr
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
@@ -13,6 +14,16 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
     }
 
     fun hentTittelForHmsnrs(hmsnrs: Set<String>): List<TittelForHmsNr> {
+        // Chunking solves: java.sql.SQLSyntaxErrorException: ORA-01795: maks. antall uttrykk i en liste er 1000
+        val chunks = hmsnrs.chunked(500)
+        val results = mutableListOf<TittelForHmsNr>()
+        for (chunk in chunks) {
+            results.addAll(helper(chunk.toSet()))
+        }
+        return results
+    }
+
+    private fun helper(hmsnrs: Set<String>): List<TittelForHmsNr> {
         @Language("OracleSQL")
         var query =
             """
