@@ -30,7 +30,6 @@ internal object Configuration {
             "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81760"),
 
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.nav.no",
-            "TESTSECRET" to "",
         )
     )
 
@@ -68,7 +67,6 @@ internal object Configuration {
             "AZURE_APP_CLIENT_ID" to "abc",
 
             "GRUNNDATA_API_URL" to "http://host.docker.internal:8880",
-            "TESTSECRET" to "",
         )
     )
 
@@ -108,6 +106,5 @@ internal object Configuration {
         "APP_PROFILE" to config()[Key("application.profile", stringType)],
         "GRUNNDATA_API_URL" to config()[Key("GRUNNDATA_API_URL", stringType)],
         "OEBS_BRUKER_ID" to config()[Key("HM_OEBS_OPPRETT_SF_BRUKEROD", stringType)],
-        "TESTSECRET" to config()[Key("TESTSECRET", stringType)],
     )
 }

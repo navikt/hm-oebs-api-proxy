@@ -5,12 +5,10 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
-import no.nav.hjelpemidler.configuration.Configuration.dataSource
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
 private val logg = KotlinLogging.logger {}
-private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun brukerpassForFnr(fnr: String): Boolean? {
@@ -22,12 +20,9 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                 WHERE FNR = ?
             """.trimIndent()
 
-        logg.info("DEBUG: Making query:")
-
         return sessionOf(dataSource).use { it ->
             it.run(
                 queryOf(query, fnr).map { row ->
-                    logg.info("DEBUG: actual answer: ${row.string("BRUKER_PASS").trim()}")
                     row.string("BRUKER_PASS").trim() == "Y"
                 }.asSingle
             )
