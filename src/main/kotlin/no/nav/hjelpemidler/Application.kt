@@ -73,6 +73,7 @@ fun Application.module() {
         internal()
         hjelpemiddelsiden()
         saksbehandling()
+        test()
     }
 }
 
