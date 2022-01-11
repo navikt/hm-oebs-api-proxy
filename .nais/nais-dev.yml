@@ -38,6 +38,8 @@ spec:
         mountPath: /secrets/oebsq1/credentials
       - kvPath: oracle/data/dev/config/oebsq1
         mountPath: /secrets/oebsq1/config
+  envFrom:
+    - secret: hm-oebs-api-proxy-test
   ingresses:
     - https://hm-oebs-api-proxy.dev-fss-pub.nais.io
   azure:
