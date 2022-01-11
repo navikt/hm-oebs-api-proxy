@@ -14,11 +14,15 @@ private val brukerpassDao = BrukerpassDao()
 
 fun Route.test() {
     get("/test-brukerpass") {
-        call.respond(
+        val results = mutableListOf(
             BrukerpassResult(
-                hasBrukerpass = brukerpassDao.brukerpassForFnr("nnnnnnnnnnn"),
-            )
+                hasBrukerpass = brukerpassDao.brukerpassForFnr("15084300133"),
+            ),
+            BrukerpassResult(
+                hasBrukerpass = brukerpassDao.brukerpassForFnr("10127622634"),
+            ),
         )
+        call.respond(results)
     }
 }
 
