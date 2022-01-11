@@ -27,6 +27,7 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         return sessionOf(dataSource).use { it ->
             it.run(
                 queryOf(query, fnr).map { row ->
+                    logg.info("DEBUG: actual answer: ${row.string("BRUKER_PASS").trim()}")
                     row.string("BRUKER_PASS").trim() == "Y"
                 }.asSingle
             )
