@@ -14,7 +14,11 @@ private val brukerpassDao = BrukerpassDao()
 
 fun Route.test() {
     get("/test-brukerpass") {
-        call.respond(BrukerpassResult(hasBrukerpass = brukerpassDao.brukerpassForFnr("nnnnnnnnnnn")))
+        call.respond(
+            BrukerpassResult(
+                hasBrukerpass = brukerpassDao.brukerpassForFnr("nnnnnnnnnnn"),
+            )
+        )
     }
 }
 

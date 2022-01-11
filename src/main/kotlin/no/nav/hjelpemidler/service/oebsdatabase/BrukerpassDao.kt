@@ -21,12 +21,15 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                 WHERE FNR = ?
             """.trimIndent()
 
+        logg.info("DEBUG: Making query:")
+
         sessionOf(dataSource).use { it ->
             it.run(
                 queryOf(query, fnr).map { row ->
                     logg.info("DEBUG: Row start:")
                     val c = row.underlying.metaData.columnCount
                     for (i in 1..c) {
+                        logg.info("DEBUG: Column #$i")
                         val label = row.underlying.metaData.getColumnLabel(i)
                         val name = row.underlying.metaData.getColumnName(i)
                         val type = row.underlying.metaData.getColumnTypeName(i)
