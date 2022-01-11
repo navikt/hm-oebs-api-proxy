@@ -16,10 +16,10 @@ fun Route.test() {
     get("/test-brukerpass") {
         val results = mutableListOf(
             BrukerpassResult(
-                hasBrukerpass = brukerpassDao.brukerpassForFnr("15084300133"),
+                hasBrukerpass = brukerpassDao.brukerpassForFnr("15084300133") ?: false,
             ),
             BrukerpassResult(
-                hasBrukerpass = brukerpassDao.brukerpassForFnr("10127622634"),
+                hasBrukerpass = brukerpassDao.brukerpassForFnr("10127622634") ?: false,
             ),
         )
         call.respond(results)
