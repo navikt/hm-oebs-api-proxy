@@ -10,18 +10,14 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
-import no.nav.hjelpemidler.service.oebsdatabase.BrukerpassDao
 import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
 import no.nav.hjelpemidler.service.oebsdatabase.TittelForHmsnrDao
-import kotlin.system.measureTimeMillis
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 private val hjelpemiddeloversiktDao = HjelpemiddeloversiktDao()
 private val tittleForHmsnrDao = TittelForHmsnrDao()
-
-private val brukerpassDao = BrukerpassDao()
 
 fun Route.hjelpemiddelsiden() {
     // Authenticated database proxy requests
@@ -39,28 +35,6 @@ fun Route.hjelpemiddelsiden() {
             if (!"\\d{11}".toRegex().matches(fnr)) {
                 error("invalid fnr in 'pid', does not match regex")
             }
-
-            // TODO: START:
-            data class Result(
-                val fantBruker: Boolean,
-                val brukerpass: Boolean,
-            )
-            var res: Result? = null
-            val timeElapsed = measureTimeMillis {
-                if (Configuration.application["APP_PROFILE"]!! != "prod") {
-                    logg.info("Processing request for /brukerpass (on-behalf-of: $fnr)")
-                } else {
-                    logg.info("Processing request for /brukerpass")
-                }
-                // Extra sanity check of FNR
-                if (!"\\d{11}".toRegex().matches(fnr)) {
-                    error("invalid fnr in 'pid', does not match regex")
-                }
-                val bp = brukerpassDao.brukerpassForFnr(fnr)
-                res = Result(bp != null, bp ?: false)
-            }
-            logg.info("DEBUG TEST: brukerpass-resultat: $res (timeElapsed=${timeElapsed}ms)")
-            // TODO: END:
 
             call.respond(hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr))
         }
