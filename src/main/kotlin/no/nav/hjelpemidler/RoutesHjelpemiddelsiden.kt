@@ -57,7 +57,7 @@ fun Route.hjelpemiddelsiden() {
                     error("invalid fnr in 'pid', does not match regex")
                 }
                 val bp = brukerpassDao.brukerpassForFnr(fnr)
-                res = Result(bp == null, bp ?: false)
+                res = Result(bp != null, bp ?: false)
             }
             logg.info("DEBUG TEST: brukerpass-resultat: $res (timeElapsed=${timeElapsed}ms)")
             // TODO: END:
