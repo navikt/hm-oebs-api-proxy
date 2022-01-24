@@ -1,6 +1,8 @@
 package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.install
@@ -39,7 +41,7 @@ fun Application.module() {
     installAuthentication()
 
     install(ContentNegotiation) {
-        register(ContentType.Application.Json, JacksonConverter())
+        register(ContentType.Application.Json, JacksonConverter(jacksonObjectMapper().registerModule(JavaTimeModule())))
     }
 
     install(CallLogging) {
