@@ -1,6 +1,8 @@
 package no.nav.hjelpemidler
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.application.Application
@@ -41,7 +43,15 @@ fun Application.module() {
     installAuthentication()
 
     install(ContentNegotiation) {
-        register(ContentType.Application.Json, JacksonConverter(jacksonObjectMapper().registerModule(JavaTimeModule())))
+        register(
+            ContentType.Application.Json,
+            JacksonConverter(
+                jacksonObjectMapper()
+                    .registerModule(JavaTimeModule())
+                    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            )
+        )
     }
 
     install(CallLogging) {
