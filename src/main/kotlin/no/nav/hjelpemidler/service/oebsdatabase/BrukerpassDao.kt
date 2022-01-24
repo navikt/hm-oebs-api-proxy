@@ -27,10 +27,8 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                     Brukerpass(
                         brukerpass = true,
                         kontraktNummer = row.stringOrNull("KONTRAKT_NUMMER"),
-                        startDate = listOf(row.stringOrNull("START_DATE")).mapNotNull { LocalDate.parse(it) }
-                            .firstOrNull(),
-                        endDate = listOf(row.stringOrNull("END_DATE")).mapNotNull { LocalDate.parse(it) }
-                            .firstOrNull(),
+                        row.localDateOrNull("START_DATE"),
+                        row.localDateOrNull("END_DATE"),
                     )
                 }.asSingle
             )
