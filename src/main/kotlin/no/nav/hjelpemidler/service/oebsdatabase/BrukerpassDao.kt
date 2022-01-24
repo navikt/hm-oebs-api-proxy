@@ -6,16 +6,17 @@ import kotliquery.sessionOf
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import org.intellij.lang.annotations.Language
+import java.time.LocalDate
 import javax.sql.DataSource
 
 private val logg = KotlinLogging.logger {}
 
 class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSource) {
-    fun brukerpassForFnr(fnr: String): Boolean? {
+    fun brukerpassForFnr(fnr: String): Brukerpass {
         @Language("OracleSQL")
         var query =
             """
-                SELECT BRUKER_PASS
+                SELECT KONTRAKT_NUMMER, SJEKK_NAVN, START_DATE, END_DATE
                 FROM XXRTV_DIGIHOT_OEBS_BRUKERP_V
                 WHERE FNR = ?
             """.trimIndent()
@@ -23,12 +24,26 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         return sessionOf(dataSource).use { it ->
             it.run(
                 queryOf(query, fnr).map { row ->
-                    row.string("BRUKER_PASS").trim() == "Y"
+                    Brukerpass(
+                        brukerpass = true,
+                        kontraktNummer = row.stringOrNull("KONTRAKT_NUMMER"),
+                        startDate = listOf(row.stringOrNull("START_DATE")).mapNotNull { LocalDate.parse(it) }
+                            .firstOrNull(),
+                        endDate = listOf(row.stringOrNull("END_DATE")).mapNotNull { LocalDate.parse(it) }
+                            .firstOrNull(),
+                    )
                 }.asSingle
             )
-        }
+        } ?: Brukerpass(brukerpass = false)
     }
 }
+
+data class Brukerpass(
+    val brukerpass: Boolean,
+    val kontraktNummer: String? = null,
+    val startDate: LocalDate? = null,
+    val endDate: LocalDate? = null,
+)
 
 fun testHelper(row: Row) {
     logg.info("DEBUG: Row start:")
