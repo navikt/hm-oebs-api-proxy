@@ -40,23 +40,6 @@ fun Route.hjelpemiddelsiden() {
                 error("invalid fnr in 'pid', does not match regex")
             }
 
-            // TODO: START:
-            var res: Brukerpass? = null
-            val timeElapsed = measureTimeMillis {
-                if (Configuration.application["APP_PROFILE"]!! != "prod") {
-                    logg.info("Processing request for /brukerpass (on-behalf-of: $fnr)")
-                } else {
-                    logg.info("Processing request for /brukerpass")
-                }
-                // Extra sanity check of FNR
-                if (!"\\d{11}".toRegex().matches(fnr)) {
-                    error("invalid fnr in 'pid', does not match regex")
-                }
-                res = brukerpassDao.brukerpassForFnr(fnr)
-            }
-            logg.info("DEBUG TEST: brukerpass-resultat: $res (timeElapsed=${timeElapsed}ms)")
-            // TODO: END:
-
             call.respond(hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr))
         }
     }
