@@ -34,7 +34,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                         artikkelNr = row.string("ARTIKKELNUMMER"),
                         serieNr = row.stringOrNull("SERIE_NUMMER"),
                         datoUtsendelse = row.string("FØRSTE_UTSENDELSE"),
-                        ordrenummer = row.string("ORDRE_NUMMER"),
+                        ordrenummer = row.stringOrNull("ORDRE_NUMMER"),
                         artikkelStatus = row.string("ARTIKKELSTATUS")
                     )
                 }.asList

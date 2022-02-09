@@ -9,7 +9,7 @@ data class HjelpemiddelBruker(
     val artikkelNr: String,
     val serieNr: String?,
     val datoUtsendelse: String,
-    val ordrenummer: String,
+    val ordrenummer: String?,
     val artikkelStatus: String,
     var hmdbBeriket: Boolean = false,
     var hmdbProduktNavn: String? = null,
