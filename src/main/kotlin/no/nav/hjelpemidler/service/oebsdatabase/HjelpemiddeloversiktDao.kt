@@ -15,7 +15,8 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         @Language("OracleSQL")
         val query =
             """
-                SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, SERIE_NUMMER, FØRSTE_UTSENDELSE
+                SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, 
+                       SERIE_NUMMER, FØRSTE_UTSENDELSE, ORDRE_NUMMER, KATEGORI3_NUMMER, ARTIKKELSTATUS  
                 FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
                 WHERE FNR = ?
                 ORDER BY FØRSTE_UTSENDELSE DESC
@@ -27,11 +28,14 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                     HjelpemiddelBruker(
                         antall = row.string("ANTALL"),
                         antallEnhet = row.string("ENHET"),
+                        kategoriNummer = row.string("KATEGORI3_NUMMER"),
                         kategori = row.string("KATEGORI3_BESKRIVELSE"),
                         artikkelBeskrivelse = row.string("ARTIKKEL_BESKRIVELSE"),
                         artikkelNr = row.string("ARTIKKELNUMMER"),
                         serieNr = row.stringOrNull("SERIE_NUMMER"),
                         datoUtsendelse = row.string("FØRSTE_UTSENDELSE"),
+                        ordrenummer = row.string("ORDRE_NUMMER"),
+                        artikkelStatus = row.string("ARTIKKELSTATUS")
                     )
                 }.asList
             )
@@ -65,11 +69,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
             item.hmdbBeskrivelse = produkt.produktbeskrivelse
             item.hmdbKategori = produkt.isotittel
             item.hmdbBilde = produkt.blobUrlLite
-
-            if (produkt.produktId != null && produkt.artikkelId != null) {
-                item.hmdbURL =
-                    "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=${produkt.produktId}&art0=${produkt.artikkelId}&nart=1"
-            }
+            item.hmdbURL = produkt.artikkelUrl
         }
         return item
     }

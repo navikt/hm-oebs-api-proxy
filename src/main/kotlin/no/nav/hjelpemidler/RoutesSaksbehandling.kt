@@ -10,14 +10,15 @@ import io.ktor.routing.Route
 import io.ktor.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.models.Serviceforespørsel
+import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
 import no.nav.hjelpemidler.service.oebsdatabase.PersoninformasjonDao
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
 
 private val logg = KotlinLogging.logger {}
-private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 private val personinformasjonDao = PersoninformasjonDao()
 private val opprettServiceforespørselDao = ServiceforespørselDao()
+private val hjelpemiddeloversiktDao = HjelpemiddeloversiktDao()
 
 fun Route.saksbehandling() {
     // Authenticated database proxy requests
@@ -37,11 +38,23 @@ fun Route.saksbehandling() {
         post("/getLeveringsaddresse") {
             val fnr = call.receiveText()
             // Extra sanity check of FNR
-            if (!"\\d{11}".toRegex().matches(fnr)) {
-                error("invalid fnr in 'pid', does not match regex")
-            }
+            validateFnr(fnr)
             val personinformasjonListe = personinformasjonDao.hentPersoninformasjon(fnr)
             call.respond(personinformasjonListe)
         }
+
+        post("/getHjelpemiddelOversikt") {
+            val fnr = call.receiveText()
+            // Extra sanity check of FNR
+            validateFnr(fnr)
+            val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
+            call.respond(hjelpemiddeloversikt)
+        }
+    }
+}
+
+private fun validateFnr(fnr: String) {
+    if (!"\\d{11}".toRegex().matches(fnr)) {
+        error("invalid fnr in 'pid', does not match regex")
     }
 }
