@@ -42,6 +42,7 @@ fun main(args: Array<String>) = EngineMain.main(args)
 
 @ExperimentalTime
 fun Application.module() {
+    environment.monitor.subscribe(ApplicationStarted, ::onStarted)
     installAuthentication()
 
     install(ContentNegotiation) {
@@ -90,7 +91,6 @@ fun Application.module() {
         felles()
         test()
     }
-    events()
 }
 
 fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
@@ -100,10 +100,7 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
             .associate { claim -> claim.key to claim.value.`as`(JsonNode::class.java) }
     } ?: error("No JWT principal found in request")
 
-fun Application.events() {
 
-    environment.monitor.subscribe(ApplicationStarted, ::onStarted)
-}
 
 private fun onStarted(app: Application) {
     logg.info("Henter feilende SF´er")
