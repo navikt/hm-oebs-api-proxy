@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
+import io.ktor.application.ApplicationStarted
 import io.ktor.application.install
 import io.ktor.auth.authentication
 import io.ktor.auth.jwt.JWTPrincipal
@@ -30,6 +31,7 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import io.prometheus.client.CollectorRegistry
 import mu.KotlinLogging
+import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselFeilDao
 import org.slf4j.event.Level
 import kotlin.time.ExperimentalTime
 
@@ -40,6 +42,9 @@ fun main(args: Array<String>) = EngineMain.main(args)
 
 @ExperimentalTime
 fun Application.module() {
+    environment.monitor.subscribe(ApplicationStarted) {
+        loggFeilendeSf()
+    }
     installAuthentication()
 
     install(ContentNegotiation) {
@@ -96,3 +101,13 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
         principal.payload.claims.entries
             .associate { claim -> claim.key to claim.value.`as`(JsonNode::class.java) }
     } ?: error("No JWT principal found in request")
+
+
+private fun loggFeilendeSf() {
+    logg.info("Henter feilende SF´er")
+    val listeAvFeilendeSf = ServiceforespørselFeilDao().finnSfMedFeil()
+    logg.info("Antall feilende SF: ${listeAvFeilendeSf.size}")
+    listeAvFeilendeSf.map {
+        logg.info("Feilende SF: $it")
+    }
+}

@@ -10,11 +10,9 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
-import no.nav.hjelpemidler.service.oebsdatabase.Brukerpass
 import no.nav.hjelpemidler.service.oebsdatabase.BrukerpassDao
 import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
 import no.nav.hjelpemidler.service.oebsdatabase.TittelForHmsnrDao
-import kotlin.system.measureTimeMillis
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
