@@ -61,6 +61,9 @@ spec:
         - application: hm-oebs-sink
           namespace: teamdigihot
           cluster: dev-gcp
+        - application: hm-saksbehandling
+          namespace: teamdigihot
+          cluster: dev-gcp
     outbound:
       external:
         - host: hm-grunndata-api.dev.intern.nav.no
