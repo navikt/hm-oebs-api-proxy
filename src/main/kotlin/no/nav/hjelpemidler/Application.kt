@@ -42,7 +42,9 @@ fun main(args: Array<String>) = EngineMain.main(args)
 
 @ExperimentalTime
 fun Application.module() {
-    environment.monitor.subscribe(ApplicationStarted, ::onStarted)
+    environment.monitor.subscribe(ApplicationStarted) {
+        loggFeilendeSf()
+    }
     installAuthentication()
 
     install(ContentNegotiation) {
@@ -101,8 +103,7 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
     } ?: error("No JWT principal found in request")
 
 
-
-private fun onStarted(app: Application) {
+private fun loggFeilendeSf() {
     logg.info("Henter feilende SF´er")
     val listeAvFeilendeSf = ServiceforespørselFeilDao().finnSfMedFeil()
     logg.info(listeAvFeilendeSf.toString())
