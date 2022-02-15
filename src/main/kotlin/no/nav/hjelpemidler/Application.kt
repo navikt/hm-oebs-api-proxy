@@ -9,7 +9,6 @@ import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.ApplicationStarted
 import io.ktor.application.install
-import io.ktor.application.log
 import io.ktor.auth.authentication
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.features.CallLogging
@@ -107,7 +106,7 @@ fun Application.events() {
 }
 
 private fun onStarted(app: Application) {
-    app.log.info("Henter feilende SF´er")
+    logg.info("Henter feilende SF´er")
     val listeAvFeilendeSf = ServiceforespørselFeilDao().finnSfMedFeil()
-    listeAvFeilendeSf.toString()
+    logg.info(listeAvFeilendeSf.toString())
 }
