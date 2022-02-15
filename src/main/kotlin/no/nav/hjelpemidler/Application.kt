@@ -106,5 +106,8 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
 private fun loggFeilendeSf() {
     logg.info("Henter feilende SF´er")
     val listeAvFeilendeSf = ServiceforespørselFeilDao().finnSfMedFeil()
-    logg.info(listeAvFeilendeSf.toString())
+    logg.info("Antall feilende SF: ${listeAvFeilendeSf.size}")
+    listeAvFeilendeSf.map {
+        logg.info("Feilende SF: $it")
+    }
 }
