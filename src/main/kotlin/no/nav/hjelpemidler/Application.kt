@@ -91,6 +91,7 @@ fun Application.module() {
         felles()
         test()
     }
+    events()
 }
 
 fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
