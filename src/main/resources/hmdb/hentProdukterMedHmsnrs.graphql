@@ -9,5 +9,6 @@ query HentProdukterMedHmsnrs($hmsnrs: [String!]!) {
     isotittel
     blobUrlLite
     artikkelUrl
+    isokortnavn
   }
 }

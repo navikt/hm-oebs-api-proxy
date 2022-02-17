@@ -48,7 +48,6 @@ fun Route.saksbehandling() {
             // Extra sanity check of FNR
             validateFnr(fnr)
             val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
-            logg.info("Fant hjelpemidler for bruker ${hjelpemiddeloversikt.map { it.artikkelNr  + ':' +  it.artikkelBeskrivelse }.joinToString { "," }}" )
             call.respond(hjelpemiddeloversikt)
         }
     }

@@ -102,7 +102,6 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
             .associate { claim -> claim.key to claim.value.`as`(JsonNode::class.java) }
     } ?: error("No JWT principal found in request")
 
-
 private fun loggFeilendeSf() {
     logg.info("Henter feilende SF´er")
     val listeAvFeilendeSf = ServiceforespørselFeilDao().finnSfMedFeil()

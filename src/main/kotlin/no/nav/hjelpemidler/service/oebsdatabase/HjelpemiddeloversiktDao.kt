@@ -70,6 +70,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
             item.hmdbKategori = produkt.isotittel
             item.hmdbBilde = produkt.blobUrlLite
             item.hmdbURL = produkt.artikkelUrl
+            item.hmdbKategoriKortnavn = produkt.isokortnavn
         }
         return item
     }
