@@ -64,6 +64,9 @@ spec:
         - application: hm-saksbehandling
           namespace: teamdigihot
           cluster: dev-gcp
+        - application: hm-bestillingsordning-river
+          namespace: teamdigihot
+          cluster: dev-gcp
     outbound:
       external:
         - host: hm-grunndata-api.dev.intern.nav.no
