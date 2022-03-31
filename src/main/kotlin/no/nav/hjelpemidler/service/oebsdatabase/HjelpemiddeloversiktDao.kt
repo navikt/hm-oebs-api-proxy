@@ -6,15 +6,13 @@ import kotliquery.sessionOf
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.hentproduktermedhmsnrs.Produkt
 import no.nav.hjelpemidler.configuration.Configuration
-import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import org.intellij.lang.annotations.Language
 import org.slf4j.LoggerFactory
 import javax.sql.DataSource
 
 class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration.dataSource) {
-    fun hentHjelpemiddeloversikt(fnr: Fødselsnummer): List<HjelpemiddelBruker> {
-
+    fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
 
         /*
         * Team OEBS har endret navn på kolonnen "FØRSTE_UTSENDELSE". Det er kun gjort i Q1 og ikke prod enda.
@@ -31,11 +29,11 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                 FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
                 WHERE FNR = ?
                 ORDER BY FØRSTE_UTSENDELSE DESC
-            """.trimIndent()
+                """.trimIndent()
 
             val items = sessionOf(dataSource).use {
                 it.run(
-                    queryOf(query, fnr.value).map { row ->
+                    queryOf(query, fnr).map { row ->
                         HjelpemiddelBruker(
                             antall = row.string("ANTALL"),
                             antallEnhet = row.string("ENHET"),
@@ -63,11 +61,11 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                 FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
                 WHERE FNR = ?
                 ORDER BY UTLÅNS_DATO DESC
-            """.trimIndent()
+                """.trimIndent()
 
             val items = sessionOf(dataSource).use {
                 it.run(
-                    queryOf(query, fnr.value).map { row ->
+                    queryOf(query, fnr).map { row ->
                         HjelpemiddelBruker(
                             antall = row.string("ANTALL"),
                             antallEnhet = row.string("ENHET"),

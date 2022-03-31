@@ -62,7 +62,9 @@ fun Route.saksbehandling() {
         }
 
         post("/getHjelpemiddelOversikt") {
-            val fnr = Fødselsnummer(call.receiveText())
+            val fnr = call.receiveText()
+            // Extra sanity check of FNR
+            validateFnr(fnr)
             val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
             call.respond(hjelpemiddeloversikt)
         }
