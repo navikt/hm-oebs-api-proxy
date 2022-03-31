@@ -9,7 +9,10 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import mu.KotlinLogging
+import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.Serviceforespørsel
+import no.nav.hjelpemidler.service.oebsdatabase.Brukernummer
+import no.nav.hjelpemidler.service.oebsdatabase.BrukernummerDao
 import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
 import no.nav.hjelpemidler.service.oebsdatabase.PersoninformasjonDao
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
@@ -19,6 +22,7 @@ private val logg = KotlinLogging.logger {}
 private val personinformasjonDao = PersoninformasjonDao()
 private val opprettServiceforespørselDao = ServiceforespørselDao()
 private val hjelpemiddeloversiktDao = HjelpemiddeloversiktDao()
+private val brukernummerDao = BrukernummerDao()
 
 fun Route.saksbehandling() {
     // Authenticated database proxy requests
@@ -43,10 +47,22 @@ fun Route.saksbehandling() {
             call.respond(personinformasjonListe)
         }
 
+        post("/getBrukernummer") {
+            val fødselsnummer = Fødselsnummer(call.receiveText())
+            val hentBrukernummer: Brukernummer? = brukernummerDao.hentBrukernummer(fødselsnummer)
+
+            when (hentBrukernummer) {
+                null -> {
+                    call.respond(status = HttpStatusCode.NotFound, "Bruker ikke funnet i OEBS")
+                }
+                else -> {
+                    call.respond(hentBrukernummer)
+                }
+            }
+        }
+
         post("/getHjelpemiddelOversikt") {
-            val fnr = call.receiveText()
-            // Extra sanity check of FNR
-            validateFnr(fnr)
+            val fnr = Fødselsnummer(call.receiveText())
             val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
             call.respond(hjelpemiddeloversikt)
         }

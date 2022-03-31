@@ -6,13 +6,14 @@ import kotliquery.sessionOf
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.hentproduktermedhmsnrs.Produkt
 import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import org.intellij.lang.annotations.Language
 import org.slf4j.LoggerFactory
 import javax.sql.DataSource
 
 class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration.dataSource) {
-    fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
+    fun hentHjelpemiddeloversikt(fnr: Fødselsnummer): List<HjelpemiddelBruker> {
 
 
         /*
@@ -34,7 +35,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
 
             val items = sessionOf(dataSource).use {
                 it.run(
-                    queryOf(query, fnr).map { row ->
+                    queryOf(query, fnr.value).map { row ->
                         HjelpemiddelBruker(
                             antall = row.string("ANTALL"),
                             antallEnhet = row.string("ENHET"),
@@ -66,7 +67,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
 
             val items = sessionOf(dataSource).use {
                 it.run(
-                    queryOf(query, fnr).map { row ->
+                    queryOf(query, fnr.value).map { row ->
                         HjelpemiddelBruker(
                             antall = row.string("ANTALL"),
                             antallEnhet = row.string("ENHET"),
