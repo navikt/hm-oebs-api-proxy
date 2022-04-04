@@ -42,31 +42,31 @@ class LagerDao(private val dataSource: DataSource = Configuration.dataSource) {
                 queryOf(query, hmsnr).map { row ->
                     LagerStatus(
                         erPåLager = (
-                            row.int("fysisk") +
-                                row.int("bestillinger") +
-                                row.int("anmodning") +
-                                row.int("intanmodning")
+                            (row.intOrNull("fysisk") ?: 0) +
+                                (row.intOrNull("bestillinger") ?: 0) +
+                                (row.intOrNull("anmodning") ?: 0) +
+                                (row.intOrNull("intanmodning") ?: 0)
                             ) >= (
-                            + row.int("behovsmeldt") +
-                                row.int("reservert") +
-                                row.int("restordre")
+                            + (row.intOrNull("behovsmeldt") ?: 0) +
+                                (row.intOrNull("reservert") ?: 0) +
+                                (row.intOrNull("restordre") ?: 0)
                             ),
 
-                        organisasjons_id = row.int("organisasjons_id"),
-                        organisasjons_navn = row.string("organisasjons_navn"),
-                        artikkelnummer = row.string("artikkelnummer"),
-                        artikkelid = row.int("artikkelid"),
-                        fysisk = row.int("fysisk"),
-                        tilgjengeligatt = row.int("tilgjengeligatt"),
-                        tilgjengeligroo = row.int("tilgjengeligroo"),
-                        tilgjengelig = row.int("tilgjengelig"),
-                        behovsmeldt = row.int("behovsmeldt"),
-                        reservert = row.int("reservert"),
-                        restordre = row.int("restordre"),
-                        bestillinger = row.int("bestillinger"),
-                        anmodning = row.int("anmodning"),
-                        intanmodning = row.int("intanmodning"),
-                        forsyning = row.int("forsyning"),
+                        organisasjons_id = row.intOrNull("organisasjons_id") ?: -1,
+                        organisasjons_navn = row.stringOrNull("organisasjons_navn") ?: "<ukjent>",
+                        artikkelnummer = row.stringOrNull("artikkelnummer") ?: "<ukjent>",
+                        artikkelid = row.intOrNull("artikkelid") ?: -1,
+                        fysisk = row.intOrNull("fysisk") ?: 0,
+                        tilgjengeligatt = row.intOrNull("tilgjengeligatt") ?: 0,
+                        tilgjengeligroo = row.intOrNull("tilgjengeligroo") ?: 0,
+                        tilgjengelig = row.intOrNull("tilgjengelig") ?: 0,
+                        behovsmeldt = row.intOrNull("behovsmeldt") ?: 0,
+                        reservert = row.intOrNull("reservert") ?: 0,
+                        restordre = row.intOrNull("restordre") ?: 0,
+                        bestillinger = row.intOrNull("bestillinger") ?: 0,
+                        anmodning = row.intOrNull("anmodning") ?: 0,
+                        intanmodning = row.intOrNull("intanmodning") ?: 0,
+                        forsyning = row.intOrNull("forsyning") ?: 0,
                         sortiment = row.stringOrNull("sortiment")?.lowercase()?.trim() == "ja",
                         lagervare = row.stringOrNull("lagervare")?.lowercase()?.trim() == "ja",
                         minmax = row.stringOrNull("minmax")?.lowercase()?.trim() == "ja",
