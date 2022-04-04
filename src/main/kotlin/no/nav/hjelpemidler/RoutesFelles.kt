@@ -2,17 +2,20 @@ package no.nav.hjelpemidler
 
 import io.ktor.application.call
 import io.ktor.auth.authenticate
+import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.service.oebsdatabase.BrukerpassDao
+import no.nav.hjelpemidler.service.oebsdatabase.LagerDao
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 private val brukerpassDao = BrukerpassDao()
+private val lagerDao = LagerDao()
 
 fun Route.felles() {
     authenticate("tokenX", "aad") {
@@ -32,6 +35,28 @@ fun Route.felles() {
             }
 
             call.respond(brukerpassDao.brukerpassForFnr(fnr))
+        }
+
+        if (Configuration.application["APP_PROFILE"]!! == "dev") {
+            get("/lager/alle-sentraler/{hmsNr}") {
+                call.respond(lagerDao.lagerStatus(call.parameters["hmsNr"]!!))
+            }
+
+            get("/lager/sentral/{orgNavn}/{hmsNr}") {
+                data class NoResult(
+                    val error: String,
+                )
+
+                val result = lagerDao.lagerStatusSentral(call.parameters["orgNavn"]!!, call.parameters["hmsNr"]!!)
+                if (result != null) {
+                    call.respond(result)
+                } else {
+                    call.respond(
+                        HttpStatusCode.NotFound,
+                        NoResult("no results found for orgNavn=\"${call.parameters["orgNavn"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\"")
+                    )
+                }
+            }
         }
     }
 }
