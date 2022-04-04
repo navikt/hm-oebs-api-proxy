@@ -11,8 +11,16 @@ private val logg = KotlinLogging.logger {}
 
 class LagerDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun lagerStatus(hmsnr: String): List<LagerStatus> {
+        return lagerStatusInner(hmsnr)
+    }
+
+    fun lagerStatusSentral(orgNavn: String, hmsnr: String): LagerStatus? {
+        return lagerStatusInner(hmsnr, orgNavn).firstOrNull()
+    }
+
+    private fun lagerStatusInner(hmsnr: String, orgNavn: String? = null): List<LagerStatus> {
         @Language("OracleSQL")
-        var query =
+        var sql =
             """
                 SELECT
                     organisasjons_id,
@@ -37,9 +45,14 @@ class LagerDao(private val dataSource: DataSource = Configuration.dataSource) {
                 WHERE artikkelnummer = ?
             """.trimIndent()
 
+        var query = queryOf(sql, hmsnr)
+        if (orgNavn != null) {
+            query = queryOf("$sql AND organisasjons_navn = ?", hmsnr, orgNavn)
+        }
+
         return sessionOf(dataSource).use { it ->
             it.run(
-                queryOf(query, hmsnr).map { row ->
+                query.map { row ->
                     LagerStatus(
                         erPåLager = (
                             (row.intOrNull("fysisk") ?: 0) +

@@ -8,11 +8,13 @@ import io.ktor.routing.get
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.service.oebsdatabase.BrukerpassDao
+import no.nav.hjelpemidler.service.oebsdatabase.LagerDao
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 private val brukerpassDao = BrukerpassDao()
+private val lagerDao = LagerDao()
 
 fun Route.felles() {
     authenticate("tokenX", "aad") {
@@ -33,5 +35,16 @@ fun Route.felles() {
 
             call.respond(brukerpassDao.brukerpassForFnr(fnr))
         }
+    }
+
+    get("/lager/alle-sentraler/{hmsNr}") {
+        call.respond(lagerDao.lagerStatus(call.parameters["hmsNr"]!!))
+    }
+
+    get("/lager/sentral/{orgNavn}/{hmsNr}") {
+        data class NoResult(
+            val error: String,
+        )
+        call.respond(lagerDao.lagerStatusSentral(call.parameters["orgNavn"]!!, call.parameters["hmsNr"]!!) ?: NoResult("no results found"))
     }
 }
