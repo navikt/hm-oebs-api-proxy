@@ -2,6 +2,7 @@ package no.nav.hjelpemidler
 
 import io.ktor.application.call
 import io.ktor.auth.authenticate
+import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
@@ -45,6 +46,11 @@ fun Route.felles() {
         data class NoResult(
             val error: String,
         )
-        call.respond(lagerDao.lagerStatusSentral(call.parameters["orgNavn"]!!, call.parameters["hmsNr"]!!) ?: NoResult("no results found"))
+        val result = lagerDao.lagerStatusSentral(call.parameters["orgNavn"]!!, call.parameters["hmsNr"]!!)
+        if (result != null) {
+            call.respond(result)
+        } else {
+            call.respond(HttpStatusCode.NotFound, NoResult("no results found for orgNavn=\"${call.parameters["orgNavn"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\""))
+        }
     }
 }
