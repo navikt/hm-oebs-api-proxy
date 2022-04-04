@@ -34,9 +34,7 @@ class LagerDao(private val dataSource: DataSource = Configuration.dataSource) {
                     lagervare,
                     minmax
                 FROM XXRTV_DIGIHOT_UTVID_ART_SOK_V
-                WHERE
-                    artikkelnummer = ?
-                ;
+                WHERE artikkelnummer = ?
             """.trimIndent()
 
         return sessionOf(dataSource).use { it ->
