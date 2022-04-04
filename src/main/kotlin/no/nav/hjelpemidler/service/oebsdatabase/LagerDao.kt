@@ -67,9 +67,9 @@ class LagerDao(private val dataSource: DataSource = Configuration.dataSource) {
                         anmodning = row.int("anmodning"),
                         intanmodning = row.int("intanmodning"),
                         forsyning = row.int("forsyning"),
-                        sortiment = row.string("sortiment").lowercase().trim() == "ja",
-                        lagervare = row.string("lagervare").lowercase().trim() == "ja",
-                        minmax = row.string("minmax").lowercase().trim() == "ja",
+                        sortiment = row.stringOrNull("sortiment")?.lowercase()?.trim() == "ja",
+                        lagervare = row.stringOrNull("lagervare")?.lowercase()?.trim() == "ja",
+                        minmax = row.stringOrNull("minmax")?.lowercase()?.trim() == "ja",
                     )
                 }.asList
             )
