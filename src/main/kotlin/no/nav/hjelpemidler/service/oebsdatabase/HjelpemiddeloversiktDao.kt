@@ -18,7 +18,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         * Team OEBS har endret navn på kolonnen "FØRSTE_UTSENDELSE". Det er kun gjort i Q1 og ikke prod enda.
         * Når det er gjort i prod, kan denne ifen fjernes
         * */
-        if (System.getenv().getValue("NAIS_CLUSTER_NAME") == "prod-gcp") {
+        if (System.getenv().getValue("NAIS_CLUSTER_NAME") == "prod-fss") {
             log.info("Fallbacker til å spørre på FØRSTE_UTSENDELSE i prod")
 
             @Language("OracleSQL")
