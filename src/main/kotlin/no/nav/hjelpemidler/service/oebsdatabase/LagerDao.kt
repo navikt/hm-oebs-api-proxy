@@ -40,7 +40,6 @@ class LagerDao(private val dataSource: DataSource = Configuration.dataSource) {
         return sessionOf(dataSource).use { it ->
             it.run(
                 queryOf(query, hmsnr).map { row ->
-                    testHelper(row)
                     LagerStatus(
                         erPåLager = (
                             row.int("fysisk") +
@@ -68,9 +67,9 @@ class LagerDao(private val dataSource: DataSource = Configuration.dataSource) {
                         anmodning = row.int("anmodning"),
                         intanmodning = row.int("intanmodning"),
                         forsyning = row.int("forsyning"),
-                        sortiment = row.boolean("sortiment"),
-                        lagervare = row.boolean("lagervare"),
-                        minmax = row.boolean("minmax"),
+                        sortiment = row.string("sortiment").lowercase().trim() == "ja",
+                        lagervare = row.string("lagervare").lowercase().trim() == "ja",
+                        minmax = row.string("minmax").lowercase().trim() == "ja",
                     )
                 }.asList
             )
