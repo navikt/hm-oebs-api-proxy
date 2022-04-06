@@ -36,26 +36,25 @@ fun Route.felles() {
 
             call.respond(brukerpassDao.brukerpassForFnr(fnr))
         }
+    }
+    if (Configuration.application["APP_PROFILE"]!! == "dev") {
+        get("/lager/alle-sentraler/{hmsNr}") {
+            call.respond(lagerDao.lagerStatus(call.parameters["hmsNr"]!!))
+        }
 
-        if (Configuration.application["APP_PROFILE"]!! == "dev") {
-            get("/lager/alle-sentraler/{hmsNr}") {
-                call.respond(lagerDao.lagerStatus(call.parameters["hmsNr"]!!))
-            }
+        get("/lager/sentral/{orgNavn}/{hmsNr}") {
+            data class NoResult(
+                val error: String,
+            )
 
-            get("/lager/sentral/{orgNavn}/{hmsNr}") {
-                data class NoResult(
-                    val error: String,
+            val result = lagerDao.lagerStatusSentral(call.parameters["orgNavn"]!!, call.parameters["hmsNr"]!!)
+            if (result != null) {
+                call.respond(result)
+            } else {
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    NoResult("no results found for orgNavn=\"${call.parameters["orgNavn"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\"")
                 )
-
-                val result = lagerDao.lagerStatusSentral(call.parameters["orgNavn"]!!, call.parameters["hmsNr"]!!)
-                if (result != null) {
-                    call.respond(result)
-                } else {
-                    call.respond(
-                        HttpStatusCode.NotFound,
-                        NoResult("no results found for orgNavn=\"${call.parameters["orgNavn"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\"")
-                    )
-                }
             }
         }
     }
