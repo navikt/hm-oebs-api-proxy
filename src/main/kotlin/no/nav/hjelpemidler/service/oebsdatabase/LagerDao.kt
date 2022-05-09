@@ -16,7 +16,7 @@ class LagerDao(
     }
 
     fun lagerStatusSentral(kommunenummer: String, hmsnr: String): LagerStatus? {
-        val orgNavn = kommuneOppslag.hentOrgNavn(kommunenummer)
+        val orgNavn = kommuneOppslag.hentOrgNavn(kommunenummer) ?: return null
         return lagerStatusInner(hmsnr, orgNavn).firstOrNull()
     }
 
