@@ -26,7 +26,7 @@ class KommuneOppslag {
         logger.info("read ${kommuneLagerTabell.size} lagre")
     }
 
-    fun hentLagerKode(kommunenummer: String): String? {
+    fun hentOrgNavn(kommunenummer: String): String? {
         val lagerKode = kommuneLagerTabell[kommunenummer] ?: ""
         val orgNavn = lagerMap[lagerKode]
         return orgNavn

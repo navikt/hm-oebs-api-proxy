@@ -12,13 +12,13 @@ internal class KommuneOppslagTest {
     fun `skal kunne slå opp lager fra kommunenummr`() {
         val kommunenummer = "1134"
         val lagerRogaland = "*11 Rogaland"
-        val ret = kommuneOppslag.hentLagerKode(kommunenummer)
+        val ret = kommuneOppslag.hentOrgNavn(kommunenummer)
         assertEquals(ret, lagerRogaland)
     }
 
     @Test
     fun `ugyldig kommunenummer skal ikke throwe exception`() {
         val kommunenummer = "0000"
-        assertDoesNotThrow { kommuneOppslag.hentLagerKode(kommunenummer) }
+        assertDoesNotThrow { kommuneOppslag.hentOrgNavn(kommunenummer) }
     }
 }
