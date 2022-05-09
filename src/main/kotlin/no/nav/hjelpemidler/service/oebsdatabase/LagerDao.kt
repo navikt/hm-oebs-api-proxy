@@ -62,7 +62,7 @@ class LagerDao(
                                 (row.intOrNull("anmodning") ?: 0) +
                                 (row.intOrNull("intanmodning") ?: 0)
                             ) > (
-                            +(row.intOrNull("behovsmeldt") ?: 0) +
+                            (row.intOrNull("behovsmeldt") ?: 0) +
                                 (row.intOrNull("reservert") ?: 0) +
                                 (row.intOrNull("restordre") ?: 0)
                             ),
