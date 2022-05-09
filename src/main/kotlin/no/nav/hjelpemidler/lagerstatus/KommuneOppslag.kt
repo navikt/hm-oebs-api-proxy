@@ -23,14 +23,13 @@ class KommuneOppslag {
                     throw IOException("There was an error parsing data from file for kommunenummer '$kommunenummer' and lagernummer `$lager`")
                 }
             }
-        logger.info("read ${kommuneLagerTabell.size} lagre")
+        logger.info("read ${kommuneLagerTabell.size} lagre fra regionstabell.")
     }
 
     fun hentOrgNavn(kommunenummer: String): String? {
         val lagerKode = kommuneLagerTabell[kommunenummer]
-        logger.info("Fant lagerkode $lagerKode fra kommunenummer $kommunenummer")
         val orgNavn = lagerMap[lagerKode]
-        logger.info("Fant orgNavn $orgNavn fra lagerkode $lagerKode (kommunenummer=$kommunenummer)")
+        logger.info("Fant orgNavn $orgNavn fra lagerkode $lagerKode. Kommunenummer = $kommunenummer")
         return orgNavn
     }
 }
