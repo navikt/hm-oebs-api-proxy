@@ -27,8 +27,10 @@ class KommuneOppslag {
     }
 
     fun hentOrgNavn(kommunenummer: String): String? {
-        val lagerKode = kommuneLagerTabell[kommunenummer] ?: ""
+        val lagerKode = kommuneLagerTabell[kommunenummer]
+        logger.info("Fant lagerkode $lagerKode fra kommunenummer $kommunenummer")
         val orgNavn = lagerMap[lagerKode]
+        logger.info("Fant orgNavn $orgNavn fra lagerkode $lagerKode (kommunenummer=$kommunenummer)")
         return orgNavn
     }
 }
