@@ -54,7 +54,7 @@ jobs:
           RESOURCE: .nais/nais-dev.yml
           VAR: image=${{ env.docker_image }}
       - name: post-deploy
-        #if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         uses: navikt/digihot-deploy/actions/post-deploy@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
