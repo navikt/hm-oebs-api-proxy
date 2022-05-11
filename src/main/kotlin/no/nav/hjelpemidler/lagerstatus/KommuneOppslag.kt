@@ -23,7 +23,7 @@ class KommuneOppslag {
                     throw IOException("There was an error parsing data from file for kommunenummer '$kommunenummer' and lagernummer `$lager`")
                 }
             }
-        logger.info("read ${kommuneLagerTabell.size} lagre fra regionstabell.")
+        logger.info("Leste ${kommuneLagerTabell.size} lagre fra regionstabell.")
     }
 
     fun hentOrgNavn(kommunenummer: String): String? {
