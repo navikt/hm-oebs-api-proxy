@@ -41,7 +41,7 @@ class LagerDao(private val dataSource: DataSource = Configuration.dataSource) {
                     sortiment,
                     lagervare,
                     minmax
-                FROM XXRTV_DIGIHOT_UTVID_ART_SOK_V
+                FROM XXRTV_DIGIHOT_UTVID_ART_V
                 WHERE artikkelnummer = ?
             """.trimIndent()
 
