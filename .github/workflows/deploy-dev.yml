@@ -8,6 +8,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
+      - lagerstatusFraKommunenummer
 env:
   docker_image: docker.pkg.github.com/${{ github.repository }}/hm-oebs-api-proxy:${{ github.sha }}
 jobs:
