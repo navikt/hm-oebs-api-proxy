@@ -39,25 +39,23 @@ fun Route.felles() {
             call.respond(brukerpassDao.brukerpassForFnr(fnr))
         }
     }
-    if (Configuration.application["APP_PROFILE"]!! == "dev") {
-        get("/lager/alle-sentraler/{hmsNr}") {
-            call.respond(lagerDao.lagerStatus(call.parameters["hmsNr"]!!))
-        }
+    get("/lager/alle-sentraler/{hmsNr}") {
+        call.respond(lagerDao.lagerStatus(call.parameters["hmsNr"]!!))
+    }
 
-        get("/lager/sentral/{kommunenummer}/{hmsNr}") {
-            data class NoResult(
-                val error: String,
+    get("/lager/sentral/{kommunenummer}/{hmsNr}") {
+        data class NoResult(
+            val error: String,
+        )
+
+        val result = lagerDao.lagerStatusSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)
+        if (result != null) {
+            call.respond(result)
+        } else {
+            call.respond(
+                HttpStatusCode.NotFound,
+                NoResult("no results found for kommunenummer=\"${call.parameters["kommunenummer"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\"")
             )
-
-            val result = lagerDao.lagerStatusSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)
-            if (result != null) {
-                call.respond(result)
-            } else {
-                call.respond(
-                    HttpStatusCode.NotFound,
-                    NoResult("no results found for kommunenummer=\"${call.parameters["kommunenummer"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\"")
-                )
-            }
         }
     }
 }
