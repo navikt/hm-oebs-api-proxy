@@ -28,7 +28,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_P"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_P"),
             "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81760"),
-
+            "OEBS_API_URL" to "http://dummy",
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.nav.no",
         )
     )
@@ -38,6 +38,7 @@ internal object Configuration {
             "application.profile" to "dev",
             "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81400"),
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.dev.intern.nav.no",
+            "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/",
 
 //            "HM_OEBS_API_PROXY_DB_NAME" to "oebst1",
 //            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_T1"),
@@ -67,6 +68,7 @@ internal object Configuration {
             "AZURE_APP_CLIENT_ID" to "abc",
 
             "GRUNNDATA_API_URL" to "http://host.docker.internal:8880",
+            "OEBS_API_URL" to "abc",
         )
     )
 
@@ -105,6 +107,10 @@ internal object Configuration {
     val application: Map<String, String> = mapOf(
         "APP_PROFILE" to config()[Key("application.profile", stringType)],
         "GRUNNDATA_API_URL" to config()[Key("GRUNNDATA_API_URL", stringType)],
-        "OEBS_BRUKER_ID" to config()[Key("HM_OEBS_OPPRETT_SF_BRUKEROD", stringType)],
+        "OEBS_BRUKER_ID" to config()[Key("HM_OEBS_OPPRETT_SF_BRUKEROD", stringType)]
+    )
+
+    val oebsApi: Map<String, String> = mapOf(
+        "OEBS_API_URL" to config()[Key("OEBS_API_URL", stringType)]
     )
 }

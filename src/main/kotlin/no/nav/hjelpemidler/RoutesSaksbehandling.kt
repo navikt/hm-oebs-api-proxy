@@ -9,6 +9,8 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import mu.KotlinLogging
+import no.nav.hjelpemidler.client.oebs.OebsApiClient
+import no.nav.hjelpemidler.models.BestillingsOrdreRequest
 import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.service.oebsdatabase.Brukernummer
@@ -23,10 +25,22 @@ private val personinformasjonDao = PersoninformasjonDao()
 private val opprettServiceforespørselDao = ServiceforespørselDao()
 private val hjelpemiddeloversiktDao = HjelpemiddeloversiktDao()
 private val brukernummerDao = BrukernummerDao()
+private val oebsApiClient = OebsApiClient()
 
 fun Route.saksbehandling() {
     // Authenticated database proxy requests
     authenticate("aad") {
+        post("/opprettOrdre") {
+            try {
+                val bestilling = call.receive<BestillingsOrdreRequest>()
+                val bestillingsResponse = oebsApiClient.opprettOrdre(bestilling)
+
+                call.respond(HttpStatusCode.Created, bestillingsResponse)
+            } catch (e: Exception) {
+                logg.error { "Noe gikk feil med opprettelse av Ordre" }
+                call.respond(HttpStatusCode.InternalServerError, e)
+            }
+        }
         post("/opprettSF") {
             try {
                 val sf = call.receive<Serviceforespørsel>()
