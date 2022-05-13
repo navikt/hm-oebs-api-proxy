@@ -115,6 +115,7 @@ internal object Configuration {
     )
 
     val oebsApi: Map<String, String> = mapOf(
-        "OEBS_API_URL" to config()[Key("OEBS_API_URL", stringType)]
+        "OEBS_API_URL" to config()[Key("OEBS_API_URL", stringType)],
+        "OEBS_API_TOKEN" to config()[Key("OEBS_API_TOKEN", stringType)]
     )
 }
