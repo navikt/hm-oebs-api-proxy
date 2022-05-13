@@ -2,19 +2,21 @@ package no.nav.hjelpemidler.service.oebsdatabase
 
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.lagerstatus.KommuneOppslag
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
-private val logg = KotlinLogging.logger {}
-
-class LagerDao(private val dataSource: DataSource = Configuration.dataSource) {
+class LagerDao(
+    private val kommuneOppslag: KommuneOppslag,
+    private val dataSource: DataSource = Configuration.dataSource
+) {
     fun lagerStatus(hmsnr: String): List<LagerStatus> {
         return lagerStatusInner(hmsnr)
     }
 
-    fun lagerStatusSentral(orgNavn: String, hmsnr: String): LagerStatus? {
+    fun lagerStatusSentral(kommunenummer: String, hmsnr: String): LagerStatus? {
+        val orgNavn = kommuneOppslag.hentOrgNavn(kommunenummer) ?: return null
         return lagerStatusInner(hmsnr, orgNavn).firstOrNull()
     }
 
@@ -41,7 +43,7 @@ class LagerDao(private val dataSource: DataSource = Configuration.dataSource) {
                     sortiment,
                     lagervare,
                     minmax
-                FROM XXRTV_DIGIHOT_UTVID_ART_SOK_V
+                FROM XXRTV_DIGIHOT_UTVID_ART_V
                 WHERE artikkelnummer = ?
             """.trimIndent()
 

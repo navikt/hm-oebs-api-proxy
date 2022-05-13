@@ -43,7 +43,7 @@ fun main(args: Array<String>) = EngineMain.main(args)
 @ExperimentalTime
 fun Application.module() {
     environment.monitor.subscribe(ApplicationStarted) {
-        loggFeilendeSf()
+       //loggFeilendeSf()
     }
     installAuthentication()
 
