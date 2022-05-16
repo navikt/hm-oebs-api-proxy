@@ -1,15 +1,16 @@
 package no.nav.hjelpemidler.client.oebs
 
 import io.ktor.client.HttpClient
-import io.ktor.client.call.receive
+import io.ktor.client.call.body
 import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.jackson.jackson
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.models.Artikkel
 import no.nav.hjelpemidler.models.BestillingsOrdreRequest
@@ -17,11 +18,11 @@ import no.nav.hjelpemidler.models.OrdeType
 import no.nav.hjelpemidler.models.Ordre
 import org.slf4j.LoggerFactory
 
-class OebsApiClient() {
+class OebsApiClient {
     private val log = LoggerFactory.getLogger("OebsApiClient")
     private val client = HttpClient(Apache) {
-        install(JsonFeature) {
-            serializer = JacksonSerializer()
+        install(ContentNegotiation) {
+            jackson()
         }
     }
 
@@ -39,10 +40,14 @@ class OebsApiClient() {
         )
 
         val response = httpPostRequest(bestilling)
-        val responseBody = response.receive<Map<String, Map<String, String>>>()
+        val responseBody = response.body<Map<String, Map<String, String>>>()
 
         if (response.status != HttpStatusCode.OK) {
-            throw RuntimeException("Error when calling OEBS API. Got Http response code ${response.status}: ${responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")}")
+            throw RuntimeException(
+                "Error when calling OEBS API. Got Http response code ${response.status}: ${
+                    responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")
+                }"
+            )
         } else return "Ordreopprettelse sendt til OEBS: ${responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")}"
     }
 
@@ -54,7 +59,7 @@ class OebsApiClient() {
                 append(HttpHeaders.Accept, "application/json")
                 append(HttpHeaders.Authorization, "Bearer $apiToken")
             }
-            body = bestilling
+            setBody(bestilling)
         }
     }
 }

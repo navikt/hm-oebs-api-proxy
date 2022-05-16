@@ -6,16 +6,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.hjelpemidler"
 version = "1.0-SNAPSHOT"
 
-val logging_version: String by project
-val logback_version: String by project
-val konfig_version: String by project
-val klaxon_version: String by project
-val ojdbc_version: String by project
-val unleash_version: String by project
-val prometheus_version: String by project
-val jackson_version: String by project
-val junit_version: String by project
-
 plugins {
     application
     kotlin("jvm") version "1.6.21"
@@ -52,37 +42,43 @@ dependencies {
     }
 
     // Jackson
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3")
+    val jacksonVersion = "2.13.3"
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
 
     // GraphQL
-    implementation("com.expediagroup:graphql-kotlin-ktor-client:5.4.1") {
+    val graphQLVersion = "5.4.1"
+    implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphQLVersion") {
         exclude("com.expediagroup", "graphql-kotlin-client-serialization") // prefer jackson
         exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
         exclude("io.ktor", "ktor-client-cio") // prefer ktor-client-apache
     }
-    implementation("com.expediagroup:graphql-kotlin-client-jackson:5.4.1")
+    implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphQLVersion")
 
     // Database
     implementation("com.github.seratch:kotliquery:1.7.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("com.oracle.database.jdbc:ojdbc11:21.5.0.0")
+    runtimeOnly("com.oracle.database.jdbc:ojdbc11:21.5.0.0")
 
     // Ktor
-    implementation("io.ktor:ktor-jackson:1.6.4")
-    implementation("io.ktor:ktor-auth:1.6.4")
-    implementation("io.ktor:ktor-auth-jwt:1.6.4")
-    implementation("io.ktor:ktor-metrics-micrometer:1.6.4")
+    val ktorVersion = "2.0.1"
+    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
     // Ktor Server
-    implementation("io.ktor:ktor-server-core:1.6.4")
-    implementation("io.ktor:ktor-server-cio:1.6.4")
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-cio:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
+    implementation("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
     // Ktor Client
-    implementation("io.ktor:ktor-client-core:1.6.4")
-    implementation("io.ktor:ktor-client-apache:1.6.4")
-    implementation("io.ktor:ktor-client-jackson:1.6.4")
-    implementation("io.ktor:ktor-client-auth:1.6.4")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-client-auth:$ktorVersion")
 
     // Testing
     testImplementation(kotlin("test"))

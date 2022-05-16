@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler
 
-import io.ktor.routing.Route
+import io.ktor.server.routing.Route
 import mu.KotlinLogging
 
 private val logg = KotlinLogging.logger {}
