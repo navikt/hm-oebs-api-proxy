@@ -18,7 +18,7 @@ import io.ktor.jackson.JacksonConverter
 import io.ktor.metrics.micrometer.MicrometerMetrics
 import io.ktor.request.path
 import io.ktor.routing.routing
-import io.ktor.server.netty.EngineMain
+import io.ktor.server.cio.EngineMain
 import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
@@ -43,7 +43,7 @@ fun main(args: Array<String>) = EngineMain.main(args)
 @ExperimentalTime
 fun Application.module() {
     environment.monitor.subscribe(ApplicationStarted) {
-       //loggFeilendeSf()
+        // loggFeilendeSf()
     }
     installAuthentication()
 
