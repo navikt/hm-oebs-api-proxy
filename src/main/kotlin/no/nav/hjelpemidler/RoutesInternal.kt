@@ -23,11 +23,8 @@ fun Route.internal() {
 
     get("/isready") {
         // Let's check if the datasource is still valid and working
-        var dbConnectionValid = false
-        Configuration.dataSource.getConnection().use { connection ->
-            if (connection.isValid(20)) {
-                dbConnectionValid = true
-            }
+        val dbConnectionValid = Configuration.dataSource.connection.use {
+            it.isValid(20)
         }
         if (!dbConnectionValid) {
             Prometheus.oebsDbAvailable.set(0.0)
@@ -39,7 +36,6 @@ fun Route.internal() {
 
     get("/metrics") {
         val names = call.request.queryParameters.getAll("name[]")?.toSet() ?: emptySet()
-
         call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
             TextFormat.write004(this, CollectorRegistry.defaultRegistry.filteredMetricFamilySamples(names))
         }
