@@ -32,18 +32,18 @@ class OebsApiClient {
     suspend fun opprettOrdre(request: BestillingsOrdreRequest): String {
 
         val bestilling = Ordre(
-            fodselsnummer = request.fodselsnummer.value,
+            fodselsnummer = request.fodselsnummer,
             formidlernavn = request.formidlernavn,
             ordretype = OrdeType.BESTILLING,
             saksnummer = request.saksnummer,
             artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) }
         )
 
-        log.info("Kaller oebs api ${bestilling}")
+        log.info("Kaller oebs api $bestilling")
         val response = httpPostRequest(bestilling)
         val responseBody = response.body<Map<String, Map<String, String>>>()
 
-        log.info("Fikk svar fra oebs ${responseBody}")
+        log.info("Fikk svar fra oebs $responseBody")
 
         if (response.status != HttpStatusCode.OK) {
             throw RuntimeException(
