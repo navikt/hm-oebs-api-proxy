@@ -9,6 +9,7 @@ import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -44,17 +45,16 @@ class OebsApiClient(engine: HttpClientEngine) {
 
         log.info("Kaller oebs api $bestilling")
         val response = httpPostRequest(bestilling)
-        val responseBody = response.body<Map<String, Map<String, String>>>()
+        if (response.status == HttpStatusCode.OK) {
+            val responseBody = response.body<Map<String, Map<String, String>>>()
+            log.info("Fikk svar fra oebs: $responseBody")
+            return "Ordreopprettelse sendt til OEBS: ${responseBody["OutputParameters"]?.get("P_RETUR_MELDING")}"
+        }
 
-        log.info("Fikk svar fra oebs $responseBody")
-
-        if (response.status != HttpStatusCode.OK) {
-            throw RuntimeException(
-                "Error when calling OEBS API. Got Http response code ${response.status}: ${
-                responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")
-                }"
-            )
-        } else return "Ordreopprettelse sendt til OEBS: ${responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")}"
+        val responseBody = response.bodyAsText()
+        throw RuntimeException(
+            "Error when calling OEBS API. Got Http response code ${response.status}: $responseBody"
+        )
     }
 
     private suspend fun httpPostRequest(
