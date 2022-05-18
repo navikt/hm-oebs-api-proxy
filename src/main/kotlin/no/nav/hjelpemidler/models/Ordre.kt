@@ -6,14 +6,14 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 data class Ordre(
     val fodselsnummer: String,
     val formidlernavn: String,
-    val ordretype: OrdeType = OrdeType.BESTILLING,
+    val ordretype: OrdreType = OrdreType.BESTILLING,
     val saksnummer: String,
-    val artikler: List<Artikkel>
+    val artikler: List<Artikkel>,
 )
 
 data class Artikkel(val hmsnr: String, val antall: String)
 
-enum class OrdeType {
+enum class OrdreType {
     BESTILLING
 }
 
@@ -21,7 +21,7 @@ data class OebsJsonFormat(
     @JsonProperty("P_JSON_MELDING")
     val jsonMelding: String,
     @JsonProperty("P_RETUR_MELDING")
-    val returMelding: String = ""
+    val returMelding: String = "",
 )
 
 fun Ordre.tilOebsJsonFormat(): OebsJsonFormat {

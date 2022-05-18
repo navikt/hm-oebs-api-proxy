@@ -14,8 +14,8 @@ import io.ktor.serialization.jackson.jackson
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.models.Artikkel
 import no.nav.hjelpemidler.models.BestillingsOrdreRequest
-import no.nav.hjelpemidler.models.OrdeType
 import no.nav.hjelpemidler.models.Ordre
+import no.nav.hjelpemidler.models.OrdreType
 import org.slf4j.LoggerFactory
 
 class OebsApiClient {
@@ -34,7 +34,7 @@ class OebsApiClient {
         val bestilling = Ordre(
             fodselsnummer = request.fodselsnummer,
             formidlernavn = request.formidlernavn,
-            ordretype = OrdeType.BESTILLING,
+            ordretype = OrdreType.BESTILLING,
             saksnummer = request.saksnummer,
             artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) }
         )
@@ -48,7 +48,7 @@ class OebsApiClient {
         if (response.status != HttpStatusCode.OK) {
             throw RuntimeException(
                 "Error when calling OEBS API. Got Http response code ${response.status}: ${
-                responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")
+                    responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")
                 }"
             )
         } else return "Ordreopprettelse sendt til OEBS: ${responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")}"
