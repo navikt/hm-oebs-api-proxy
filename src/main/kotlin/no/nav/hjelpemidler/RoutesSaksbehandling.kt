@@ -37,7 +37,7 @@ fun Route.saksbehandling() {
 
                 call.respond(HttpStatusCode.Created, bestillingsResponse)
             } catch (e: Exception) {
-                logg.error { "Noe gikk feil med opprettelse av Ordre" }
+                logg.error("Noe gikk feil med opprettelse av Ordre", e)
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }

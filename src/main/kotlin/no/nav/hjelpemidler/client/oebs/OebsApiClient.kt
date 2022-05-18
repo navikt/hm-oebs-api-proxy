@@ -39,8 +39,11 @@ class OebsApiClient {
             artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) }
         )
 
+        log.info("Kaller oebs api ${bestilling}")
         val response = httpPostRequest(bestilling)
         val responseBody = response.body<Map<String, Map<String, String>>>()
+
+        log.info("Fikk svar fra oebs ${responseBody}")
 
         if (response.status != HttpStatusCode.OK) {
             throw RuntimeException(
