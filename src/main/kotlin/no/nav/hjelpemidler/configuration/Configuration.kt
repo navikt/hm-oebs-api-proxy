@@ -9,27 +9,17 @@ import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
 
 internal object Configuration {
-
-    private fun config() = when (System.getenv("NAIS_CLUSTER_NAME") ?: System.getProperty("NAIS_CLUSTER_NAME")) {
-        "dev-fss" -> ConfigurationProperties.systemProperties() overriding EnvironmentVariables overriding devProperties
-        "prod-fss" -> ConfigurationProperties.systemProperties() overriding EnvironmentVariables overriding prodProperties
-        else -> {
-            ConfigurationProperties.systemProperties() overriding EnvironmentVariables overriding localProperties
-        }
-    }
-
     private val prodProperties = ConfigurationMap(
         mapOf(
             "application.profile" to "prod",
 
+            "HM_OEBS_OPPRETT_SF_BRUKEROD" to "81760",
+
             "HM_OEBS_API_PROXY_DB_NAME" to "oebsp",
-            // "HM_OEBS_API_PROXY_DB_URL" to "jdbc:oracle:thin:@dm09db08.adeo.no:1521/oebsp",    // P-env
             "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_P"),
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_P"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_P"),
 
-            "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81760"),
-            "OEBS_API_TOKEN" to System.getenv("OEBS_API_TOKEN"),
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.nav.no",
         )
     )
@@ -37,10 +27,8 @@ internal object Configuration {
     private val devProperties = ConfigurationMap(
         mapOf(
             "application.profile" to "dev",
-            "HM_OEBS_OPPRETT_SF_BRUKEROD" to ("81400"),
-            "GRUNNDATA_API_URL" to "https://hm-grunndata-api.dev.intern.nav.no",
-            "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/",
-            "OEBS_API_TOKEN" to System.getenv("OEBS_API_TOKEN"),
+
+            "HM_OEBS_OPPRETT_SF_BRUKEROD" to "81400",
 
 //            "HM_OEBS_API_PROXY_DB_NAME" to "oebst1",
 //            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_T1"),
@@ -51,6 +39,10 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_Q1"),
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_Q1"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
+
+            "GRUNNDATA_API_URL" to "https://hm-grunndata-api.dev.intern.nav.no",
+
+            "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/",
         )
     )
 
@@ -58,63 +50,74 @@ internal object Configuration {
         mapOf(
             "application.profile" to "local",
 
-            "HM_OEBS_API_PROXY_DB_URL" to "abc",
-            "HM_OEBS_API_PROXY_DB_USR" to "abc",
-            "HM_OEBS_API_PROXY_DB_PW" to "abc",
-            "HM_OEBS_API_PROXY_DB_NAME" to "abc",
+            "HM_OEBS_OPPRETT_SF_BRUKEROD" to "",
 
-            "TOKEN_X_WELL_KNOWN_URL" to "abc",
-            "TOKEN_X_CLIENT_ID" to "abc",
+            "HM_OEBS_API_PROXY_DB_URL" to "",
+            "HM_OEBS_API_PROXY_DB_USR" to "",
+            "HM_OEBS_API_PROXY_DB_PW" to "",
+            "HM_OEBS_API_PROXY_DB_NAME" to "",
 
-            "AZURE_APP_WELL_KNOWN_URL" to "abc",
-            "AZURE_APP_CLIENT_ID" to "abc",
+            "TOKEN_X_WELL_KNOWN_URL" to "",
+            "TOKEN_X_CLIENT_ID" to "",
+
+            "AZURE_APP_WELL_KNOWN_URL" to "",
+            "AZURE_APP_CLIENT_ID" to "",
 
             "GRUNNDATA_API_URL" to "http://host.docker.internal:8880",
-            "OEBS_API_URL" to "abc",
-            "OEBS_API_TOKEN" to "abc",
+
+            "OEBS_API_URL" to "",
+            "OEBS_API_TOKEN" to "",
         )
     )
 
+    private val configuration = when (System.getenv("NAIS_CLUSTER_NAME") ?: System.getProperty("NAIS_CLUSTER_NAME")) {
+        "dev-fss" -> ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding devProperties
+        "prod-fss" -> ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding prodProperties
+        else -> ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding localProperties
+    }
+
+    operator fun get(key: String): String = configuration[Key(key, stringType)]
+
     val oracleDatabaseConfig: Map<String, String> = mapOf(
-        "HM_OEBS_API_PROXY_DB_NAME" to config()[Key("HM_OEBS_API_PROXY_DB_NAME", stringType)],
-        "HM_OEBS_API_PROXY_DB_URL" to config()[Key("HM_OEBS_API_PROXY_DB_URL", stringType)],
-        "HM_OEBS_API_PROXY_DB_USR" to config()[Key("HM_OEBS_API_PROXY_DB_USR", stringType)],
-        "HM_OEBS_API_PROXY_DB_PW" to config()[Key("HM_OEBS_API_PROXY_DB_PW", stringType)],
+        "HM_OEBS_API_PROXY_DB_NAME" to get("HM_OEBS_API_PROXY_DB_NAME"),
+        "HM_OEBS_API_PROXY_DB_URL" to get("HM_OEBS_API_PROXY_DB_URL"),
+        "HM_OEBS_API_PROXY_DB_USR" to get("HM_OEBS_API_PROXY_DB_USR"),
+        "HM_OEBS_API_PROXY_DB_PW" to get("HM_OEBS_API_PROXY_DB_PW"),
     )
 
     val dataSource by lazy {
-        println("ORACLE URL " + config()[Key("HM_OEBS_API_PROXY_DB_URL", stringType)])
+        println("ORACLE URL " + get("HM_OEBS_API_PROXY_DB_URL"))
         HikariDataSource().apply {
-            username = config()[Key("HM_OEBS_API_PROXY_DB_USR", stringType)]
-            password = config()[Key("HM_OEBS_API_PROXY_DB_PW", stringType)]
+            username = get("HM_OEBS_API_PROXY_DB_USR")
+            password = get("HM_OEBS_API_PROXY_DB_PW")
             maximumPoolSize = 10
             minimumIdle = 1
             idleTimeout = 10001
             connectionTimeout = 1000
             maxLifetime = 30001
             driverClassName = "oracle.jdbc.driver.OracleDriver"
-            jdbcUrl = config()[Key("HM_OEBS_API_PROXY_DB_URL", stringType)]
+            jdbcUrl = get("HM_OEBS_API_PROXY_DB_URL")
         }
     }
 
     val tokenX: Map<String, String> = mapOf(
-        "TOKEN_X_WELL_KNOWN_URL" to config()[Key("TOKEN_X_WELL_KNOWN_URL", stringType)],
-        "TOKEN_X_CLIENT_ID" to config()[Key("TOKEN_X_CLIENT_ID", stringType)],
+        "TOKEN_X_WELL_KNOWN_URL" to get("TOKEN_X_WELL_KNOWN_URL"),
+        "TOKEN_X_CLIENT_ID" to get("TOKEN_X_CLIENT_ID"),
     )
 
     val azureAD: Map<String, String> = mapOf(
-        "AZURE_APP_WELL_KNOWN_URL" to config()[Key("AZURE_APP_WELL_KNOWN_URL", stringType)],
-        "AZURE_APP_CLIENT_ID" to config()[Key("AZURE_APP_CLIENT_ID", stringType)],
+        "AZURE_APP_WELL_KNOWN_URL" to get("AZURE_APP_WELL_KNOWN_URL"),
+        "AZURE_APP_CLIENT_ID" to get("AZURE_APP_CLIENT_ID"),
     )
 
     val application: Map<String, String> = mapOf(
-        "APP_PROFILE" to config()[Key("application.profile", stringType)],
-        "GRUNNDATA_API_URL" to config()[Key("GRUNNDATA_API_URL", stringType)],
-        "OEBS_BRUKER_ID" to config()[Key("HM_OEBS_OPPRETT_SF_BRUKEROD", stringType)]
+        "APP_PROFILE" to get("application.profile"),
+        "GRUNNDATA_API_URL" to get("GRUNNDATA_API_URL"),
+        "OEBS_BRUKER_ID" to get("HM_OEBS_OPPRETT_SF_BRUKEROD"),
     )
 
     val oebsApi: Map<String, String> = mapOf(
-        "OEBS_API_URL" to config()[Key("OEBS_API_URL", stringType)],
-        "OEBS_API_TOKEN" to config()[Key("OEBS_API_TOKEN", stringType)]
+        "OEBS_API_URL" to get("OEBS_API_URL"),
+        "OEBS_API_TOKEN" to get("OEBS_API_TOKEN"),
     )
 }
