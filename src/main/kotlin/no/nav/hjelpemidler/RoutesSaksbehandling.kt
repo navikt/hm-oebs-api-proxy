@@ -1,13 +1,13 @@
 package no.nav.hjelpemidler
 
-import io.ktor.application.call
-import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.receive
-import io.ktor.request.receiveText
-import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.post
+import io.ktor.server.application.call
+import io.ktor.server.auth.authenticate
+import io.ktor.server.request.receive
+import io.ktor.server.request.receiveText
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.client.oebs.OebsApiClient
 import no.nav.hjelpemidler.models.BestillingsOrdreRequest

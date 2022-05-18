@@ -3,16 +3,17 @@ package no.nav.hjelpemidler
 import com.auth0.jwk.JwkProviderBuilder
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
-import io.ktor.application.Application
-import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.auth.jwt.JWTPrincipal
-import io.ktor.auth.jwt.jwt
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
+import io.ktor.serialization.jackson.jackson
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
 import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.configuration.Configuration
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
@@ -21,8 +22,10 @@ import java.net.URL
 import java.util.concurrent.TimeUnit
 
 private fun httpClientWithProxy() = HttpClient(Apache) {
-    install(JsonFeature) {
-        serializer = JacksonSerializer { configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) }
+    install(ContentNegotiation) {
+        jackson {
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        }
     }
     engine {
         customizeClient {
@@ -33,10 +36,10 @@ private fun httpClientWithProxy() = HttpClient(Apache) {
 
 fun Application.installAuthentication() {
     // Load token X config for rest client authentication
-    var tokenXConfig: WellKnownConfig? = null
+    var tokenXConfig: WellKnownConfig?
     runBlocking {
         tokenXConfig = WellKnownConfig(
-            metadata = httpClientWithProxy().get(Configuration.tokenX["TOKEN_X_WELL_KNOWN_URL"]!!),
+            metadata = httpClientWithProxy().get(Configuration.tokenX["TOKEN_X_WELL_KNOWN_URL"]!!).body(),
             clientId = Configuration.tokenX["TOKEN_X_CLIENT_ID"]!!,
         )
     }
@@ -49,10 +52,10 @@ fun Application.installAuthentication() {
         .build()
 
     // Load Azure AD config for rest client authentication
-    var aadConfig: WellKnownConfig? = null
+    var aadConfig: WellKnownConfig?
     runBlocking {
         aadConfig = WellKnownConfig(
-            metadata = httpClientWithProxy().get(Configuration.azureAD["AZURE_APP_WELL_KNOWN_URL"]!!),
+            metadata = httpClientWithProxy().get(Configuration.azureAD["AZURE_APP_WELL_KNOWN_URL"]!!).body(),
             clientId = Configuration.azureAD["AZURE_APP_CLIENT_ID"]!!,
         )
     }
