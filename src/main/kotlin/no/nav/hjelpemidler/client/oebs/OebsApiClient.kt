@@ -53,7 +53,7 @@ class OebsApiClient(engine: HttpClientEngine) {
 
         val responseBody = response.bodyAsText()
         throw RuntimeException(
-            "Error when calling OEBS API. Got Http response code ${response.status}: $responseBody"
+            "Feil under kall til OEBS API, status: ${response.status}, body: $responseBody"
         )
     }
 
