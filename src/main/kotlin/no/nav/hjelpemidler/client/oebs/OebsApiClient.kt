@@ -45,7 +45,7 @@ class OebsApiClient {
         if (response.status != HttpStatusCode.OK) {
             throw RuntimeException(
                 "Error when calling OEBS API. Got Http response code ${response.status}: ${
-                    responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")
+                responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")
                 }"
             )
         } else return "Ordreopprettelse sendt til OEBS: ${responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")}"

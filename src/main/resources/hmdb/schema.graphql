@@ -2,6 +2,12 @@ schema {
   query: Query
 }
 
+"Marks the field, argument, input field or enum value as deprecated"
+directive @deprecated(
+    "The reason for the deprecation"
+    reason: String = "No longer supported"
+  ) on FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM_VALUE | INPUT_FIELD_DEFINITION
+
 "Directs the executor to include this field or fragment only when the `if` argument is true"
 directive @include(
     "Included when true."
@@ -14,29 +20,29 @@ directive @skip(
     if: Boolean!
   ) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 
-"Marks the field, argument, input field or enum value as deprecated"
-directive @deprecated(
-    "The reason for the deprecation"
-    reason: String = "No longer supported"
-  ) on FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM_VALUE | INPUT_FIELD_DEFINITION
-
 "Exposes a URL that specifies the behaviour of this scalar."
 directive @specifiedBy(
     "The URL that specifies the behaviour of this scalar."
     url: String!
   ) on SCALAR
 
-type GodkjenningsKursDTO {
+type Bestillingsordning {
+  erIBestillingsordning: Boolean!
+  hmsnr: String!
+}
+
+type GodkjenningskursDTO {
   isokode: String!
   kursId: Int!
   tittel: String!
 }
 
+"Kombinasjon av produkt/produktserie, artikkel og hjelpemiddel"
 type Produkt {
-  artikkelId: String
+  artikkelId: String!
   artikkelUrl: String!
   artikkelbeskrivelse: String
-  artikkelnavn: String
+  artikkelnavn: String!
   artikkelnr: String
   avtalepostId: String
   avtalepostbeskrivelse: String
@@ -53,21 +59,23 @@ type Produkt {
   harNavAvtale: Boolean!
   hmsnr: String
   id: ID!
-  isokode: String
+  isokode: String!
   isokortnavn: String
-  isotekst: String
-  isotittel: String
+  isotekst: String!
+  isotittel: String!
   kategori: String
-  paakrevdGodkjenningskurs: GodkjenningsKursDTO
-  produktId: String
+  leverandorId: String
+  paakrevdGodkjenningskurs: GodkjenningskursDTO
+  produktId: String!
   produktUrl: String!
-  produktbeskrivelse: String
-  produktnavn: String
+  produktbeskrivelse: String!
+  produktnavn: String!
+  rammeavtaleId: String
   rammeavtaleSlutt: LocalDate
   rammeavtaleStart: LocalDate
   tekniskeData: [TekniskeDataTriple!]!
+  tekniskeDataSomTekst: String!
   tilgjengeligForDigitalSoknad: Boolean!
-  versjon: Int!
 }
 
 type ProduktPage {
@@ -77,16 +85,21 @@ type ProduktPage {
 }
 
 type Query {
-  "Finn produkter basert på søkeord"
-  finnProdukter(filter: ProduktfilterInput!, sokeord: String!): ProduktPage!
+  "Sjekk om et tilbehør er prisforhandlet"
+  erPrisforhandletTilbehoer(hmsnr: String!, leverandorId: String!, rammeavtaleId: String!): Boolean!
   "Hent produkter"
   hentAlleProdukter(filter: ProduktfilterInput!): ProduktPage!
+  "Sjekk om et produkt/tilbehør er på bestillingsordning"
+  hentErIBestillingsOrdning(hmsnrs: [String!]!): [Bestillingsordning!]!
   "Hent produkter med hmsnr"
   hentProdukterMedHmsnr(hmsnr: String!): [Produkt!]!
   "Hent produkter med hmsnrs"
   hentProdukterMedHmsnrs(hmsnrs: [String!]!): [Produkt!]!
+  "Hent produkter som er tilgjengelige for digital søknad"
+  sortiment: [Produkt!]!
 }
 
+"Teknisk datum med ledetekst, verdi og evt. enhet"
 type TekniskeDataTriple {
   enhet: String
   tekst: String

@@ -9,7 +9,7 @@ version = "1.0-SNAPSHOT"
 plugins {
     application
     kotlin("jvm") version "1.6.21"
-    id("com.expediagroup.graphql") version "5.4.1"
+    id("com.expediagroup.graphql") version "6.0.0-alpha.4"
     id("com.diffplug.spotless") version "6.6.1"
 }
 
@@ -47,7 +47,7 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
 
     // GraphQL
-    val graphQLVersion = "5.4.1"
+    val graphQLVersion = "6.0.0-alpha.4"
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphQLVersion") {
         exclude("com.expediagroup", "graphql-kotlin-client-serialization") // prefer jackson
         exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
