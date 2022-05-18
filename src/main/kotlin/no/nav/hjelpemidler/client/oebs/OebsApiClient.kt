@@ -2,7 +2,7 @@ package no.nav.hjelpemidler.client.oebs
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.apache.Apache
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.headers
@@ -21,9 +21,9 @@ import no.nav.hjelpemidler.models.Ordre
 import no.nav.hjelpemidler.models.OrdreType
 import org.slf4j.LoggerFactory
 
-class OebsApiClient {
+class OebsApiClient(engine: HttpClientEngine) {
     private val log = LoggerFactory.getLogger("OebsApiClient")
-    private val client = HttpClient(Apache) {
+    private val client = HttpClient(engine = engine) {
         install(ContentNegotiation) {
             jackson()
         }
@@ -51,7 +51,7 @@ class OebsApiClient {
         if (response.status != HttpStatusCode.OK) {
             throw RuntimeException(
                 "Error when calling OEBS API. Got Http response code ${response.status}: ${
-                    responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")
+                responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")
                 }"
             )
         } else return "Ordreopprettelse sendt til OEBS: ${responseBody.get("OutputParameters")?.get("P_RETUR_MELDING")}"

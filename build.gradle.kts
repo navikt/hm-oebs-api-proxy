@@ -83,6 +83,7 @@ dependencies {
     // Testing
     testImplementation(kotlin("test"))
     testImplementation("org.testcontainers:oracle-xe:1.17.1")
+    testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
 }
 
 spotless {
