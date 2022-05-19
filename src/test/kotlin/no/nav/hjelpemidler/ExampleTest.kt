@@ -1,11 +1,7 @@
 package no.nav.hjelpemidler
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlin.test.Test
 import kotlin.test.assertEquals
-
-private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
 internal class ExampleTest {
     @Test
@@ -13,7 +9,7 @@ internal class ExampleTest {
         assertEquals(22, 22)
     }
 
-/*@Test
+    /*@Test
     fun `Parsing av hjelpemiddeldatabasen`() {
         assertEquals(22, 22)
 

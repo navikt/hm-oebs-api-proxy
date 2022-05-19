@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler.models
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.nav.hjelpemidler.jsonMapper
 
 data class Ordre(
     val fodselsnummer: String,
@@ -22,10 +22,9 @@ data class OebsJsonFormat(
     val jsonMelding: String,
     @JsonProperty("P_RETUR_MELDING")
     val returMelding: String = "",
-)
-
-fun Ordre.tilOebsJsonFormat(): OebsJsonFormat {
-    val writeValueAsString = jacksonObjectMapper().writeValueAsString(this)
-    writeValueAsString.replace("\"", "\\\"")
-    return OebsJsonFormat(writeValueAsString)
+) {
+    constructor(jsonMelding: Any, returMelding: String = "") : this(
+        jsonMapper.writeValueAsString(jsonMelding),
+        returMelding
+    )
 }

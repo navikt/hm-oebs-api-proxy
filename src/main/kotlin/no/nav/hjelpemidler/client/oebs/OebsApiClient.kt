@@ -1,9 +1,11 @@
 package no.nav.hjelpemidler.client.oebs
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.accept
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -18,6 +20,7 @@ import io.ktor.serialization.jackson.jackson
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.models.Artikkel
 import no.nav.hjelpemidler.models.BestillingsOrdreRequest
+import no.nav.hjelpemidler.models.OebsJsonFormat
 import no.nav.hjelpemidler.models.Ordre
 import no.nav.hjelpemidler.models.OrdreType
 import org.slf4j.LoggerFactory
@@ -26,7 +29,15 @@ class OebsApiClient(engine: HttpClientEngine) {
     private val log = LoggerFactory.getLogger("OebsApiClient")
     private val client = HttpClient(engine = engine) {
         install(ContentNegotiation) {
-            jackson()
+            jackson {
+                registerModule(JavaTimeModule())
+            }
+        }
+        defaultRequest {
+            // bearerAuth(apiToken)
+            header(HttpHeaders.Authorization, "Basic $apiToken")
+            contentType(ContentType.Application.Json)
+            accept(ContentType.Application.Json)
         }
     }
 
@@ -34,7 +45,6 @@ class OebsApiClient(engine: HttpClientEngine) {
     private val apiToken = Configuration.oebsApi.getValue("OEBS_API_TOKEN")
 
     suspend fun opprettOrdre(request: BestillingsOrdreRequest): String {
-
         val bestilling = Ordre(
             fodselsnummer = request.fodselsnummer,
             formidlernavn = request.formidlernavn,
@@ -59,13 +69,7 @@ class OebsApiClient(engine: HttpClientEngine) {
 
     private suspend fun httpPostRequest(
         bestilling: Ordre,
-    ): HttpResponse {
-        return client.post(apiUrl) {
-            // bearerAuth(apiToken)
-            header(HttpHeaders.Authorization, "Basic $apiToken") // skulle vært Bearer
-            contentType(ContentType.Application.Json)
-            accept(ContentType.Application.Json)
-            setBody(bestilling)
-        }
+    ): HttpResponse = client.post(apiUrl) {
+        setBody(OebsJsonFormat(bestilling))
     }
 }

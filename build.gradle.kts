@@ -44,7 +44,6 @@ dependencies {
     // Jackson
     val jacksonVersion = "2.13.3"
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
 
     // GraphQL
     val graphQLVersion = "6.0.0-alpha.4"
