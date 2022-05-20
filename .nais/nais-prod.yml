@@ -27,6 +27,8 @@ spec:
     requests:
       cpu: 500m
       memory: 600Mi
+  envFrom:
+    - secret: hm-oebs-api-proxy-secret
   vault:
     enabled: true
     paths:
