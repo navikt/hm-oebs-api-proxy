@@ -52,6 +52,7 @@ class OebsApiClient(engine: HttpClientEngine) {
             artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) }
         )
 
+        log.info("Kaller oebs api $apiUrl")
         val response = httpPostRequest(bestilling)
         if (response.status == HttpStatusCode.OK) {
             val responseBody = response.body<Map<String, Map<String, String>>>()
