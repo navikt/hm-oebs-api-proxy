@@ -72,6 +72,3 @@ spec:
       external:
         - host: hm-grunndata-api.intern.nav.no
         - host: hm-oebs-api-proxy.prod-fss-pub.nais.io
-  env:
-    - name: OEBS_API_URL
-      value: https://hm-oebs-api-proxy.prod-fss-pub.nais.io/
