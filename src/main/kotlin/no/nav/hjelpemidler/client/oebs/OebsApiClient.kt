@@ -34,7 +34,6 @@ class OebsApiClient(engine: HttpClientEngine) {
             }
         }
         defaultRequest {
-            // bearerAuth(apiToken)
             header(HttpHeaders.Authorization, "Basic $apiToken")
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
@@ -53,7 +52,6 @@ class OebsApiClient(engine: HttpClientEngine) {
             artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) }
         )
 
-        log.info("Kaller oebs api $bestilling")
         val response = httpPostRequest(bestilling)
         if (response.status == HttpStatusCode.OK) {
             val responseBody = response.body<Map<String, Map<String, String>>>()
