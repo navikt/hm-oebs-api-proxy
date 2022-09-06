@@ -43,7 +43,7 @@ internal object Configuration {
 
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.dev.intern.nav.no",
             // T1
-            //"OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/",
+            // "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/",
             // Q1
             "OEBS_API_URL" to "http://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/",
         )
