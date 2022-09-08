@@ -8,7 +8,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
-      - DIGIHOT-758/inboud-hm-soknad-api
+      - snyk-2022-09-06
 env:
   docker_image: docker.pkg.github.com/${{ github.repository }}/hm-oebs-api-proxy:${{ github.sha }}
 jobs:

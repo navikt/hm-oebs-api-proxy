@@ -35,7 +35,7 @@ fun Route.saksbehandling() {
             try {
                 val bestilling = call.receive<BestillingsOrdreRequest>()
                 val bestillingsResponse = oebsApiClient.opprettOrdre(bestilling)
-logg.info { "Oppretter ordre, bestillingsdata: $bestilling" }
+                logg.info { "Oppretter ordre, bestillingsdata: $bestilling" }
                 call.respond(HttpStatusCode.Created, bestillingsResponse)
             } catch (e: Exception) {
                 logg.error("Noe gikk feil med opprettelse av Ordre", e)

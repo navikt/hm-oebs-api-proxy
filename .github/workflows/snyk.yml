@@ -9,6 +9,7 @@ on:
       - Jenkinsfile
     branches:
       - main
+      - snyk-2022-09-06
 jobs:
   snyk:
     runs-on: ubuntu-latest

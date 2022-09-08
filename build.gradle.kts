@@ -32,12 +32,12 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("com.github.guepardoapps:kulid:2.0.0.0")
     implementation("com.natpryce:konfig:1.6.10.0")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.9.0")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.9.3")
 
     // Logging
-    implementation("io.github.microutils:kotlin-logging:2.1.21")
+    implementation("io.github.microutils:kotlin-logging:2.1.23")
     runtimeOnly("ch.qos.logback:logback-classic:1.2.11")
-    runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.1.1") {
+    runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.2") {
         exclude("com.fasterxml.jackson.core")
     }
 
@@ -46,7 +46,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     // GraphQL
-    val graphQLVersion = "6.0.0-alpha.4"
+    val graphQLVersion = "6.2.2"
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphQLVersion") {
         exclude("com.expediagroup", "graphql-kotlin-client-serialization") // prefer jackson
         exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
@@ -55,12 +55,12 @@ dependencies {
     implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphQLVersion")
 
     // Database
-    implementation("com.github.seratch:kotliquery:1.7.0")
+    implementation("com.github.seratch:kotliquery:1.9.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
     runtimeOnly("com.oracle.database.jdbc:ojdbc11:21.5.0.0")
 
     // Ktor
-    val ktorVersion = "2.0.1"
+    val ktorVersion = "2.1.0"
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
     // Ktor Server
@@ -81,7 +81,7 @@ dependencies {
 
     // Testing
     testImplementation(kotlin("test"))
-    testImplementation("org.testcontainers:oracle-xe:1.17.1")
+    testImplementation("org.testcontainers:oracle-xe:1.17.3")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
 }
 
