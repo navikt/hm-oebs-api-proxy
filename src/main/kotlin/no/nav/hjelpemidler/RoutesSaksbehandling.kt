@@ -35,7 +35,7 @@ fun Route.saksbehandling() {
             try {
                 val bestilling = call.receive<BestillingsOrdreRequest>()
                 val bestillingsResponse = oebsApiClient.opprettOrdre(bestilling)
-                logg.info { "Oppretter ordre, bestillingsdata: $bestilling" }
+                logg.info { "Oppretter ordre, saksnummer: ${bestilling.saksnummer}, hjelpemidler: ${bestilling.artikler}" }
                 call.respond(HttpStatusCode.Created, bestillingsResponse)
             } catch (e: Exception) {
                 logg.error("Noe gikk feil med opprettelse av Ordre", e)
@@ -70,6 +70,7 @@ fun Route.saksbehandling() {
                 null -> {
                     call.respond(status = HttpStatusCode.NotFound, "Bruker ikke funnet i OEBS")
                 }
+
                 else -> {
                     call.respond(hentBrukernummer)
                 }
