@@ -9,8 +9,7 @@ jobs:
       - uses: actions/checkout@v1
       - name: get release tag
         run: |
-          APPLICATION=$(echo $GITHUB_REPOSITORY | cut -d "/" -f 2)
-          IMAGE=docker.pkg.github.com/$GITHUB_REPOSITORY/$APPLICATION:$GITHUB_SHA
+          IMAGE=ghcr.io/$GITHUB_REPOSITORY:$VERSION_TAG
           echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
           echo $IMAGE
       - uses: nais/deploy/actions/deploy@v1
