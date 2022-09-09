@@ -57,15 +57,15 @@ dependencies {
     // Database
     implementation("com.github.seratch:kotliquery:1.9.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
-    runtimeOnly("com.oracle.database.jdbc:ojdbc11:21.5.0.0")
+    runtimeOnly("com.oracle.database.jdbc:ojdbc11:21.7.0.0")
 
     // Ktor
-    val ktorVersion = "2.1.0"
+    val ktorVersion = "2.1.1"
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
     // Ktor Server
-    implementation("io.ktor:ktor-server-core:$ktorVersion")
-    implementation("io.ktor:ktor-server-cio:$ktorVersion")
+    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-cio-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
@@ -73,16 +73,16 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
     // Ktor Client
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-client-auth:$ktorVersion")
+    implementation("io.ktor:ktor-client-jackson-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-auth-jvm:$ktorVersion")
 
     // Testing
     testImplementation(kotlin("test"))
+    testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("org.testcontainers:oracle-xe:1.17.3")
-    testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
 }
 
 spotless {
