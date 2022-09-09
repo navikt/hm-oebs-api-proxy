@@ -2,12 +2,15 @@ name: deploy-prod
 on:
   release:
     types: [published]
+
 jobs:
   deploy-prod:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: get release tag
+        env:
+          VERSION_TAG: ${{ github.event.release.tag_name }}
         run: |
           IMAGE=ghcr.io/$GITHUB_REPOSITORY:$VERSION_TAG
           echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
