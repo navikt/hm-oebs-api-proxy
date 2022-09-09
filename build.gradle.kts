@@ -9,7 +9,7 @@ version = "1.0-SNAPSHOT"
 plugins {
     application
     kotlin("jvm") version "1.6.21"
-    id("com.expediagroup.graphql") version "6.0.0-alpha.4"
+    id("com.expediagroup.graphql") version "6.2.2"
     id("com.diffplug.spotless") version "6.6.1"
 }
 
@@ -36,14 +36,13 @@ dependencies {
 
     // Logging
     implementation("io.github.microutils:kotlin-logging:2.1.23")
-    runtimeOnly("ch.qos.logback:logback-classic:1.2.11")
+    runtimeOnly("ch.qos.logback:logback-classic:1.4.0")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.2") {
         exclude("com.fasterxml.jackson.core")
     }
 
     // Jackson
-    val jacksonVersion = "2.13.3"
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
 
     // GraphQL
     val graphQLVersion = "6.2.2"

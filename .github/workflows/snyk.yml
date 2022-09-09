@@ -5,10 +5,11 @@ on:
       - README.md
       - CHANGELOG.md
       - .gitignore
+      - .github/**
       - Jenkinsfile
     branches:
       - main
-      - snyk-2022-09-09
+
 jobs:
   snyk:
     runs-on: ubuntu-latest
