@@ -9,14 +9,14 @@ on:
       - Jenkinsfile
     branches:
       - main
-      - snyk-2022-09-06
+
 jobs:
   snyk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/gradle-jdk11@master
+        uses: snyk/actions/gradle@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
