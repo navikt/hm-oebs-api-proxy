@@ -21,7 +21,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_P"),
 
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.nav.no",
-            "OEBS_API_URL" to "http://oebs.adeo.no/webservices/rest/opprettordre/digihotordreontinfo/",
+            "OEBS_API_URL" to "http://oebs.adeo.no/webservices/rest/opprettordre/digihotordreontinfo/"
         )
     )
 
@@ -45,7 +45,7 @@ internal object Configuration {
             // T1
             // "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/",
             // Q1
-            "OEBS_API_URL" to "http://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/",
+            "OEBS_API_URL" to "http://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/"
         )
     )
 
@@ -69,7 +69,7 @@ internal object Configuration {
             "GRUNNDATA_API_URL" to "http://host.docker.internal:8880",
 
             "OEBS_API_URL" to "",
-            "OEBS_API_TOKEN" to "",
+            "OEBS_API_TOKEN" to ""
         )
     )
 
@@ -85,7 +85,7 @@ internal object Configuration {
         "HM_OEBS_API_PROXY_DB_NAME" to get("HM_OEBS_API_PROXY_DB_NAME"),
         "HM_OEBS_API_PROXY_DB_URL" to get("HM_OEBS_API_PROXY_DB_URL"),
         "HM_OEBS_API_PROXY_DB_USR" to get("HM_OEBS_API_PROXY_DB_USR"),
-        "HM_OEBS_API_PROXY_DB_PW" to get("HM_OEBS_API_PROXY_DB_PW"),
+        "HM_OEBS_API_PROXY_DB_PW" to get("HM_OEBS_API_PROXY_DB_PW")
     )
 
     val dataSource by lazy {
@@ -105,22 +105,22 @@ internal object Configuration {
 
     val tokenX: Map<String, String> = mapOf(
         "TOKEN_X_WELL_KNOWN_URL" to get("TOKEN_X_WELL_KNOWN_URL"),
-        "TOKEN_X_CLIENT_ID" to get("TOKEN_X_CLIENT_ID"),
+        "TOKEN_X_CLIENT_ID" to get("TOKEN_X_CLIENT_ID")
     )
 
     val azureAD: Map<String, String> = mapOf(
         "AZURE_APP_WELL_KNOWN_URL" to get("AZURE_APP_WELL_KNOWN_URL"),
-        "AZURE_APP_CLIENT_ID" to get("AZURE_APP_CLIENT_ID"),
+        "AZURE_APP_CLIENT_ID" to get("AZURE_APP_CLIENT_ID")
     )
 
     val application: Map<String, String> = mapOf(
         "APP_PROFILE" to get("application.profile"),
         "GRUNNDATA_API_URL" to get("GRUNNDATA_API_URL"),
-        "OEBS_BRUKER_ID" to get("HM_OEBS_OPPRETT_SF_BRUKEROD"),
+        "OEBS_BRUKER_ID" to get("HM_OEBS_OPPRETT_SF_BRUKEROD")
     )
 
     val oebsApi: Map<String, String> = mapOf(
         "OEBS_API_URL" to get("OEBS_API_URL"),
-        "OEBS_API_TOKEN" to get("OEBS_API_TOKEN"),
+        "OEBS_API_TOKEN" to get("OEBS_API_TOKEN")
     )
 }

@@ -40,7 +40,7 @@ fun Application.installAuthentication() {
     runBlocking {
         tokenXConfig = WellKnownConfig(
             metadata = httpClientWithProxy().get(Configuration.tokenX["TOKEN_X_WELL_KNOWN_URL"]!!).body(),
-            clientId = Configuration.tokenX["TOKEN_X_CLIENT_ID"]!!,
+            clientId = Configuration.tokenX["TOKEN_X_CLIENT_ID"]!!
         )
     }
 
@@ -56,7 +56,7 @@ fun Application.installAuthentication() {
     runBlocking {
         aadConfig = WellKnownConfig(
             metadata = httpClientWithProxy().get(Configuration.azureAD["AZURE_APP_WELL_KNOWN_URL"]!!).body(),
-            clientId = Configuration.azureAD["AZURE_APP_CLIENT_ID"]!!,
+            clientId = Configuration.azureAD["AZURE_APP_CLIENT_ID"]!!
         )
     }
 

@@ -4,7 +4,7 @@ import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
-import no.nav.hjelpemidler.client.hmdb.hentproduktermedhmsnrs.Produkt
+import no.nav.hjelpemidler.client.hmdb.hentprodukter.Produkt
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import org.intellij.lang.annotations.Language
@@ -45,11 +45,11 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
     }
 
     private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
-        // Unique list of hmsnrs to fetch data for
-        val hmsNrs = items.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet()
+        // Unique set of hmsnr to fetch data for
+        val hmsnr = items.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet()
 
-        // Fetch data for hmsnrs from hm-grunndata-api
-        val produkter: List<Produkt> = HjelpemiddeldatabaseClient.hentProdukterMedHmsnrs(hmsNrs)
+        // Fetch data for hmsnr from hm-grunndata-api
+        val produkter: List<Produkt> = HjelpemiddeldatabaseClient.hentProdukter(hmsnr)
 
         // Apply data to items
         val produkterByHmsnr = produkter.groupBy { it.hmsnr }

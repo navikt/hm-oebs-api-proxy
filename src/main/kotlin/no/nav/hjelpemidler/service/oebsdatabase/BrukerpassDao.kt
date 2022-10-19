@@ -28,7 +28,7 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                         brukerpass = true,
                         kontraktNummer = row.stringOrNull("KONTRAKT_NUMMER"),
                         row.localDateOrNull("START_DATE"),
-                        row.localDateOrNull("END_DATE"),
+                        row.localDateOrNull("END_DATE")
                     )
                 }.asSingle
             )

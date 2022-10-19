@@ -84,7 +84,7 @@ class LagerDao(
                         forsyning = row.intOrNull("forsyning") ?: 0,
                         sortiment = row.stringOrNull("sortiment")?.lowercase()?.trim() == "ja",
                         lagervare = row.stringOrNull("lagervare")?.lowercase()?.trim() == "ja",
-                        minmax = row.stringOrNull("minmax")?.lowercase()?.trim() == "ja",
+                        minmax = row.stringOrNull("minmax")?.lowercase()?.trim() == "ja"
                     )
                 }.asList
             )

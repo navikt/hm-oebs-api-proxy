@@ -10,7 +10,6 @@ import javax.sql.DataSource
 class ServiceforespørselFeilDao(private val dataSource: DataSource = Configuration.dataSource) {
 
     fun finnSfMedFeil(): List<SfFeil> {
-
         @Language("OracleSQL")
         val finnSFQuery =
             """

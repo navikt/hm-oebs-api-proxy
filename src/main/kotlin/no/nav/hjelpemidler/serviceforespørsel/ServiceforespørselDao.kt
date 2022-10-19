@@ -10,7 +10,6 @@ import javax.sql.DataSource
 class ServiceforespørselDao(private val dataSource: DataSource = Configuration.dataSource) {
 
     fun opprettServiceforespørsel(sf: Serviceforespørsel) {
-
         @Language("OracleSQL")
         val opprettSFQuery =
             """

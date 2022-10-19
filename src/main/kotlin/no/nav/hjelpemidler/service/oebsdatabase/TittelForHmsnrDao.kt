@@ -3,7 +3,6 @@ package no.nav.hjelpemidler.service.oebsdatabase
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.hjelpemidler.configuration.Configuration
-import no.nav.hjelpemidler.configuration.Configuration.dataSource
 import no.nav.hjelpemidler.models.TittelForHmsNr
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
@@ -41,7 +40,7 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
                     TittelForHmsNr(
                         hmsNr = row.string("ARTIKKEL"),
                         type = row.string("BRUKERARTIKKELTYPE"),
-                        title = row.string("ARTIKKEL_BESKRIVELSE"),
+                        title = row.string("ARTIKKEL_BESKRIVELSE")
                     )
                 }.asList
             )

@@ -8,9 +8,9 @@ version = "1.0-SNAPSHOT"
 
 plugins {
     application
-    kotlin("jvm") version "1.6.21"
-    id("com.expediagroup.graphql") version "6.2.2"
-    id("com.diffplug.spotless") version "6.6.1"
+    kotlin("jvm") version "1.7.20"
+    id("com.expediagroup.graphql") version "6.2.5"
+    id("com.diffplug.spotless") version "6.11.0"
 }
 
 application {
@@ -32,11 +32,11 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("com.github.guepardoapps:kulid:2.0.0.0")
     implementation("com.natpryce:konfig:1.6.10.0")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.9.3")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.9.4")
 
     // Logging
-    implementation("io.github.microutils:kotlin-logging:2.1.23")
-    runtimeOnly("ch.qos.logback:logback-classic:1.4.0")
+    implementation("io.github.microutils:kotlin-logging:3.0.0")
+    runtimeOnly("ch.qos.logback:logback-classic:1.4.3")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.2") {
         exclude("com.fasterxml.jackson.core")
     }
@@ -45,7 +45,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
 
     // GraphQL
-    val graphQLVersion = "6.2.2"
+    val graphQLVersion = "6.2.5"
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphQLVersion") {
         exclude("com.expediagroup", "graphql-kotlin-client-serialization") // prefer jackson
         exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
@@ -59,7 +59,7 @@ dependencies {
     runtimeOnly("com.oracle.database.jdbc:ojdbc11:21.7.0.0")
 
     // Ktor
-    val ktorVersion = "2.1.1"
+    val ktorVersion = "2.1.2"
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
     // Ktor Server
@@ -81,7 +81,7 @@ dependencies {
     // Testing
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
-    testImplementation("org.testcontainers:oracle-xe:1.17.3")
+    testImplementation("org.testcontainers:oracle-xe:1.17.4")
 }
 
 spotless {

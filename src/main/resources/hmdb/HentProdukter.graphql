@@ -1,5 +1,5 @@
-query HentProdukterMedHmsnr($hmsnr: String!) {
-  produkter: hentProdukterMedHmsnr(hmsnr: $hmsnr) {
+query HentProdukter($hmsnr: [String!]!) {
+  produkter(filter: { hmsnr: $hmsnr }) {
     id
     hmsnr
     artikkelId
@@ -8,5 +8,7 @@ query HentProdukterMedHmsnr($hmsnr: String!) {
     produktbeskrivelse
     isotittel
     blobUrlLite
+    artikkelUrl
+    isokortnavn
   }
 }
