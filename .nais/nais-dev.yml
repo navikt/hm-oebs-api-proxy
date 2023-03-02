@@ -44,8 +44,15 @@ spec:
     - https://hm-oebs-api-proxy.dev-fss-pub.nais.io
   azure:
     application:
-      allowAllUsers: true
       enabled: true
+      allowAllUsers: false
+      claims:
+        extra:
+          - "NAVident"
+        groups:
+          # Saksbehandling:
+          - id: "b9340050-ccb5-4de7-9d96-0fb2d9fb38eb" # 0000-GA-hotsak-brukere
+          - id: "1aa0caef-04cc-4446-8ed3-bbb78d59681c" # 0000-GA-brilleadmin-brukere
   tokenx:
     enabled: true
   webproxy: true
