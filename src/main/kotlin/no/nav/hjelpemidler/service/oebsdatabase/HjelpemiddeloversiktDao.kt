@@ -3,6 +3,7 @@ package no.nav.hjelpemidler.service.oebsdatabase
 import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import mu.KotlinLogging
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Produkt
 import no.nav.hjelpemidler.configuration.Configuration
@@ -10,6 +11,8 @@ import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import org.intellij.lang.annotations.Language
 import org.slf4j.LoggerFactory
 import javax.sql.DataSource
+
+private val logg = KotlinLogging.logger {}
 
 class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
@@ -66,12 +69,15 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
     private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
         // Unique set of hmsnr to fetch data for
         val hmsnr = items.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet()
+        logg.info { "[DEBUG]: hmsnr: $hmsnr" }
 
         // Fetch data for hmsnr from hm-grunndata-api
         val produkter: List<Produkt> = HjelpemiddeldatabaseClient.hentProdukter(hmsnr)
+        logg.info { "[DEBUG]: produkter: $produkter" }
 
         // Apply data to items
         val produkterByHmsnr = produkter.groupBy { it.hmsnr }
+        logg.info { "[DEBUG]: produkterByHmsnr: $produkterByHmsnr" }
         items.map { item ->
             val produkt = produkterByHmsnr[item.artikkelNr]?.firstOrNull()
             if (produkt == null) {
