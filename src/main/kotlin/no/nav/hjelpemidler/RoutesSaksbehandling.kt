@@ -93,8 +93,7 @@ fun Route.saksbehandling() {
             //val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
             //val harUtlåntIsokode = hjelpemiddeloversikt.find { it.kategoriNummer == isokode } != null
             val harUtlåntIsokode = hjelpemiddeloversiktDao.harUtlåntIsokode(fnr, isokode)
-            call.respond(HttpStatusCode.InternalServerError)
-            //call.respond(harUtlåntIsokode)
+            call.respond(harUtlåntIsokode)
         }
     }
 }
