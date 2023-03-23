@@ -90,8 +90,9 @@ fun Route.saksbehandling() {
             val fnr = req.fnr
             val isokode = req.isokode
             validateFnr(fnr)
-            val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
-            val harUtlåntIsokode = hjelpemiddeloversikt.find { it.kategoriNummer == isokode } != null
+            //val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
+            //val harUtlåntIsokode = hjelpemiddeloversikt.find { it.kategoriNummer == isokode } != null
+            val harUtlåntIsokode = hjelpemiddeloversiktDao.harUtlåntIsokode(fnr, isokode)
             call.respond(harUtlåntIsokode)
         }
     }
