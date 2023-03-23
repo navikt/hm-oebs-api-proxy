@@ -91,8 +91,8 @@ fun Route.saksbehandling() {
             val isokode = req.isokode
             validateFnr(fnr)
             val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
-            val harUtlevertIsokode = hjelpemiddeloversikt.find { it.kategoriNummer == isokode } != null
-            call.respond(harUtlevertIsokode)
+            val harUtlåntIsokode = hjelpemiddeloversikt.find { it.kategoriNummer == isokode } != null
+            call.respond(harUtlåntIsokode)
         }
     }
 }
