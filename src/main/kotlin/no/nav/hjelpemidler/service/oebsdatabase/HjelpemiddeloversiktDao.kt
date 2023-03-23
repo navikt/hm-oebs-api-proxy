@@ -44,6 +44,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                 }.asList
             )
         }
+        logg.info { "[DEBUG]: items: $items" }
         return berikOrdrelinjer(items)
     }
 
