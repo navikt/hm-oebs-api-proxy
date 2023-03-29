@@ -85,7 +85,7 @@ fun Route.saksbehandling() {
             call.respond(hjelpemiddeloversikt)
         }
 
-        post("/harUtlåntIsokode") {
+        post("/harUtlantIsokode") {
             try {
                 val req = call.receive<HarUtlåntIsokodeRequest>()
                 val fnr = req.fnr
