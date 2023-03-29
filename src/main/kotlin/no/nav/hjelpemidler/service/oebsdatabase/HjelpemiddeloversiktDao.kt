@@ -1,7 +1,6 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
 import kotlinx.coroutines.runBlocking
-import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
@@ -45,7 +44,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         return berikOrdrelinjer(items)
     }
 
-    fun utlånPåIsokode(fnr: String, isokode: String): List<Row> {
+    fun utlånPåIsokode(fnr: String, isokode: String): List<UtlånPåIsokode> {
         @Language("OracleSQL")
         val query =
             """
@@ -58,11 +57,20 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
 
         val items = sessionOf(dataSource).use {
             it.run(
-                queryOf(query, fnr, isokode).map{row ->  row}.asList
+                queryOf(query, fnr, isokode).map{row ->  UtlånPåIsokode(
+                    kategoriNummer = row.string("KATEGORI3_NUMMER"),
+                    datoUtsendelse = row.string("UTLÅNS_DATO")
+                )}.asList
             )
         }
+
         return items
     }
+
+    data class UtlånPåIsokode (
+        val kategoriNummer: String,
+        val datoUtsendelse: String
+    )
 
     private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
         // Unique set of hmsnr to fetch data for
