@@ -86,7 +86,7 @@ fun Route.saksbehandling() {
         }
 
         post("/harUtlåntIsokode") {
-            val req = call.receive<HarUtlevertIsokodeRequest>()
+            val req = call.receive<HarUtlåntIsokodeRequest>()
             val fnr = req.fnr
             val isokode = req.isokode
             validateFnr(fnr)
@@ -102,7 +102,7 @@ private fun validateFnr(fnr: String) {
     }
 }
 
-private data class HarUtlevertIsokodeRequest(
+private data class HarUtlåntIsokodeRequest(
     val fnr: String,
     val isokode: String
 )
