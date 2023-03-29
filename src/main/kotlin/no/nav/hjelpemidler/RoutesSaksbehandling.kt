@@ -86,12 +86,18 @@ fun Route.saksbehandling() {
         }
 
         post("/harUtlåntIsokode") {
-            val req = call.receive<HarUtlåntIsokodeRequest>()
-            val fnr = req.fnr
-            val isokode = req.isokode
-            validateFnr(fnr)
-            val harUtlåntIsokode = hjelpemiddeloversiktDao.utlånPåIsokode(fnr, isokode).isNotEmpty()
-            call.respond(harUtlåntIsokode)
+            try {
+                val req = call.receive<HarUtlåntIsokodeRequest>()
+                val fnr = req.fnr
+                val isokode = req.isokode
+                validateFnr(fnr)
+                val harUtlåntIsokode = hjelpemiddeloversiktDao.utlånPåIsokode(fnr, isokode).isNotEmpty()
+                call.respond(harUtlåntIsokode)
+            } catch (e: Exception) {
+                logg.error("Noe gikk feil med sjekk av utlån på isokode", e)
+                call.respond(HttpStatusCode.InternalServerError, e)
+            }
+
         }
     }
 }
