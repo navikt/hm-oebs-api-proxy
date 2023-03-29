@@ -48,7 +48,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         @Language("OracleSQL")
         val query =
             """
-            SELECT KATEGORI3_NUMMER  
+            SELECT KATEGORI3_NUMMER, UTLÅNS_DATO
             FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
             WHERE FNR = ?
             AND KATEGORI3_NUMMER = ?
