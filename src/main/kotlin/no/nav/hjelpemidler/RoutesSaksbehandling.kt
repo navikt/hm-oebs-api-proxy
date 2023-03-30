@@ -84,6 +84,21 @@ fun Route.saksbehandling() {
             val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
             call.respond(hjelpemiddeloversikt)
         }
+
+        post("/harUtlantIsokode") {
+            try {
+                val req = call.receive<HarUtlåntIsokodeRequest>()
+                val fnr = req.fnr
+                val isokode = req.isokode
+                validateFnr(fnr)
+                val harUtlåntIsokode = hjelpemiddeloversiktDao.utlånPåIsokode(fnr, isokode).isNotEmpty()
+                call.respond(harUtlåntIsokode)
+            } catch (e: Exception) {
+                logg.error("Noe gikk feil med sjekk av utlån på isokode", e)
+                call.respond(HttpStatusCode.InternalServerError, e)
+            }
+
+        }
     }
 }
 
@@ -92,3 +107,8 @@ private fun validateFnr(fnr: String) {
         error("invalid fnr in 'pid', does not match regex")
     }
 }
+
+private data class HarUtlåntIsokodeRequest(
+    val fnr: String,
+    val isokode: String
+)
