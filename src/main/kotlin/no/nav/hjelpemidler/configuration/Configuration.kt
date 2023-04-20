@@ -41,7 +41,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_Q1"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
 
-            "GRUNNDATA_API_URL" to "https://hm-grunndata-api.dev.intern.nav.no",
+            "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.dev.nav.no",
             // T1
             // "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/",
             // Q1
