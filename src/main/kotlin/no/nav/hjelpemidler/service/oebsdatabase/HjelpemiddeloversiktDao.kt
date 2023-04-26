@@ -57,17 +57,19 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
 
         val items = sessionOf(dataSource).use {
             it.run(
-                queryOf(query, fnr, isokode).map{row ->  UtlånPåIsokode(
-                    kategoriNummer = row.string("KATEGORI3_NUMMER"),
-                    datoUtsendelse = row.string("UTLÅNS_DATO")
-                )}.asList
+                queryOf(query, fnr, isokode).map { row ->
+                    UtlånPåIsokode(
+                        kategoriNummer = row.string("KATEGORI3_NUMMER"),
+                        datoUtsendelse = row.string("UTLÅNS_DATO")
+                    )
+                }.asList
             )
         }
 
         return items
     }
 
-    data class UtlånPåIsokode (
+    data class UtlånPåIsokode(
         val kategoriNummer: String,
         val datoUtsendelse: String
     )

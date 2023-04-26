@@ -97,7 +97,6 @@ fun Route.saksbehandling() {
                 logg.error("Noe gikk feil med sjekk av utlån på isokode", e)
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
-
         }
     }
 }
