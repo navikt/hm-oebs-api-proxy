@@ -97,7 +97,21 @@ fun Route.saksbehandling() {
                 logg.error("Noe gikk feil med sjekk av utlån på isokode", e)
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
+        }
 
+        post("/utlanSerienrArtnr") {
+            try {
+                val req = call.receive<UtlånPåArtnrOgSerienrRequest>()
+                val artnr = req.artnr
+                val serienr = req.serienr
+                val utlån = hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr)
+                call.respond(UtlånPåArtnrOgSerienrResponse(
+                    utlån
+                ))
+            } catch (e: Exception) {
+                logg.error("Noe gikk feil med sjekk av utlån på artnr og serienr", e)
+                call.respond(HttpStatusCode.InternalServerError, e)
+            }
         }
     }
 }
@@ -111,4 +125,13 @@ private fun validateFnr(fnr: String) {
 private data class HarUtlåntIsokodeRequest(
     val fnr: String,
     val isokode: String
+)
+
+private data class UtlånPåArtnrOgSerienrRequest(
+    val artnr: String,
+    val serienr: String
+)
+
+private data class UtlånPåArtnrOgSerienrResponse(
+    val utlån: HjelpemiddeloversiktDao.UtlånPåArtnrOgSerienr?
 )

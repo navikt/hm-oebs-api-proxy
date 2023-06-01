@@ -8,7 +8,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
-      - sjekk-utlevert-isokode
+      - endepunkt-utlån-artnr-serienr
 
 env:
   IMAGE: "ghcr.io/${{ github.repository }}:${{ github.sha }}"

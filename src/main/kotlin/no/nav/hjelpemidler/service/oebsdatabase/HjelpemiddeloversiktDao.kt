@@ -67,9 +67,43 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         return items
     }
 
-    data class UtlånPåIsokode (
+    fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): UtlånPåArtnrOgSerienr? {
+        @Language("OracleSQL")
+        val query =
+            """
+            SELECT FNR, ARTIKKELNUMMER, SERIE_NUMMER, UTLÅNS_DATO  
+            FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+            WHERE ARTIKKELNUMMER = ?
+            AND SERIE_NUMMER = ?
+            ORDER BY UTLÅNS_DATO DESC
+            """.trimIndent()
+
+        val item = sessionOf(dataSource).use {
+            it.run(
+                queryOf(query, artnr, serienr).map { row ->
+                    UtlånPåArtnrOgSerienr(
+                        fnr = row.string("FNR"),
+                        artnr = row.string("ARTIKKELNUMMER"),
+                        serienr = row.string("SERIE_NUMMER"),
+                        utlånsDato = row.string("UTLÅNS_DATO")
+                    )
+                }.asSingle
+            )
+        }
+
+        return item
+    }
+
+    data class UtlånPåIsokode(
         val kategoriNummer: String,
         val datoUtsendelse: String
+    )
+
+    data class UtlånPåArtnrOgSerienr(
+        val fnr: String,
+        val artnr: String,
+        val serienr: String,
+        val utlånsDato: String
     )
 
     private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
