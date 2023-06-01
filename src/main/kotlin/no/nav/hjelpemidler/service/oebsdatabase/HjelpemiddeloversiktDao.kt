@@ -7,6 +7,7 @@ import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Produkt
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
+import no.nav.hjelpemidler.models.Utlån
 import org.intellij.lang.annotations.Language
 import org.slf4j.LoggerFactory
 import javax.sql.DataSource
@@ -67,7 +68,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         return items
     }
 
-    fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): UtlånPåArtnrOgSerienr? {
+    fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? {
         @Language("OracleSQL")
         val query =
             """
@@ -81,7 +82,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         val item = sessionOf(dataSource).use {
             it.run(
                 queryOf(query, artnr, serienr).map { row ->
-                    UtlånPåArtnrOgSerienr(
+                    Utlån(
                         fnr = row.string("FNR"),
                         artnr = row.string("ARTIKKELNUMMER"),
                         serienr = row.string("SERIE_NUMMER"),
@@ -97,13 +98,6 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
     data class UtlånPåIsokode(
         val kategoriNummer: String,
         val datoUtsendelse: String
-    )
-
-    data class UtlånPåArtnrOgSerienr(
-        val fnr: String,
-        val artnr: String,
-        val serienr: String,
-        val utlånsDato: String
     )
 
     private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {

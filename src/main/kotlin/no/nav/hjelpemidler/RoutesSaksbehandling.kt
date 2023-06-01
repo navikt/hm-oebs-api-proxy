@@ -2,6 +2,7 @@ package no.nav.hjelpemidler
 
 import io.ktor.client.engine.apache.Apache
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
@@ -14,6 +15,7 @@ import no.nav.hjelpemidler.client.oebs.OebsApiClient
 import no.nav.hjelpemidler.models.BestillingsOrdreRequest
 import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.Serviceforespørsel
+import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.service.oebsdatabase.Brukernummer
 import no.nav.hjelpemidler.service.oebsdatabase.BrukernummerDao
 import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
@@ -105,9 +107,7 @@ fun Route.saksbehandling() {
                 val artnr = req.artnr
                 val serienr = req.serienr
                 val utlån = hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr)
-                call.respond(UtlånPåArtnrOgSerienrResponse(
-                    utlån
-                ))
+                call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
             } catch (e: Exception) {
                 logg.error("Noe gikk feil med sjekk av utlån på artnr og serienr", e)
                 call.respond(HttpStatusCode.InternalServerError, e)
@@ -133,5 +133,5 @@ private data class UtlånPåArtnrOgSerienrRequest(
 )
 
 private data class UtlånPåArtnrOgSerienrResponse(
-    val utlån: HjelpemiddeloversiktDao.UtlånPåArtnrOgSerienr?
+    val utlån: Utlån?
 )
