@@ -5,7 +5,7 @@ data class BestillingsOrdreRequest(
     val formidlernavn: String,
     val saksnummer: String,
     val artikler: List<OrdreArtikkel>,
-    val forsendelsesinfo: String = "",
+    val forsendelsesinfo: String = ""
 )
 
 data class OrdreArtikkel(val hmsnr: String, val antall: String)

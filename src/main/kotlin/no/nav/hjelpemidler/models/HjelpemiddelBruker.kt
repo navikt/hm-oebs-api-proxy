@@ -17,7 +17,7 @@ data class HjelpemiddelBruker(
     var hmdbKategori: String? = null,
     var hmdbBilde: String? = null,
     var hmdbURL: String? = null,
-    var hmdbKategoriKortnavn: String? = null,
+    var hmdbKategoriKortnavn: String? = null
 
     /*
         val FOREKOMST_NUMMER: String,
