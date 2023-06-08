@@ -49,7 +49,8 @@ class OebsApiClient(engine: HttpClientEngine) {
             formidlernavn = request.formidlernavn,
             ordretype = OrdreType.BESTILLING,
             saksnummer = request.saksnummer,
-            artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) }
+            artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) },
+            forsendelsesinfo = request.forsendelsesinfo,
         )
 
         log.info("Kaller oebs api $apiUrl")
