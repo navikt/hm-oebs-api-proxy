@@ -9,7 +9,7 @@ data class Ordre(
     val ordretype: OrdreType = OrdreType.BESTILLING,
     val saksnummer: String,
     val artikler: List<Artikkel>,
-    val forsendelsesinfo: String
+    val shipping_instructions: String
 )
 
 data class Artikkel(val hmsnr: String, val antall: String)
