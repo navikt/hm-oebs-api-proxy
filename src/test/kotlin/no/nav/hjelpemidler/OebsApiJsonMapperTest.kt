@@ -24,7 +24,7 @@ internal class OebsApiJsonMapperTest {
         )
 
         assertEquals(
-            "{\"fodselsnummer\":\"04331234565\",\"formidlernavn\":\"Navn navnesen\",\"ordretype\":\"BESTILLING\",\"saksnummer\":\"1234\",\"artikler\":[{\"hmsnr\":\"1111\",\"antall\":\"1\"},{\"hmsnr\":\"2222\",\"antall\":\"2\"}],\"shipping_instructions\":\"Skal til XK-lager\"}",
+            "{\"fodselsnummer\":\"04331234565\",\"formidlernavn\":\"Navn navnesen\",\"ordretype\":\"BESTILLING\",\"saksnummer\":\"1234\",\"artikler\":[{\"hmsnr\":\"1111\",\"antall\":\"1\"},{\"hmsnr\":\"2222\",\"antall\":\"2\"}],\"shippinginstructions\":\"Skal til XK-lager\"}",
             oebsJsonFormat.jsonMelding
         )
     }
