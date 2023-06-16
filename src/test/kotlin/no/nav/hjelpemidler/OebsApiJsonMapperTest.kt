@@ -19,7 +19,7 @@ internal class OebsApiJsonMapperTest {
                     Artikkel("1111", "1"),
                     Artikkel("2222", "2")
                 ),
-                shipping_instructions = "Skal til XK-lager"
+                shippinginstructions = "Skal til XK-lager"
             )
         )
 
