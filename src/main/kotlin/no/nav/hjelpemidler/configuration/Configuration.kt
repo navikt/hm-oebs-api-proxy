@@ -7,6 +7,9 @@ import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
+import mu.KotlinLogging
+
+private val logg = KotlinLogging.logger {}
 
 internal object Configuration {
     private val prodProperties = ConfigurationMap(
@@ -90,8 +93,12 @@ internal object Configuration {
 
     val dataSource by lazy {
         println("ORACLE URL " + get("HM_OEBS_API_PROXY_DB_URL"))
+        val user = get("HM_OEBS_API_PROXY_DB_USR")
+        if (get("application.profile") == "dev") {
+            logg.info { "ORACLE USER $user" }
+        }
         HikariDataSource().apply {
-            username = get("HM_OEBS_API_PROXY_DB_USR")
+            username = user
             password = get("HM_OEBS_API_PROXY_DB_PW")
             maximumPoolSize = 10
             minimumIdle = 1
