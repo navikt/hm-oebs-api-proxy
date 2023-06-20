@@ -55,14 +55,18 @@ class OebsApiClient(engine: HttpClientEngine) {
     private val apiToken = Configuration.oebsApi.getValue("OEBS_API_TOKEN")
 
     suspend fun opprettOrdre(request: BestillingsOrdreRequest): String {
+        val shippingsinstructions = if (request.forsendelsesinfo.isNullOrBlank()) {
+            request.formidlernavn // Tidligere når vi ikke sendte inn shippingsinstructions, så satte OEBS automatisk forimdlernavn som info på ordrelinjene
+        } else {
+            request.forsendelsesinfo
+        }
         val bestilling = Ordre(
             fodselsnummer = request.fodselsnummer,
             formidlernavn = request.formidlernavn,
             ordretype = OrdreType.BESTILLING,
             saksnummer = request.saksnummer,
             artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) },
-            shippinginstructions = request.forsendelsesinfo
-                ?: request.formidlernavn // Tidligere når vi ikke sendte inn shippingsinstructions, så satte OEBS automatisk forimdlernavn som info på ordrelinjene
+            shippinginstructions = shippingsinstructions
         )
 
         log.info("Kaller oebs api $apiUrl")
