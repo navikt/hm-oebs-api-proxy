@@ -22,6 +22,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.jackson.jackson
 import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.configuration.isNotProd
 import no.nav.hjelpemidler.models.Artikkel
 import no.nav.hjelpemidler.models.BestillingsOrdreRequest
 import no.nav.hjelpemidler.models.OebsJsonFormat
@@ -37,10 +38,11 @@ class OebsApiClient(engine: HttpClientEngine) {
                 registerModule(JavaTimeModule())
             }
         }
-        install(Logging) {
-            // TODO fjern før prodsetting
-            logger = Logger.DEFAULT
-            level = LogLevel.BODY
+        if (isNotProd()) {
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.BODY
+            }
         }
         defaultRequest {
             header(HttpHeaders.Authorization, "Basic $apiToken")

@@ -35,11 +35,12 @@ fun Route.saksbehandling() {
         post("/opprettOrdre") {
             try {
                 val bestilling = call.receive<BestillingsOrdreRequest>()
+                logg.info { "BestillingsOrdreRequest $bestilling" }
                 val bestillingsResponse = oebsApiClient.opprettOrdre(bestilling)
                 logg.info { "Oppretter ordre, saksnummer: ${bestilling.saksnummer}, hjelpemidler: ${bestilling.artikler}" }
                 call.respond(HttpStatusCode.Created, bestillingsResponse)
             } catch (e: Exception) {
-                logg.error("Noe gikk feil med opprettelse av Ordre", e)
+                logg.error(e) { "Noe gikk feil med opprettelse av Ordre" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }
@@ -50,7 +51,7 @@ fun Route.saksbehandling() {
                 logg.info("Serviceforspørsel for sak ${sf.referansenummer} opprettet")
                 call.respond(HttpStatusCode.Created)
             } catch (e: Exception) {
-                logg.error("Noe gikk feil med opprettelse av SF", e)
+                logg.error(e) { "Noe gikk feil med opprettelse av SF" }
                 throw e
             }
         }
@@ -95,7 +96,7 @@ fun Route.saksbehandling() {
                 val harUtlåntIsokode = hjelpemiddeloversiktDao.utlånPåIsokode(fnr, isokode).isNotEmpty()
                 call.respond(harUtlåntIsokode)
             } catch (e: Exception) {
-                logg.error("Noe gikk feil med sjekk av utlån på isokode", e)
+                logg.error(e) { "Noe gikk feil med sjekk av utlån på isokode" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }
@@ -108,7 +109,7 @@ fun Route.saksbehandling() {
                 val utlån = hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr)
                 call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
             } catch (e: Exception) {
-                logg.error("Noe gikk feil med sjekk av utlån på artnr og serienr", e)
+                logg.error(e) { "Noe gikk feil med sjekk av utlån på artnr og serienr" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }

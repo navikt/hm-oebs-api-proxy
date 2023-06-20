@@ -125,3 +125,6 @@ internal object Configuration {
         "OEBS_API_TOKEN" to get("OEBS_API_TOKEN")
     )
 }
+
+fun isProd(): Boolean = Configuration.application["APP_PROFILE"]!! == "prod"
+fun isNotProd() = !isProd()
