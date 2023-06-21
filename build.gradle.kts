@@ -77,6 +77,7 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-auth-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
 
     // Testing
     testImplementation(kotlin("test"))

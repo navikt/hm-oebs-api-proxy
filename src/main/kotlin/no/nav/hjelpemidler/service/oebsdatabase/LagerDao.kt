@@ -112,5 +112,5 @@ data class LagerStatus(
     val forsyning: Int,
     val sortiment: Boolean,
     val lagervare: Boolean,
-    val minmax: Boolean,
+    val minmax: Boolean
 )

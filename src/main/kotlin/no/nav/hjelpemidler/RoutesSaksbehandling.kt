@@ -14,6 +14,7 @@ import no.nav.hjelpemidler.client.oebs.OebsApiClient
 import no.nav.hjelpemidler.models.BestillingsOrdreRequest
 import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.Serviceforespørsel
+import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.service.oebsdatabase.Brukernummer
 import no.nav.hjelpemidler.service.oebsdatabase.BrukernummerDao
 import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
@@ -34,11 +35,12 @@ fun Route.saksbehandling() {
         post("/opprettOrdre") {
             try {
                 val bestilling = call.receive<BestillingsOrdreRequest>()
+                logg.info { "BestillingsOrdreRequest $bestilling" }
                 val bestillingsResponse = oebsApiClient.opprettOrdre(bestilling)
                 logg.info { "Oppretter ordre, saksnummer: ${bestilling.saksnummer}, hjelpemidler: ${bestilling.artikler}" }
                 call.respond(HttpStatusCode.Created, bestillingsResponse)
             } catch (e: Exception) {
-                logg.error("Noe gikk feil med opprettelse av Ordre", e)
+                logg.error(e) { "Noe gikk feil med opprettelse av Ordre" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }
@@ -49,7 +51,7 @@ fun Route.saksbehandling() {
                 logg.info("Serviceforspørsel for sak ${sf.referansenummer} opprettet")
                 call.respond(HttpStatusCode.Created)
             } catch (e: Exception) {
-                logg.error("Noe gikk feil med opprettelse av SF", e)
+                logg.error(e) { "Noe gikk feil med opprettelse av SF" }
                 throw e
             }
         }
@@ -94,10 +96,22 @@ fun Route.saksbehandling() {
                 val harUtlåntIsokode = hjelpemiddeloversiktDao.utlånPåIsokode(fnr, isokode).isNotEmpty()
                 call.respond(harUtlåntIsokode)
             } catch (e: Exception) {
-                logg.error("Noe gikk feil med sjekk av utlån på isokode", e)
+                logg.error(e) { "Noe gikk feil med sjekk av utlån på isokode" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
+        }
 
+        post("/utlanSerienrArtnr") {
+            try {
+                val req = call.receive<UtlånPåArtnrOgSerienrRequest>()
+                val artnr = req.artnr
+                val serienr = req.serienr
+                val utlån = hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr)
+                call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
+            } catch (e: Exception) {
+                logg.error(e) { "Noe gikk feil med sjekk av utlån på artnr og serienr" }
+                call.respond(HttpStatusCode.InternalServerError, e)
+            }
         }
     }
 }
@@ -111,4 +125,13 @@ private fun validateFnr(fnr: String) {
 private data class HarUtlåntIsokodeRequest(
     val fnr: String,
     val isokode: String
+)
+
+private data class UtlånPåArtnrOgSerienrRequest(
+    val artnr: String,
+    val serienr: String
+)
+
+private data class UtlånPåArtnrOgSerienrResponse(
+    val utlån: Utlån?
 )

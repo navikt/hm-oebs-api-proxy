@@ -8,6 +8,7 @@ import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
 
+
 internal object Configuration {
     private val prodProperties = ConfigurationMap(
         mapOf(
@@ -43,7 +44,7 @@ internal object Configuration {
 
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.dev.nav.no",
             // T1
-            // "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/",
+//            "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/"
             // Q1
             "OEBS_API_URL" to "http://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/"
         )
@@ -124,3 +125,6 @@ internal object Configuration {
         "OEBS_API_TOKEN" to get("OEBS_API_TOKEN")
     )
 }
+
+fun isProd(): Boolean = Configuration.application["APP_PROFILE"]!! == "prod"
+fun isNotProd() = !isProd()
