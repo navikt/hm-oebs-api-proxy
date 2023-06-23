@@ -28,7 +28,7 @@ internal object OracleTestHelper {
             maxLifetime = 30001
         }.also { sessionOf(it).run(queryOf("DROP ROLE IF EXISTS cloudsqliamuser").asExecute) }
             .also { sessionOf(it).run(queryOf("CREATE ROLE cloudsqliamuser").asExecute) }
-            .also { sessionOf(it).run(queryOf("CREATE TABLE XXRTV_DIGIHOT_OEBS_ADR_FNR_V").asExecute) }
+            .also { sessionOf(it).run(queryOf("CREATE TABLE apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V").asExecute) }
     }
 
     fun withDb(block: () -> Unit) {

@@ -43,7 +43,7 @@ class LagerDao(
                     sortiment,
                     lagervare,
                     minmax
-                FROM XXRTV_DIGIHOT_UTVID_ART_V
+                FROM apps.XXRTV_DIGIHOT_UTVID_ART_V
                 WHERE artikkelnummer = ?
             """.trimIndent()
 

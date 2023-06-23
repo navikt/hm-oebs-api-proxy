@@ -13,7 +13,7 @@ class BrukernummerDao(private val dataSource: DataSource = Configuration.dataSou
         val hentBrukernummerQuery =
             """
             SELECT BRUKER_NUMMER
-            FROM XXRTV_DIGIHOT_OEBS_ADR_FNR_V
+            FROM apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V
             WHERE FNR = ?
             """.trimIndent()
 
