@@ -7,8 +7,10 @@ import no.nav.hjelpemidler.models.Fødselsnummer
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
+
 class BrukernummerDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun hentBrukernummer(fnr: Fødselsnummer): Brukernummer? {
+
         @Language("OracleSQL")
         val hentBrukernummerQuery =
             """
@@ -18,6 +20,7 @@ class BrukernummerDao(private val dataSource: DataSource = Configuration.dataSou
             """.trimIndent()
 
         val brukernummer = sessionOf(dataSource).use {
+
             it.run(
                 queryOf(hentBrukernummerQuery, fnr.value).map { row ->
                     Brukernummer(

@@ -65,8 +65,11 @@ fun Route.saksbehandling() {
         }
 
         post("/getBrukernummer") {
+            logg.info { "/getBrukernummer" }
             val fødselsnummer = Fødselsnummer(call.receiveText())
             val hentBrukernummer: Brukernummer? = brukernummerDao.hentBrukernummer(fødselsnummer)
+
+            logg.info { "hentBrukernummer result $hentBrukernummer" }
 
             when (hentBrukernummer) {
                 null -> {

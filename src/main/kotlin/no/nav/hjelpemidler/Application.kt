@@ -29,6 +29,7 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import io.prometheus.client.CollectorRegistry
 import mu.KotlinLogging
+import no.nav.hjelpemidler.service.oebsdatabase.TestDao
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselFeilDao
 import org.slf4j.event.Level
 import kotlin.time.ExperimentalTime
@@ -42,6 +43,8 @@ fun main(args: Array<String>) = EngineMain.main(args)
 fun Application.module() {
     environment.monitor.subscribe(ApplicationStarted) {
         // loggFeilendeSf()
+        logg.info { "environment.monitor.subscribe(ApplicationStarted)" }
+        TestDao().testNamespacing()
     }
     installAuthentication()
 
