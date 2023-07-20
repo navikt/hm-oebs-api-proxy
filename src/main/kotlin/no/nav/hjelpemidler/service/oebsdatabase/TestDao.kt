@@ -14,11 +14,34 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
 
         logg.info { "ENTER testNamespacing" }
 
+        //testSelectAll()
+
         testBrukernummer()
         testUtlån()
         testArtBeskrivelse()
         testBrukerpass()
         testLagerstatus()
+    }
+
+    private fun testSelectAll() {
+        logg.info { "test select *" }
+        @Language("OracleSQL")
+        val query =
+            """
+            SELECT *
+            FROM apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V
+            """.trimIndent()
+
+        val result = sessionOf(dataSource).use {
+
+            it.run(
+                queryOf(query).map { row ->
+                    row.string("BRUKER_NUMMER")
+                }.asSingle
+            )
+        }
+
+        logg.info { "Result testSelectAll $result" }
     }
 
     private fun testBrukernummer() {
@@ -34,7 +57,6 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
 
             it.run(
                 queryOf(query).map { row ->
-                    logg.info { row.string("FNR") }
                     row.string("BRUKER_NUMMER")
                 }.asSingle
             )
