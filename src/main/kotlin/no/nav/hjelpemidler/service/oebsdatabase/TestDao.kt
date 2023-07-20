@@ -38,6 +38,7 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
 
             it.run(
                 queryOf(hentBrukernummerQuery).map { row ->
+                    logg.info { row.string("FNR") }
                     row.string("BRUKER_NUMMER")
                 }.asSingle
             )
@@ -50,8 +51,9 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
         @Language("OracleSQL")
         val hentBrukernummerQuery =
             """
-            SELECT FNR  
+            SELECT *
             FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+            WHERE FNR = '123'
             """.trimIndent()
 
         val result = sessionOf(dataSource).use {
