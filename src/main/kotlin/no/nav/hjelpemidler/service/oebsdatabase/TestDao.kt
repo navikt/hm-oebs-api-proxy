@@ -18,9 +18,7 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
         testUtlån()
         testArtBeskrivelse()
         testBrukerpass()
-
-//            "select * from apps.XXRTV_DIGIHOT_UTVID_ART_V",
-
+        testLagerstatus()
     }
 
     private fun testBrukernummer() {
@@ -106,5 +104,44 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
         }
 
         logg.info { "Result testBrukerpass $result" }
+    }
+
+    private fun testLagerstatus() {
+        @Language("OracleSQL")
+        var query =
+            """
+                SELECT
+                    organisasjons_id,
+                    organisasjons_navn,
+                    artikkelnummer,
+                    artikkelid,
+                    fysisk,
+                    tilgjengeligatt,
+                    tilgjengeligroo,
+                    tilgjengelig,
+                    behovsmeldt,
+                    reservert,
+                    restordre,
+                    bestillinger,
+                    anmodning,
+                    intanmodning,
+                    forsyning,
+                    sortiment,
+                    lagervare,
+                    minmax
+                FROM apps.XXRTV_DIGIHOT_UTVID_ART_V
+                WHERE artikkelnummer = '236958'
+            """.trimIndent()
+
+        val result = sessionOf(dataSource).use {
+
+            it.run(
+                queryOf(query).map { row ->
+                    row.string("organisasjons_id")
+                }.asSingle
+            )
+        }
+
+        logg.info { "Result testLagerstatus $result" }
     }
 }
