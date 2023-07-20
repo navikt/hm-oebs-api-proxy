@@ -17,8 +17,8 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
         testBrukernummer()
         testUtlån()
         testArtBeskrivelse()
+        testBrukerpass()
 
-//            "select * from apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V",
 //            "select * from apps.XXRTV_DIGIHOT_UTVID_ART_V",
 
     }
@@ -49,7 +49,7 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
         @Language("OracleSQL")
         val query =
             """
-            SELECT *
+            SELECT ARTIKKELNUMMER
             FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
             WHERE FNR = '27066427779'
             """.trimIndent()
@@ -58,12 +58,12 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
 
             it.run(
                 queryOf(query).map { row ->
-                    row
+                    row.string("ARTIKKELNUMMER")
                 }.asSingle
             )
         }
 
-        logg.info { "Result testUtlån $result}" }
+        logg.info { "Result testUtlån $result" }
     }
 
     private fun testArtBeskrivelse() {
@@ -79,11 +79,32 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
 
             it.run(
                 queryOf(query).map { row ->
-                    row
+                    row.string("ARTIKKEL_BESKRIVELSE")
                 }.asSingle
             )
         }
 
-        logg.info { "Result testUtlån $result}" }
+        logg.info { "Result testArtBeskrivelse $result}" }
+    }
+
+    private fun testBrukerpass() {
+        @Language("OracleSQL")
+        var query =
+            """
+                SELECT KONTRAKT_NUMMER, SJEKK_NAVN, START_DATE, END_DATE, FNR
+                FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V
+                WHERE KONTRAKT_NUMMER IS NOT NULL
+            """.trimIndent()
+
+        val result = sessionOf(dataSource).use {
+
+            it.run(
+                queryOf(query).map { row ->
+                    row.string("FNR")
+                }.asSingle
+            )
+        }
+
+        logg.info { "Result testBrukerpass $result" }
     }
 }
