@@ -50,11 +50,8 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
         @Language("OracleSQL")
         val hentBrukernummerQuery =
             """
-            SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, 
-                   SERIE_NUMMER, UTLÅNS_DATO, ORDRE_NUMMER, KATEGORI3_NUMMER, ARTIKKELSTATUS, FNR  
+            SELECT FNR  
             FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
-            WHERE ANTALL = 1
-            ORDER BY UTLÅNS_DATO DESC
             """.trimIndent()
 
         val result = sessionOf(dataSource).use {
