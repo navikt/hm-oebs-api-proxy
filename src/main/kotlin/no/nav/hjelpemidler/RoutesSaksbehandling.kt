@@ -35,7 +35,6 @@ fun Route.saksbehandling() {
         post("/opprettOrdre") {
             try {
                 val bestilling = call.receive<BestillingsOrdreRequest>()
-                logg.info { "BestillingsOrdreRequest $bestilling" }
                 val bestillingsResponse = oebsApiClient.opprettOrdre(bestilling)
                 logg.info { "Oppretter ordre, saksnummer: ${bestilling.saksnummer}, hjelpemidler: ${bestilling.artikler}" }
                 call.respond(HttpStatusCode.Created, bestillingsResponse)
