@@ -28,11 +28,36 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                         brukerpass = true,
                         kontraktNummer = row.stringOrNull("KONTRAKT_NUMMER"),
                         row.localDateOrNull("START_DATE"),
-                        row.localDateOrNull("END_DATE")
+                        row.localDateOrNull("END_DATE"),
                     )
-                }.asSingle
+                }.asSingle,
             )
         } ?: Brukerpass(brukerpass = false)
+    }
+
+    fun hentAlleBrukerpass(): List<BrukerpassMedFnr> {
+        @Language("OracleSQL")
+        var query =
+            """
+                SELECT FNR, KONTRAKT_NUMMER, SJEKK_NAVN, START_DATE, END_DATE
+                FROM XXRTV_DIGIHOT_OEBS_BRUKERP_V
+            """.trimIndent()
+
+        val items = sessionOf(dataSource).use {
+            it.run(
+                queryOf(query).map { row ->
+                    BrukerpassMedFnr(
+                        fnr = row.string("FNR"),
+                        brukerpass = true,
+                        kontraktNummer = row.stringOrNull("KONTRAKT_NUMMER"),
+                        row.localDateOrNull("START_DATE"),
+                        row.localDateOrNull("END_DATE"),
+                    )
+                }.asList,
+            )
+        }
+
+        return items
     }
 }
 
@@ -40,7 +65,15 @@ data class Brukerpass(
     val brukerpass: Boolean,
     val kontraktNummer: String? = null,
     val startDate: LocalDate? = null,
-    val endDate: LocalDate? = null
+    val endDate: LocalDate? = null,
+)
+
+data class BrukerpassMedFnr(
+    val fnr: String,
+    val brukerpass: Boolean,
+    val kontraktNummer: String? = null,
+    val startDate: LocalDate? = null,
+    val endDate: LocalDate? = null,
 )
 
 fun testHelper(row: Row) {

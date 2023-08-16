@@ -8,6 +8,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.client.oebs.OebsApiClient
@@ -17,6 +18,7 @@ import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.service.oebsdatabase.Brukernummer
 import no.nav.hjelpemidler.service.oebsdatabase.BrukernummerDao
+import no.nav.hjelpemidler.service.oebsdatabase.BrukerpassDao
 import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
 import no.nav.hjelpemidler.service.oebsdatabase.PersoninformasjonDao
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
@@ -27,6 +29,7 @@ private val personinformasjonDao = PersoninformasjonDao()
 private val opprettServiceforespørselDao = ServiceforespørselDao()
 private val hjelpemiddeloversiktDao = HjelpemiddeloversiktDao()
 private val brukernummerDao = BrukernummerDao()
+private val brukerpassDao = BrukerpassDao()
 private val oebsApiClient = OebsApiClient(Apache.create())
 
 fun Route.saksbehandling() {
@@ -84,6 +87,12 @@ fun Route.saksbehandling() {
             validateFnr(fnr)
             val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
             call.respond(hjelpemiddeloversikt)
+        }
+
+        // TODO: for testing i dev, fjern når ferdig
+        get("/hentbrukerpass") {
+            val brukerpass = brukerpassDao.hentAlleBrukerpass()
+            call.respond(brukerpass)
         }
 
         post("/harUtlantIsokode") {
