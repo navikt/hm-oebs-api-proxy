@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -13,6 +14,10 @@ import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.cio.EngineMain
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
+import io.ktor.server.plugins.callid.CALL_ID_DEFAULT_DICTIONARY
+import io.ktor.server.plugins.callid.CallId
+import io.ktor.server.plugins.callid.callIdMdc
+import io.ktor.server.plugins.callid.generate
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.path
@@ -57,10 +62,16 @@ fun Application.module() {
         level = Level.TRACE
         filter { call ->
             !call.request.path().startsWith("/internal") &&
-                !call.request.path().startsWith("/isalive") &&
-                !call.request.path().startsWith("/isready") &&
-                !call.request.path().startsWith("/metrics")
+                    !call.request.path().startsWith("/isalive") &&
+                    !call.request.path().startsWith("/isready") &&
+                    !call.request.path().startsWith("/metrics")
         }
+        callIdMdc("correlationId")
+    }
+
+    install(CallId) {
+        header(HttpHeaders.XCorrelationId)
+        generate(10, CALL_ID_DEFAULT_DICTIONARY)
     }
 
     install(MicrometerMetrics) {
