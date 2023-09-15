@@ -11,16 +11,15 @@ private val logg = KotlinLogging.logger {}
 
 class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun testNamespacing() {
-
         logg.info { "ENTER testNamespacing" }
 
-        //testSelectAll()
+        // testSelectAll()
 
-        //testBrukernummer()
-        //testUtlån()
-        //testArtBeskrivelse()
-        //testBrukerpass()
-        //testLagerstatus()
+        // testBrukernummer()
+        // testUtlån()
+        // testArtBeskrivelse()
+        // testBrukerpass()
+        // testLagerstatus()
         testPersoninformasjon()
     }
 
@@ -34,11 +33,10 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
             """.trimIndent()
 
         val result = sessionOf(dataSource).use {
-
             it.run(
                 queryOf(query).map { row ->
                     row.string("BRUKER_NUMMER")
-                }.asSingle
+                }.asSingle,
             )
         }
 
@@ -55,11 +53,10 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
             """.trimIndent()
 
         val result = sessionOf(dataSource).use {
-
             it.run(
                 queryOf(query).map { row ->
                     row.string("BRUKER_NUMMER")
-                }.asSingle
+                }.asSingle,
             )
         }
 
@@ -76,11 +73,10 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
             """.trimIndent()
 
         val result = sessionOf(dataSource).use {
-
             it.run(
                 queryOf(query).map { row ->
                     row.string("ARTIKKELNUMMER")
-                }.asSingle
+                }.asSingle,
             )
         }
 
@@ -97,11 +93,10 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
             """.trimIndent()
 
         val result = sessionOf(dataSource).use {
-
             it.run(
                 queryOf(query).map { row ->
                     row.string("ARTIKKEL_BESKRIVELSE")
-                }.asSingle
+                }.asSingle,
             )
         }
 
@@ -118,11 +113,10 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
             """.trimIndent()
 
         val result = sessionOf(dataSource).use {
-
             it.run(
                 queryOf(query).map { row ->
                     row.string("FNR")
-                }.asSingle
+                }.asSingle,
             )
         }
 
@@ -157,11 +151,10 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
             """.trimIndent()
 
         val result = sessionOf(dataSource).use {
-
             it.run(
                 queryOf(query).map { row ->
                     row.string("organisasjons_id")
-                }.asSingle
+                }.asSingle,
             )
         }
 
@@ -180,9 +173,19 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
         val result = sessionOf(dataSource).use {
             it.run(
                 queryOf(query).map { row ->
-                    logg.info { "testPersoninformasjon row: $row" }
+                    val metadata = row.underlying.metaData
+                    val columnsNumber: Int = metadata.getColumnCount()
+                    while (row.underlying.next()) {
+                        for (i in 1..columnsNumber) {
+                            if (i > 1) print(",  ")
+                            val columnValue: String = row.underlying.getString(i)
+                            print(columnValue + " " + metadata.getColumnName(i))
+                        }
+                        println("")
+                    }
+
                     row.string("FNR")
-                }.asSingle
+                }.asSingle,
             )
         }
 
