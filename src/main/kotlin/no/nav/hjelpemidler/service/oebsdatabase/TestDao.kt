@@ -16,11 +16,12 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
 
         //testSelectAll()
 
-        testBrukernummer()
-        testUtlån()
-        testArtBeskrivelse()
-        testBrukerpass()
-        testLagerstatus()
+        //testBrukernummer()
+        //testUtlån()
+        //testArtBeskrivelse()
+        //testBrukerpass()
+        //testLagerstatus()
+        testPersoninformasjon()
     }
 
     private fun testSelectAll() {
@@ -165,5 +166,26 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
         }
 
         logg.info { "Result testLagerstatus $result" }
+    }
+
+    private fun testPersoninformasjon() {
+        @Language("OracleSQL")
+        var query =
+            """
+                SELECT *
+                FROM apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V
+                WHERE FNR = '27066427779'
+            """.trimIndent()
+
+        val result = sessionOf(dataSource).use {
+            it.run(
+                queryOf(query).map { row ->
+                    logg.info { "testPersoninformasjon row: $row" }
+                    row.string("FNR")
+                }.asSingle
+            )
+        }
+
+        logg.info { "Result testBrukerpass $result" }
     }
 }
