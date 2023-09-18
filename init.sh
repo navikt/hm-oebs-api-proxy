@@ -11,9 +11,9 @@ if [ -d "/secrets/oebsq1" ]; then
 fi
 
 if [ -d "/secrets/oebsq2" ]; then
-#    export HM_OEBS_API_PROXY_DB_USR_Q2=$(cat /secrets/oebsq2/credentials/username)
+    export HM_OEBS_API_PROXY_DB_USR_Q2=$(cat /secrets/oebsq2/credentials/username)
     export HM_OEBS_API_PROXY_DB_PW_Q2=$(cat /secrets/oebsq2/credentials/password)
-    export HM_OEBS_API_PROXY_DB_URL_Q2=$(cat /secrets/oebsq2/config/jdbc_url)
+#    export HM_OEBS_API_PROXY_DB_URL_Q2=$(cat /secrets/oebsq2/config/jdbc_url)
 fi
 
 if [ -d "/secrets/oebsp" ]; then
