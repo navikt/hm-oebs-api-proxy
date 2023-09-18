@@ -15,12 +15,12 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
 
         // testSelectAll()
 
-        // testBrukernummer()
-        // testUtlån()
-        // testArtBeskrivelse()
-        // testBrukerpass()
-        // testLagerstatus()
-        testPersoninformasjon()
+         testBrukernummer()
+         testUtlån()
+         testArtBeskrivelse()
+         testBrukerpass()
+         testLagerstatus()
+//        testPersoninformasjon()
     }
 
     private fun testSelectAll() {
