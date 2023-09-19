@@ -20,7 +20,7 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
          testArtBeskrivelse()
          testBrukerpass()
          testLagerstatus()
-         testPersoninformasjon()
+//        testPersoninformasjon()
     }
 
     private fun testSelectAll() {
@@ -167,7 +167,7 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
             """
                 SELECT *
                 FROM apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V
-                WHERE BYDEL IS NOT NULL
+                WHERE FNR = '27066427779'
             """.trimIndent()
 
         val result = sessionOf(dataSource).use {
