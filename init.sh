@@ -10,14 +10,6 @@ if [ -d "/secrets/oebsq1" ]; then
     export HM_OEBS_API_PROXY_DB_URL_Q1=$(cat /secrets/oebsq1/config/jdbc_url)
 fi
 
-if [ -d "/secrets/oebsq2" ]; then
-    # samme credentials som i q1
-    export HM_OEBS_API_PROXY_DB_USR_Q2=$(cat /secrets/oebsq1/credentials/username)
-    export HM_OEBS_API_PROXY_DB_PW_Q2=$(cat /secrets/oebsq1/credentials/password)
-    # jdbc_url ligger i kubernetes secret
-#    export HM_OEBS_API_PROXY_DB_URL_Q2=$(cat /secrets/oebsq2/config/jdbc_url)
-fi
-
 if [ -d "/secrets/oebsp" ]; then
     export HM_OEBS_API_PROXY_DB_USR_P=$(cat /secrets/oebsp/credentials/username)
     export HM_OEBS_API_PROXY_DB_PW_P=$(cat /secrets/oebsp/credentials/password)
