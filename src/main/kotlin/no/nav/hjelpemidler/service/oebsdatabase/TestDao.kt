@@ -15,12 +15,54 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
 
         // testSelectAll()
 
-         testBrukernummer()
-         testUtlån()
-         testArtBeskrivelse()
-         testBrukerpass()
-         testLagerstatus()
+//         testBrukernummer()
+//         testUtlån()
+//         testArtBeskrivelse()
+//         testBrukerpass()
+//         testLagerstatus()
 //        testPersoninformasjon()
+        testSf()
+        testSfApps()
+    }
+
+    private fun testSf() {
+        logg.info { "testSf()" }
+        @Language("OracleSQL")
+        val query =
+            """
+            select count(*) as antall
+            from XXRTV_CS_DIGIHOT_SF_OPPRETT
+            """.trimIndent()
+
+        val result = sessionOf(dataSource).use {
+            it.run(
+                queryOf(query).map { row ->
+                    row.int("antall")
+                }.asSingle,
+            )
+        }
+
+        logg.info { "Result testSf $result" }
+    }
+
+    private fun testSfApps() {
+        logg.info { "testSfApps()" }
+        @Language("OracleSQL")
+        val query =
+            """
+            select count(*) as antall
+            from apps.XXRTV_CS_DIGIHOT_SF_OPPRETT
+            """.trimIndent()
+
+        val result = sessionOf(dataSource).use {
+            it.run(
+                queryOf(query).map { row ->
+                    row.int("antall")
+                }.asSingle,
+            )
+        }
+
+        logg.info { "Result testSfApps $result" }
     }
 
     private fun testSelectAll() {

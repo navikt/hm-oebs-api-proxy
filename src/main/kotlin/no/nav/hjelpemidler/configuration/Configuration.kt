@@ -40,18 +40,18 @@ internal object Configuration {
 //            "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_T1"),
 
             // Q1
-//            "OEBS_API_URL" to "http://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/",
-//            "HM_OEBS_API_PROXY_DB_NAME" to "oebsq1",
-//            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_Q1"),
-//            "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_Q1"),
-//            "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
-
-            // Q2 (samme bruker og passord som Q1)
             "OEBS_API_URL" to "http://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/",
-            "HM_OEBS_API_PROXY_DB_NAME" to "oebsq2",
-            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_Q2"),
+            "HM_OEBS_API_PROXY_DB_NAME" to "oebsq1",
+            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_Q1"),
             "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_Q1"),
             "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
+
+            // Q2 (samme bruker og passord som Q1)
+//            "OEBS_API_URL" to "http://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/",
+//            "HM_OEBS_API_PROXY_DB_NAME" to "oebsq2",
+//            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_Q2"),
+//            "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_Q1"),
+//            "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
         )
     )
 
