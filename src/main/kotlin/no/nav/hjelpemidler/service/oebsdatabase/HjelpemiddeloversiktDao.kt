@@ -19,7 +19,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
             """
             SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, 
                    SERIE_NUMMER, UTLÅNS_DATO, ORDRE_NUMMER, KATEGORI3_NUMMER, ARTIKKELSTATUS  
-            FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+            FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
             WHERE FNR = ?
             ORDER BY UTLÅNS_DATO DESC
             """.trimIndent()
@@ -50,7 +50,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         val query =
             """
             SELECT KATEGORI3_NUMMER, UTLÅNS_DATO
-            FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+            FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
             WHERE FNR = ?
             AND KATEGORI3_NUMMER = ?
             ORDER BY UTLÅNS_DATO DESC
@@ -75,7 +75,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         val query =
             """
             SELECT FNR, ARTIKKELNUMMER, SERIE_NUMMER, UTLÅNS_DATO  
-            FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+            FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
             WHERE ARTIKKELNUMMER = ?
             AND SERIE_NUMMER = ?
             ORDER BY UTLÅNS_DATO DESC

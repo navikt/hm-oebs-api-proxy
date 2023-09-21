@@ -14,7 +14,7 @@ class PersoninformasjonDao(private val dataSource: DataSource = Configuration.da
             """
             
             SELECT BRUKER_NUMMER, LEVERINGS_ADDRESSE, LEVERINGS_KOMMUNE, LEVERINGS_POSTNUMMER, LEVERINGS_BY, PRIMAER_ADR
-            FROM XXRTV_DIGIHOT_OEBS_ADR_FNR_V
+            FROM apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V
             WHERE FNR = ?
             """.trimIndent()
 
