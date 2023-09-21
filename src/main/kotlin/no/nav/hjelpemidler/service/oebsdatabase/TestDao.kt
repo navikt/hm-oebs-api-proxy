@@ -4,6 +4,9 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.models.Resultat
+import no.nav.hjelpemidler.models.Serviceforespørsel
+import no.nav.hjelpemidler.models.Stønadsklasse
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
@@ -21,48 +24,53 @@ class TestDao(private val dataSource: DataSource = Configuration.dataSource) {
 //         testBrukerpass()
 //         testLagerstatus()
 //        testPersoninformasjon()
-        testSf()
-        testSfApps()
-    }
-
-    private fun testSf() {
-        logg.info { "testSf()" }
-        @Language("OracleSQL")
-        val query =
-            """
-            select count(*) as antall
-            from XXRTV_CS_DIGIHOT_SF_OPPRETT
-            """.trimIndent()
-
-        val result = sessionOf(dataSource).use {
-            it.run(
-                queryOf(query).map { row ->
-                    row.int("antall")
-                }.asSingle,
+        try {
+            opprettServiceforespørsel(
+                Serviceforespørsel(
+                    fødselsnummer = "26848497710",
+                    navn = "Berømt Aktivitet",
+                    stønadsklasse = Stønadsklasse.HJDABH,
+                    resultat = Resultat.I,
+                    referansenummer = "9000",
+                    )
             )
+            logg.info { "Opprettelse av SF vellykket" }
+        } catch (e: Exception) {
+            logg.error(e) { "Opprettelse av SF feilet" }
         }
 
-        logg.info { "Result testSf $result" }
     }
 
-    private fun testSfApps() {
-        logg.info { "testSfApps()" }
+    fun opprettServiceforespørsel(sf: Serviceforespørsel) {
         @Language("OracleSQL")
-        val query =
+        val opprettSFQuery =
             """
-            select count(*) as antall
-            from apps.XXRTV_CS_DIGIHOT_SF_OPPRETT
+            
+            insert into xxrtv_cs_digihot_sf_opprett 
+            (ID, FNR, NAVN, STONADSKLASS,SAKSTYPE,RESULTAT,SFDATO ,REFERANSENUMMER,KILDE,PROCESSED,LAST_UPDATE_DATE,LAST_UPDATED_BY,CREATION_DATE,CREATED_BY, JOB_ID, SAKSBLOKK)
+            values 
+            (XXRTV_CS_DIGIHOT_SF_OPPRETT_S.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, sysdate, :referansenummer, :kilde, :processed, sysdate, :oppdatertAv, sysdate, :oppdatertAv, :jobId, 'X')
             """.trimIndent()
 
-        val result = sessionOf(dataSource).use {
+        sessionOf(dataSource).use {
             it.run(
-                queryOf(query).map { row ->
-                    row.int("antall")
-                }.asSingle,
+                queryOf(
+                    opprettSFQuery,
+                    mapOf(
+                        "fnr" to sf.fødselsnummer,
+                        "navn" to sf.navn,
+                        "stonadsklasse" to sf.stønadsklasse.name,
+                        "sakstype" to "S",
+                        "resultat" to sf.resultat.name,
+                        "referansenummer" to sf.referansenummer,
+                        "kilde" to sf.kilde,
+                        "processed" to "N",
+                        "oppdatertAv" to Configuration.application["OEBS_BRUKER_ID"],
+                        "jobId" to -1
+                    )
+                ).asUpdate
             )
         }
-
-        logg.info { "Result testSfApps $result" }
     }
 
     private fun testSelectAll() {
