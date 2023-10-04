@@ -13,7 +13,7 @@ class ServiceforespørselFeilDao(private val dataSource: DataSource = Configurat
         @Language("OracleSQL")
         val finnSFQuery =
             """
-            select ID, SAKSNUMMER, REFERANSENUMMER, PROCESSED, SF_NUMMER, FEILMELDING, KOMMENTAR, CREATION_DATE, LAST_UPDATE_DATE  from xxrtv_cs_digihot_sf_opprett
+            select ID, SAKSNUMMER, REFERANSENUMMER, PROCESSED, SF_NUMMER, FEILMELDING, KOMMENTAR, CREATION_DATE, LAST_UPDATE_DATE  from apps.xxrtv_cs_digihot_sf_opprett
             where FEILMELDING IS NOT NULL
             """.trimIndent()
 

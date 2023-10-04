@@ -9,7 +9,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
-      - post-brukerpass
+      - namespacing-2
 
 jobs:
   build:

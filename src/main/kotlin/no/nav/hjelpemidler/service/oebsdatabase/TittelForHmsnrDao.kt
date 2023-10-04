@@ -27,7 +27,7 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
         var query =
             """
                 SELECT ARTIKKEL, BRUKERARTIKKELTYPE, ARTIKKEL_BESKRIVELSE
-                FROM XXRTV_DIGIHOT_OEBS_ART_BESKR_V
+                FROM apps.XXRTV_DIGIHOT_OEBS_ART_BESKR_V
                 WHERE ARTIKKEL IN (?)
             """.trimIndent()
 
