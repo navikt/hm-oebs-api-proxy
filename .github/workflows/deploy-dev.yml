@@ -9,7 +9,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
-      - namespacing-2
+      - bydel
 
 jobs:
   build:
