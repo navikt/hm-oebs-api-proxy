@@ -7,6 +7,7 @@ import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
+import javax.sql.DataSource
 
 
 internal object Configuration {
@@ -89,19 +90,20 @@ internal object Configuration {
         "HM_OEBS_API_PROXY_DB_PW" to get("HM_OEBS_API_PROXY_DB_PW")
     )
 
-    val dataSource by lazy {
-        println("ORACLE URL " + get("HM_OEBS_API_PROXY_DB_URL"))
-        HikariDataSource().apply {
-            username = get("HM_OEBS_API_PROXY_DB_USR")
-            password = get("HM_OEBS_API_PROXY_DB_PW")
-            maximumPoolSize = 10
-            minimumIdle = 1
-            idleTimeout = 10001
-            connectionTimeout = 1000
-            maxLifetime = 30001
-            driverClassName = "oracle.jdbc.driver.OracleDriver"
-            jdbcUrl = get("HM_OEBS_API_PROXY_DB_URL")
-        }
+    val dataSource: Nothing by lazy {
+        throw RuntimeException("OeBS er opptatt med vedlikehold")
+//        println("ORACLE URL " + get("HM_OEBS_API_PROXY_DB_URL"))
+//        HikariDataSource().apply {
+//            username = get("HM_OEBS_API_PROXY_DB_USR")
+//            password = get("HM_OEBS_API_PROXY_DB_PW")
+//            maximumPoolSize = 10
+//            minimumIdle = 1
+//            idleTimeout = 10001
+//            connectionTimeout = 1000
+//            maxLifetime = 30001
+//            driverClassName = "oracle.jdbc.driver.OracleDriver"
+//            jdbcUrl = get("HM_OEBS_API_PROXY_DB_URL")
+//        }
     }
 
     val tokenX: Map<String, String> = mapOf(
