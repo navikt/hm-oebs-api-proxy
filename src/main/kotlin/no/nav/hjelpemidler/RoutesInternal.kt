@@ -14,23 +14,23 @@ import no.nav.hjelpemidler.metrics.Prometheus
 
 fun Route.internal() {
     get("/isalive") {
-//        // Let's check if the datasource has been closed
-//        if (Configuration.dataSource.isClosed) {
-//            return@get call.respondText("NOT ALIVE", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
-//        }
+        // Let's check if the datasource has been closed
+        if (Configuration.dataSource.isClosed) {
+            return@get call.respondText("NOT ALIVE", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
+        }
         call.respondText("ALIVE", ContentType.Text.Plain)
     }
 
     get("/isready") {
         // Let's check if the datasource is still valid and working
-//        val dbConnectionValid = Configuration.dataSource.connection.use {
-//            it.isValid(20)
-//        }
-//        if (!dbConnectionValid) {
-//            Prometheus.oebsDbAvailable.set(0.0)
-//            return@get call.respondText("NOT READY", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
-//        }
-//        Prometheus.oebsDbAvailable.set(1.0)
+        val dbConnectionValid = Configuration.dataSource.connection.use {
+            it.isValid(20)
+        }
+        if (!dbConnectionValid) {
+            Prometheus.oebsDbAvailable.set(0.0)
+            return@get call.respondText("NOT READY", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
+        }
+        Prometheus.oebsDbAvailable.set(1.0)
         call.respondText("READY", ContentType.Text.Plain)
     }
 

@@ -9,7 +9,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
-      - vedlikehold
+      - bydel
 
 jobs:
   build:

@@ -93,10 +93,10 @@ fun Application.module() {
 
     routing {
         internal()
-        // Deaktivert
-//        hjelpemiddelsiden()
-//        saksbehandling()
-//        felles()
+        hjelpemiddelsiden()
+        saksbehandling()
+        felles()
+        test()
     }
 }
 
