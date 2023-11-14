@@ -27,6 +27,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         val items = sessionOf(dataSource).use {
             it.run(
                 queryOf(query, fnr).map { row ->
+                    log.info("utlånsType: ${row.stringOrNull("UTLÅNS_TYPE")}")
                     HjelpemiddelBruker(
                         antall = row.string("ANTALL"),
                         antallEnhet = row.string("ENHET"),
