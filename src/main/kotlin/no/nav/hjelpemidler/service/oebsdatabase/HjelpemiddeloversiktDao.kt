@@ -18,8 +18,8 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         val query =
             """
             SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, 
-                   SERIE_NUMMER, UTLÅNS_DATO, ORDRE_NUMMER, KATEGORI3_NUMMER, ARTIKKELSTATUS, UTLÅNS_TYPE,
-                   INNLEVERINGSDATO
+                   SERIE_NUMMER, UTLÅNS_DATO, ORDRE_NUMMER, KATEGORI3_NUMMER, ARTIKKELSTATUS, 
+                   UTLÅNS_TYPE, INNLEVERINGSDATO
             FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
             WHERE FNR = ?
             ORDER BY UTLÅNS_DATO DESC
