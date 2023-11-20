@@ -16,4 +16,5 @@ if [ -d "/secrets/oebsp" ]; then
     export HM_OEBS_API_PROXY_DB_URL_P=$(cat /secrets/oebsp/config/jdbc_url)
 fi
 
-/app.jar
+set -x
+exec java -jar /app.jar
