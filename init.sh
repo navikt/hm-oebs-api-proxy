@@ -15,3 +15,5 @@ if [ -d "/secrets/oebsp" ]; then
     export HM_OEBS_API_PROXY_DB_PW_P=$(cat /secrets/oebsp/credentials/password)
     export HM_OEBS_API_PROXY_DB_URL_P=$(cat /secrets/oebsp/config/jdbc_url)
 fi
+
+/app.jar
