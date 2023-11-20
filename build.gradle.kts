@@ -67,10 +67,16 @@ dependencies {
     implementation("io.ktor:ktor-server-cio-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
     implementation("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-server-call-id:$ktorVersion")
+
+    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
+    constraints {
+        implementation("com.auth0:jwks-rsa:0.22.1") {
+            because("Guava vulnerable to insecure use of temporary directory (<32.0.0)")
+        }
+    }
 
     // Ktor Client
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
