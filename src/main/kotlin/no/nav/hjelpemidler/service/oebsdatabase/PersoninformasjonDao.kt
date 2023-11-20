@@ -27,7 +27,7 @@ class PersoninformasjonDao(private val dataSource: DataSource = Configuration.da
                         leveringKommune = row.stringOrNull("LEVERINGS_KOMMUNE") ?: "",
                         leveringBy = row.stringOrNull("LEVERINGS_BY") ?: "",
                         primaerAdr = row.string("PRIMAER_ADR"),
-                        bydel = row.stringOrNull("BYDEL"),
+                        bydel = row.stringOrNull("BYDEL")
                     )
                 }.asList
             )

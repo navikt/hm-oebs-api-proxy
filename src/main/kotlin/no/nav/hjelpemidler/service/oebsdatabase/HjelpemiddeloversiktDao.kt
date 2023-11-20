@@ -40,7 +40,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                         ordrenummer = row.stringOrNull("ORDRE_NUMMER"),
                         artikkelStatus = row.string("ARTIKKELSTATUS"),
                         utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
-                        innleveringsdato = row.stringOrNull("INNLEVERINGSDATO"),
+                        innleveringsdato = row.stringOrNull("INNLEVERINGSDATO")
                     )
                 }.asList
             )

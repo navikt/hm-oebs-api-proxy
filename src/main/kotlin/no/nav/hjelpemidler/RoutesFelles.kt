@@ -22,7 +22,6 @@ private val brukerpassDao = BrukerpassDao()
 private val lagerDao = LagerDao(kommuneOppslag)
 
 fun Route.felles() {
-
     authenticate("aad") {
         post("/hent-brukerpass") {
             val fnr = call.receive<FnrDto>().fnr
