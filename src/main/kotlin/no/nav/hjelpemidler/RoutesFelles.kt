@@ -45,7 +45,7 @@ fun Route.felles() {
 
         get("/lager/sentral/{kommunenummer}/{hmsNr}") {
             data class NoResult(
-                val error: String
+                val error: String,
             )
 
             val result = lagerDao.lagerStatusSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)

@@ -106,10 +106,10 @@ fun Application.installAuthentication() {
 
 private data class WellKnownConfig(
     val metadata: Metadata,
-    val clientId: String
+    val clientId: String,
 ) {
     data class Metadata(
         @JsonProperty("issuer") val issuer: String,
-        @JsonProperty("jwks_uri") val jwksUri: String
+        @JsonProperty("jwks_uri") val jwksUri: String,
     )
 }
