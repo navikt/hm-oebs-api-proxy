@@ -91,7 +91,6 @@ internal object Configuration {
 
     private fun loadVaultCred(filename: String): String {
         return runCatching { File(filename).readText(Charsets.UTF_8) }.getOrElse {
-            log.error(it) { "Could not load vault credential: $filename" }
             ""
         }
     }
