@@ -90,7 +90,9 @@ internal object Configuration {
     operator fun get(key: String): String = configuration[Key(key, stringType)]
 
     private fun loadVaultCred(filename: String): String {
+        log.info("DEBUG loading cred: $filename")
         return runCatching { File(filename).readText(Charsets.UTF_8) }.getOrElse {
+            log.info("DEBUG loading cred failed: $filename")
             ""
         }
     }
