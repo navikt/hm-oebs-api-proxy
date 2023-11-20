@@ -8,7 +8,7 @@ version = "1.0-SNAPSHOT"
 
 plugins {
     application
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.9.0"
     id("com.expediagroup.graphql") version "6.2.5"
     id("com.diffplug.spotless") version "6.11.0"
 }
@@ -42,7 +42,7 @@ dependencies {
     }
 
     // Jackson
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
 
     // GraphQL
     val graphQLVersion = "6.2.5"
@@ -59,7 +59,7 @@ dependencies {
     runtimeOnly("com.oracle.database.jdbc:ojdbc11:21.7.0.0")
 
     // Ktor
-    val ktorVersion = "2.1.2"
+    val ktorVersion = "2.3.3"
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
     // Ktor Server
@@ -70,6 +70,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
     implementation("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-id:$ktorVersion")
 
     // Ktor Client
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
@@ -77,6 +78,7 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-auth-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
 
     // Testing
     testImplementation(kotlin("test"))

@@ -6,6 +6,10 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.accept
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -18,6 +22,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.jackson.jackson
 import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.configuration.isNotProd
 import no.nav.hjelpemidler.models.Artikkel
 import no.nav.hjelpemidler.models.BestillingsOrdreRequest
 import no.nav.hjelpemidler.models.OebsJsonFormat
@@ -33,6 +38,12 @@ class OebsApiClient(engine: HttpClientEngine) {
                 registerModule(JavaTimeModule())
             }
         }
+        if (isNotProd()) {
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.BODY
+            }
+        }
         defaultRequest {
             header(HttpHeaders.Authorization, "Basic $apiToken")
             contentType(ContentType.Application.Json)
@@ -44,12 +55,18 @@ class OebsApiClient(engine: HttpClientEngine) {
     private val apiToken = Configuration.oebsApi.getValue("OEBS_API_TOKEN")
 
     suspend fun opprettOrdre(request: BestillingsOrdreRequest): String {
+        val shippingsinstructions = if (request.forsendelsesinfo.isNullOrBlank()) {
+            request.formidlernavn // Tidligere når vi ikke sendte inn shippingsinstructions, så satte OEBS automatisk forimdlernavn som info på ordrelinjene
+        } else {
+            request.forsendelsesinfo
+        }
         val bestilling = Ordre(
             fodselsnummer = request.fodselsnummer,
             formidlernavn = request.formidlernavn,
             ordretype = OrdreType.BESTILLING,
             saksnummer = request.saksnummer,
-            artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) }
+            artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) },
+            shippinginstructions = shippingsinstructions
         )
 
         log.info("Kaller oebs api $apiUrl")
@@ -67,7 +84,7 @@ class OebsApiClient(engine: HttpClientEngine) {
     }
 
     private suspend fun httpPostRequest(
-        bestilling: Ordre,
+        bestilling: Ordre
     ): HttpResponse = client.post(apiUrl) {
         setBody(OebsJsonFormat(bestilling))
     }

@@ -3,11 +3,13 @@ package no.nav.hjelpemidler
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import mu.KotlinLogging
-import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.configuration.isNotProd
 import no.nav.hjelpemidler.lagerstatus.KommuneOppslag
 import no.nav.hjelpemidler.service.oebsdatabase.BrukerpassDao
 import no.nav.hjelpemidler.service.oebsdatabase.LagerDao
@@ -20,12 +22,26 @@ private val brukerpassDao = BrukerpassDao()
 private val lagerDao = LagerDao(kommuneOppslag)
 
 fun Route.felles() {
+
+    authenticate("aad") {
+        post("/hent-brukerpass") {
+            val fnr = call.receive<FnrDto>().fnr
+
+            // Extra sanity check of FNR
+            if (!"\\d{11}".toRegex().matches(fnr)) {
+                error("invalid fnr from body, does not match regex")
+            }
+
+            call.respond(brukerpassDao.brukerpassForFnr(fnr))
+        }
+    }
+
     authenticate("tokenX", "aad") {
         get("/brukerpass") {
             // Extract FNR to lookup from idporten logon
             val fnr = call.getTokenInfo()["pid"]?.asText() ?: error("Could not find 'pid' claim in token")
 
-            if (Configuration.application["APP_PROFILE"]!! != "prod") {
+            if (isNotProd()) {
                 logg.info("Processing request for /brukerpass (on-behalf-of: $fnr)")
             } else {
                 logg.info("Processing request for /brukerpass")
@@ -45,7 +61,7 @@ fun Route.felles() {
 
         get("/lager/sentral/{kommunenummer}/{hmsNr}") {
             data class NoResult(
-                val error: String,
+                val error: String
             )
 
             val result = lagerDao.lagerStatusSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)
@@ -60,3 +76,7 @@ fun Route.felles() {
         }
     }
 }
+
+private data class FnrDto(
+    val fnr: String
+)

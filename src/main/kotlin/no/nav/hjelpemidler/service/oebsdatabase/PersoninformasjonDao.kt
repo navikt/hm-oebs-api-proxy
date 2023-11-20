@@ -12,9 +12,8 @@ class PersoninformasjonDao(private val dataSource: DataSource = Configuration.da
         @Language("OracleSQL")
         val hentPersoninfoQuery =
             """
-            
-            SELECT BRUKER_NUMMER, LEVERINGS_ADDRESSE, LEVERINGS_KOMMUNE, LEVERINGS_POSTNUMMER, LEVERINGS_BY, PRIMAER_ADR
-            FROM XXRTV_DIGIHOT_OEBS_ADR_FNR_V
+            SELECT BRUKER_NUMMER, LEVERINGS_ADDRESSE, LEVERINGS_KOMMUNE, LEVERINGS_POSTNUMMER, LEVERINGS_BY, PRIMAER_ADR, BYDEL
+            FROM apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V
             WHERE FNR = ?
             """.trimIndent()
 
@@ -27,7 +26,8 @@ class PersoninformasjonDao(private val dataSource: DataSource = Configuration.da
                         leveringPostnr = row.stringOrNull("LEVERINGS_POSTNUMMER") ?: "",
                         leveringKommune = row.stringOrNull("LEVERINGS_KOMMUNE") ?: "",
                         leveringBy = row.stringOrNull("LEVERINGS_BY") ?: "",
-                        primaerAdr = row.string("PRIMAER_ADR")
+                        primaerAdr = row.string("PRIMAER_ADR"),
+                        bydel = row.stringOrNull("BYDEL"),
                     )
                 }.asList
             )

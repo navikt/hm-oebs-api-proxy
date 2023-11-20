@@ -7,6 +7,7 @@ import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Produkt
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
+import no.nav.hjelpemidler.models.Utlån
 import org.intellij.lang.annotations.Language
 import org.slf4j.LoggerFactory
 import javax.sql.DataSource
@@ -17,8 +18,9 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         val query =
             """
             SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, 
-                   SERIE_NUMMER, UTLÅNS_DATO, ORDRE_NUMMER, KATEGORI3_NUMMER, ARTIKKELSTATUS  
-            FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+                   SERIE_NUMMER, UTLÅNS_DATO, ORDRE_NUMMER, KATEGORI3_NUMMER, ARTIKKELSTATUS, 
+                   UTLÅNS_TYPE, INNLEVERINGSDATO
+            FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
             WHERE FNR = ?
             ORDER BY UTLÅNS_DATO DESC
             """.trimIndent()
@@ -36,7 +38,9 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                         serieNr = row.stringOrNull("SERIE_NUMMER"),
                         datoUtsendelse = row.string("UTLÅNS_DATO"),
                         ordrenummer = row.stringOrNull("ORDRE_NUMMER"),
-                        artikkelStatus = row.string("ARTIKKELSTATUS")
+                        artikkelStatus = row.string("ARTIKKELSTATUS"),
+                        utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
+                        innleveringsdato = row.stringOrNull("INNLEVERINGSDATO"),
                     )
                 }.asList
             )
@@ -49,7 +53,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         val query =
             """
             SELECT KATEGORI3_NUMMER, UTLÅNS_DATO
-            FROM XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+            FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
             WHERE FNR = ?
             AND KATEGORI3_NUMMER = ?
             ORDER BY UTLÅNS_DATO DESC
@@ -57,17 +61,46 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
 
         val items = sessionOf(dataSource).use {
             it.run(
-                queryOf(query, fnr, isokode).map{row ->  UtlånPåIsokode(
-                    kategoriNummer = row.string("KATEGORI3_NUMMER"),
-                    datoUtsendelse = row.string("UTLÅNS_DATO")
-                )}.asList
+                queryOf(query, fnr, isokode).map { row ->
+                    UtlånPåIsokode(
+                        kategoriNummer = row.string("KATEGORI3_NUMMER"),
+                        datoUtsendelse = row.string("UTLÅNS_DATO")
+                    )
+                }.asList
             )
         }
 
         return items
     }
 
-    data class UtlånPåIsokode (
+    fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? {
+        @Language("OracleSQL")
+        val query =
+            """
+            SELECT FNR, ARTIKKELNUMMER, SERIE_NUMMER, UTLÅNS_DATO  
+            FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+            WHERE ARTIKKELNUMMER = ?
+            AND SERIE_NUMMER = ?
+            ORDER BY UTLÅNS_DATO DESC
+            """.trimIndent()
+
+        val item = sessionOf(dataSource).use {
+            it.run(
+                queryOf(query, artnr, serienr).map { row ->
+                    Utlån(
+                        fnr = row.string("FNR"),
+                        artnr = row.string("ARTIKKELNUMMER"),
+                        serienr = row.string("SERIE_NUMMER"),
+                        utlånsDato = row.string("UTLÅNS_DATO")
+                    )
+                }.asSingle
+            )
+        }
+
+        return item
+    }
+
+    data class UtlånPåIsokode(
         val kategoriNummer: String,
         val datoUtsendelse: String
     )

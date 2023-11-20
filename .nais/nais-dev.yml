@@ -86,6 +86,12 @@ spec:
         - application: hm-kommune-api
           namespace: teamdigihot
           cluster: dev-gcp
+        - application: hm-delbestilling-api
+          namespace: teamdigihot
+          cluster: dev-gcp
+        - application: hm-roller
+          namespace: teamdigihot
+          cluster: dev-gcp
     outbound:
       external:
         - host: hm-grunndata-api.dev.intern.nav.no

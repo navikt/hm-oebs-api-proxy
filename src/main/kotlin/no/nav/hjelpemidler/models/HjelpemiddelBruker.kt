@@ -11,13 +11,15 @@ data class HjelpemiddelBruker(
     val datoUtsendelse: String,
     val ordrenummer: String?,
     val artikkelStatus: String,
+    val utlånsType: String?,
+    val innleveringsdato: String?,
     var hmdbBeriket: Boolean = false,
     var hmdbProduktNavn: String? = null,
     var hmdbBeskrivelse: String? = null,
     var hmdbKategori: String? = null,
     var hmdbBilde: String? = null,
     var hmdbURL: String? = null,
-    var hmdbKategoriKortnavn: String? = null,
+    var hmdbKategoriKortnavn: String? = null
 
     /*
         val FOREKOMST_NUMMER: String,

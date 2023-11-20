@@ -17,7 +17,7 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         var query =
             """
                 SELECT KONTRAKT_NUMMER, SJEKK_NAVN, START_DATE, END_DATE
-                FROM XXRTV_DIGIHOT_OEBS_BRUKERP_V
+                FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V
                 WHERE FNR = ?
             """.trimIndent()
 
@@ -40,7 +40,7 @@ data class Brukerpass(
     val brukerpass: Boolean,
     val kontraktNummer: String? = null,
     val startDate: LocalDate? = null,
-    val endDate: LocalDate? = null,
+    val endDate: LocalDate? = null
 )
 
 fun testHelper(row: Row) {
