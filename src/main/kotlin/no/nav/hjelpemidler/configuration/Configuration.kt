@@ -7,6 +7,7 @@ import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import com.zaxxer.hikari.HikariDataSource
+import java.io.File
 
 
 internal object Configuration {
@@ -17,9 +18,9 @@ internal object Configuration {
             "HM_OEBS_OPPRETT_SF_BRUKEROD" to "81760",
 
             "HM_OEBS_API_PROXY_DB_NAME" to "oebsp",
-            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_P"),
-            "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_P"),
-            "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_P"),
+            "HM_OEBS_API_PROXY_DB_URL" to loadVaultCred("/secrets/oebsp/config/jdbc_url"), // System.getenv("HM_OEBS_API_PROXY_DB_URL_P"),
+            "HM_OEBS_API_PROXY_DB_USR" to loadVaultCred("/secrets/oebsp/credentials/username"), // System.getenv("HM_OEBS_API_PROXY_DB_USR_P"),
+            "HM_OEBS_API_PROXY_DB_PW" to loadVaultCred("/secrets/oebsp/credentials/password"), // System.getenv("HM_OEBS_API_PROXY_DB_PW_P"),
 
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.nav.no",
             "OEBS_API_URL" to "http://oebs.adeo.no/webservices/rest/opprettordre/digihotordreontinfo/"
@@ -34,16 +35,16 @@ internal object Configuration {
 
             /*
             "HM_OEBS_API_PROXY_DB_NAME" to "oebst1",
-            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_T1"),
-            "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_T1"),
-            "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_T1"),
+            "HM_OEBS_API_PROXY_DB_URL" to loadVaultCred("/secrets/oebst1/config/jdbc_url"), // System.getenv("HM_OEBS_API_PROXY_DB_URL_T1"),
+            "HM_OEBS_API_PROXY_DB_USR" to loadVaultCred("/secrets/oebst1/credentials/username"), // System.getenv("HM_OEBS_API_PROXY_DB_USR_T1"),
+            "HM_OEBS_API_PROXY_DB_PW" to loadVaultCred("/secrets/oebst1/credentials/password"), // System.getenv("HM_OEBS_API_PROXY_DB_PW_T1"),
             */
 
 
             "HM_OEBS_API_PROXY_DB_NAME" to "oebsq1",
-            "HM_OEBS_API_PROXY_DB_URL" to System.getenv("HM_OEBS_API_PROXY_DB_URL_Q1"),
-            "HM_OEBS_API_PROXY_DB_USR" to System.getenv("HM_OEBS_API_PROXY_DB_USR_Q1"),
-            "HM_OEBS_API_PROXY_DB_PW" to System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
+            "HM_OEBS_API_PROXY_DB_URL" to loadVaultCred("/secrets/oebsq1/config/jdbc_url"), // System.getenv("HM_OEBS_API_PROXY_DB_URL_Q1"),
+            "HM_OEBS_API_PROXY_DB_USR" to loadVaultCred("/secrets/oebsq1/credentials/username"), // System.getenv("HM_OEBS_API_PROXY_DB_USR_Q1"),
+            "HM_OEBS_API_PROXY_DB_PW" to loadVaultCred("/secrets/oebsq1/credentials/password"), // System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
 
 
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.dev.nav.no",
@@ -85,6 +86,12 @@ internal object Configuration {
     }
 
     operator fun get(key: String): String = configuration[Key(key, stringType)]
+
+    private fun loadVaultCred(filename: String): String {
+        return runCatching { File(filename).readText(Charsets.UTF_8) }.getOrElse {
+            throw Exception("Could not load vault credential: $filename")
+        }
+    }
 
     val oracleDatabaseConfig: Map<String, String> = mapOf(
         "HM_OEBS_API_PROXY_DB_NAME" to get("HM_OEBS_API_PROXY_DB_NAME"),
