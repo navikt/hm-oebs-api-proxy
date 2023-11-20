@@ -90,9 +90,7 @@ internal object Configuration {
     operator fun get(key: String): String = configuration[Key(key, stringType)]
 
     private fun loadVaultCred(filename: String): String {
-        log.info("DEBUG loading cred: $filename")
         return runCatching { File(filename).readText(Charsets.UTF_8) }.getOrElse {
-            log.info("DEBUG loading cred failed: $filename")
             ""
         }
     }
@@ -106,7 +104,6 @@ internal object Configuration {
 
     val dataSource by lazy {
         println("ORACLE URL " + get("HM_OEBS_API_PROXY_DB_URL"))
-        log.info("DEBUG HERE2: url=${get("HM_OEBS_API_PROXY_DB_URL")}")
         HikariDataSource().apply {
             username = get("HM_OEBS_API_PROXY_DB_USR")
             password = get("HM_OEBS_API_PROXY_DB_PW")

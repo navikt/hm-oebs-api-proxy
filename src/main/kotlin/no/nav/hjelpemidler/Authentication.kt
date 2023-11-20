@@ -15,14 +15,11 @@ import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
 import kotlinx.coroutines.runBlocking
-import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import java.net.ProxySelector
 import java.net.URL
 import java.util.concurrent.TimeUnit
-
-private val logg = KotlinLogging.logger {}
 
 private fun httpClientWithProxy() = HttpClient(Apache) {
     install(ContentNegotiation) {
@@ -40,14 +37,12 @@ private fun httpClientWithProxy() = HttpClient(Apache) {
 fun Application.installAuthentication() {
     // Load token X config for rest client authentication
     var tokenXConfig: WellKnownConfig?
-    logg.info("DEBUG HERE2.1: tokenXWellKnownUrl=${Configuration.tokenX["TOKEN_X_WELL_KNOWN_URL"]!!}, clientId=${Configuration.tokenX["TOKEN_X_CLIENT_ID"]!!}")
     runBlocking {
         tokenXConfig = WellKnownConfig(
             metadata = httpClientWithProxy().get(Configuration.tokenX["TOKEN_X_WELL_KNOWN_URL"]!!).body(),
             clientId = Configuration.tokenX["TOKEN_X_CLIENT_ID"]!!
         )
     }
-    logg.info("DEBUG HERE2.2")
 
     val jwkProviderTokenX = JwkProviderBuilder(URL(tokenXConfig!!.metadata.jwksUri))
         // cache up to 10 JWKs for 24 hours
@@ -55,7 +50,6 @@ fun Application.installAuthentication() {
         // if not cached, only allow max 10 different keys per minute to be fetched from external provider
         .rateLimited(10, 1, TimeUnit.MINUTES)
         .build()
-    logg.info("DEBUG HERE2.3: azure_well_known_url=${Configuration.azureAD["AZURE_APP_WELL_KNOWN_URL"]!!}, azure_client_id=${Configuration.azureAD["AZURE_APP_CLIENT_ID"]!!}")
 
     // Load Azure AD config for rest client authentication
     var aadConfig: WellKnownConfig?
@@ -65,7 +59,6 @@ fun Application.installAuthentication() {
             clientId = Configuration.azureAD["AZURE_APP_CLIENT_ID"]!!
         )
     }
-    logg.info("DEBUG HERE2.4")
 
     val jwkProviderAad = JwkProviderBuilder(URL(aadConfig!!.metadata.jwksUri))
         // cache up to 10 JWKs for 24 hours
@@ -73,7 +66,6 @@ fun Application.installAuthentication() {
         // if not cached, only allow max 10 different keys per minute to be fetched from external provider
         .rateLimited(10, 1, TimeUnit.MINUTES)
         .build()
-    logg.info("DEBUG HERE2.5")
 
     // Install auth providers
     install(Authentication) {
@@ -110,8 +102,6 @@ fun Application.installAuthentication() {
             }
         }
     }
-
-    logg.info("DEBUG HERE2.6")
 }
 
 private data class WellKnownConfig(

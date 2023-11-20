@@ -45,13 +45,10 @@ fun main(args: Array<String>) = EngineMain.main(args)
 
 @ExperimentalTime
 fun Application.module() {
-    logg.info("DEBUG HERE1")
     environment.monitor.subscribe(ApplicationStarted) {
         // loggFeilendeSf()
     }
-    logg.info("DEBUG HERE2")
     installAuthentication()
-    logg.info("DEBUG HERE3")
 
     install(ContentNegotiation) {
         jackson {
@@ -60,7 +57,6 @@ fun Application.module() {
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         }
     }
-    logg.info("DEBUG HERE4")
 
     install(CallLogging) {
         level = Level.TRACE
@@ -72,13 +68,11 @@ fun Application.module() {
         }
         callIdMdc("correlationId")
     }
-    logg.info("DEBUG HERE5")
 
     install(CallId) {
         header(HttpHeaders.XCorrelationId)
         generate(10, CALL_ID_DEFAULT_DICTIONARY)
     }
-    logg.info("DEBUG HERE6")
 
     install(MicrometerMetrics) {
         registry = PrometheusMeterRegistry(
@@ -96,7 +90,6 @@ fun Application.module() {
             KafkaConsumerMetrics()
         )
     }
-    logg.info("DEBUG HERE7")
 
     routing {
         internal()
@@ -105,7 +98,6 @@ fun Application.module() {
         felles()
         test()
     }
-    logg.info("DEBUG HERE8")
 }
 
 fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
