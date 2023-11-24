@@ -13,6 +13,7 @@ data class HjelpemiddelBruker(
     val artikkelStatus: String,
     val utlånsType: String?,
     val innleveringsdato: String?,
+    val oppdatertInnleveringsdato: String?,
     var hmdbBeriket: Boolean = false,
     var hmdbProduktNavn: String? = null,
     var hmdbBeskrivelse: String? = null,

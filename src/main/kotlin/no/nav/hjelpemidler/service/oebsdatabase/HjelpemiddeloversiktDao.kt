@@ -19,7 +19,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
             """
             SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, 
                    SERIE_NUMMER, UTLÅNS_DATO, ORDRE_NUMMER, KATEGORI3_NUMMER, ARTIKKELSTATUS, 
-                   UTLÅNS_TYPE, INNLEVERINGSDATO
+                   UTLÅNS_TYPE, INNLEVERINGSDATO, OPPDATERT_INNLEVERINGSDATO
             FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
             WHERE FNR = ?
             ORDER BY UTLÅNS_DATO DESC
@@ -40,7 +40,8 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                         ordrenummer = row.stringOrNull("ORDRE_NUMMER"),
                         artikkelStatus = row.string("ARTIKKELSTATUS"),
                         utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
-                        innleveringsdato = row.stringOrNull("INNLEVERINGSDATO")
+                        innleveringsdato = row.stringOrNull("INNLEVERINGSDATO"),
+                        oppdatertInnleveringsdato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO")
                     )
                 }.asList
             )
