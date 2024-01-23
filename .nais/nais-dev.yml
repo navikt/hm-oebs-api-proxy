@@ -94,4 +94,4 @@ spec:
           cluster: dev-gcp
     outbound:
       external:
-        - host: hm-grunndata-api.dev.intern.nav.no
+        - host: hm-grunndata-api.intern.dev.nav.no

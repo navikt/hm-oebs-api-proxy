@@ -38,6 +38,12 @@ type Bestillingsordning {
   hmsnr: String!
 }
 
+type Godkjenningskurs {
+  isokode: String!
+  kursId: Int!
+  tittel: String!
+}
+
 type Kategori {
   navn: String!
   produkter: [Produkt!]!
@@ -90,11 +96,11 @@ type Produkt {
   isokortnavn: String
   isotekst: String!
   isotittel: String!
-  kanSokesTilInstitusjon: Boolean!
   kategori: String
   leverandor: Leverandor
   leverandorId: String
-  paakrevdGodkjenningskurs: PaakrevdGodkjenningskursDTO
+  paakrevdGodkjenningskurs: PaakrevdGodkjenningskursDTO @deprecated(reason : "Bruk pakrevdGodkjenningskurs, replace with pakrevdGodkjenningskurs")
+  pakrevdGodkjenningskurs: Godkjenningskurs
   produktId: String!
   produktUrl: String!
   produktbeskrivelse: String!
@@ -117,11 +123,11 @@ type ProduktPage {
 type Query {
   avtaleposter: [Avtalepost!]!
   "Sjekk om et tilbehør er prisforhandlet"
-  erPrisforhandletTilbehoer(hmsnr: String!, leverandorId: String!, rammeavtaleId: String!): Boolean!
+  erPrisforhandletTilbehoer(hmsnr: String!, leverandorId: String!, rammeavtaleId: String!): Boolean! @deprecated(reason : "Bruk prisforhandletTilbehor")
   "Hent alle produkter"
   hentAlleProdukter(filter: ProduktfilterInput): ProduktPage! @deprecated(reason : "Bruk produkter i stedet, replace with produkter(filter)")
   "Sjekk om et produkt/tilbehør er på bestillingsordning"
-  hentErIBestillingsOrdning(hmsnrs: [String!]!): [Bestillingsordning!]!
+  hentErIBestillingsOrdning(hmsnrs: [String!]!): [Bestillingsordning!]! @deprecated(reason : "Bruk produkter med erIBestillingsordning = true")
   "Hent produkter med hmsnr"
   hentProdukterMedHmsnr(hmsnr: String!): [Produkt!]! @deprecated(reason : "Bruk produkter i stedet, replace with produkter(filter)")
   "Hent produkter med hmsnrs"
@@ -129,8 +135,11 @@ type Query {
   kategorier(navn: [String!]): [Kategori!]!
   "Finn produkter"
   produkter(filter: ProdukterFilterInput): [Produkt!]!
+  "Finn produkter (paginert)"
+  produkterPaginert(filter: ProdukterPaginertFilterInput): ProduktPage!
   "Hent produkter som er tilgjengelige for digital søknad"
-  sortiment(filter: ProdukterFilterInput): [Produkt!]! @deprecated(reason : "Bruk produkter i stedet, replace with produkter(filter)")
+  sortiment: [Produkt!]! @deprecated(reason : "Bruk produkter i stedet, replace with produkter(filter)")
+  tilbehor(filter: TilbehorFilterInput): [Tilbehor!]!
 }
 
 "Teknisk datum med ledetekst, verdi og evt. enhet"
@@ -141,9 +150,10 @@ type TekniskeDataTriple {
   visningstekst(separator: String): String!
 }
 
-enum Behovsmeldingstype {
-  BESTILLING
-  SOKNAD
+type Tilbehor {
+  hmsnr: String
+  leverandorId: String
+  rammeavtaleId: String
 }
 
 enum Produkttype {
@@ -161,14 +171,27 @@ scalar LocalDateTime
 input ProdukterFilterInput {
   artikkelId: [String!]
   avtalepostId: [String!]
-  behovsmeldingstype: Behovsmeldingstype
+  erIBestillingsordning: Boolean
   hmsnr: [String!]
   isokode: [String!]
   kategori: [String!]
   produktId: [String!]
+  tilgjengeligForDigitalSoknad: Boolean
+}
+
+input ProdukterPaginertFilterInput {
+  filter: ProdukterFilterInput
+  limit: Int
+  offset: Int
 }
 
 input ProduktfilterInput {
   limit: Int
   offset: Int
+}
+
+input TilbehorFilterInput {
+  hmsnr: [String!]
+  leverandorId: [String!]
+  rammeavtaleId: [String!]
 }
