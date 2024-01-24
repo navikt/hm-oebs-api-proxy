@@ -1,10 +1,7 @@
 query HentProdukter($hmsnr: [String!]!) {
   produkter(filter: { hmsnr: $hmsnr }) {
-    id
     hmsnr
-    artikkelId
     artikkelnavn
-    produktId
     produktbeskrivelse
     isotittel
     blobUrlLite

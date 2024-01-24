@@ -3,6 +3,8 @@ package no.nav.hjelpemidler.service.oebsdatabase
 import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import mu.KotlinLogging
+import no.nav.hjelpemidler.client.`hmdb-ng`.HjelpemiddeldatabaseNgClient
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Produkt
 import no.nav.hjelpemidler.configuration.Configuration
@@ -113,6 +115,43 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         // Fetch data for hmsnr from hm-grunndata-api
         val produkter: List<Produkt> = HjelpemiddeldatabaseClient.hentProdukter(hmsnr)
 
+        // TODO: Remove when old grunndata-api is replaced in prod., and old hmdb is hmdb-ng
+        runCatching {
+            val produkterMap = produkter.groupBy { it.hmsnr!! }.mapValues { it.value.first() }
+            val produkterNgMap = runCatching { HjelpemiddeldatabaseNgClient.hentProdukter(hmsnr) }.getOrElse { e ->
+                log2.error(e) { "DEBUG GRUNNDATA: Exception while fetching hmdb-ng: $e" }
+                listOf()
+            }.groupBy { it.hmsArtNr!! }.mapValues { it.value.first() }
+
+            val missingHmsnrs: MutableList<String> = mutableListOf()
+            val unexpectedDataHmsnrs: MutableMap<String, Pair<String, String>> = mutableMapOf()
+            val matchesHmsnrs: MutableMap<String, String> = mutableMapOf()
+            produkterMap.forEach { hmsnr, old ->
+                val new = produkterNgMap[hmsnr]
+                if (new == null) {
+                    missingHmsnrs.add(hmsnr)
+                } else if (
+                    old.artikkelnavn != new.articleName ||
+                    old.isotittel != new.isoCategoryTitle ||
+                    old.isokortnavn != new.isoCategoryTextShort ||
+                    old.produktbeskrivelse != new.attributes.text
+                ) {
+                    unexpectedDataHmsnrs[hmsnr] = Pair(old.toString(), new.toString())
+                } else {
+                    matchesHmsnrs[hmsnr] = old.isokortnavn.toString()
+                }
+            }
+            if (missingHmsnrs.isNotEmpty()) {
+                log.info("DEBUG GRUNNDATA: new dataset missing results for hmsnrs=$missingHmsnrs")
+            }
+            if (unexpectedDataHmsnrs.isNotEmpty()) {
+                log.info("DEBUG GRUNNDATA: new dataset has mismatching data: $unexpectedDataHmsnrs")
+            }
+            if (matchesHmsnrs.isNotEmpty()) {
+                log.info("DEBUG GRUNNDATA: new dataset matches old for hmsnrs/data: $matchesHmsnrs")
+            }
+        }.getOrNull()
+
         // Apply data to items
         val produkterByHmsnr = produkter.groupBy { it.hmsnr }
         items.map { item ->
@@ -140,5 +179,6 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
 
     companion object {
         private val log = LoggerFactory.getLogger("HjelpemiddeloversiktDao")
+        private val log2 = KotlinLogging.logger {}
     }
 }
