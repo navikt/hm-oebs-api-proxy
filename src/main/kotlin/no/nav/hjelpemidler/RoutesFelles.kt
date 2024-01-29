@@ -35,7 +35,7 @@ fun Route.felles() {
             call.respond(brukerpassDao.brukerpassForFnr(fnr))
         }
 
-        get("/lagervare-deler") {
+        post("/lagervare-deler") {
             val fnr = call.receiveText()
             logg.info { "fnr: $fnr" }
             val produkter = lagerDao.lagerTest()
