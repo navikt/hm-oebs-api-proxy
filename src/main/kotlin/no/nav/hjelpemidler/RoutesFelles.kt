@@ -38,6 +38,8 @@ fun Route.felles() {
         get("/lagervare-deler") {
             val fnr = call.receiveText()
             logg.info { "fnr: $fnr" }
+            val produkter = lagerDao.lagerTest()
+            logg.info{"produkter: $produkter"}
             call.respond(HttpStatusCode.OK)
         }
     }

@@ -9,7 +9,7 @@ import javax.sql.DataSource
 
 class LagerDao(
     private val kommuneOppslag: KommuneOppslag,
-    private val dataSource: DataSource = Configuration.dataSource
+    private val dataSource: DataSource = Configuration.dataSource,
 ) {
     fun lagerStatus(hmsnr: String): List<LagerStatus> {
         return lagerStatusInner(hmsnr)
@@ -84,9 +84,26 @@ class LagerDao(
                         forsyning = row.intOrNull("forsyning") ?: 0,
                         sortiment = row.stringOrNull("sortiment")?.lowercase()?.trim() == "ja",
                         lagervare = row.stringOrNull("lagervare")?.lowercase()?.trim() == "ja",
-                        minmax = row.stringOrNull("minmax")?.lowercase()?.trim() == "ja"
+                        minmax = row.stringOrNull("minmax")?.lowercase()?.trim() == "ja",
                     )
-                }.asList
+                }.asList,
+            )
+        }
+    }
+
+    fun lagerTest(): List<Unit> {
+        @Language("OracleSQL")
+        var sql =
+            """
+                SELECT *
+                FROM apps.XXRTV_DIGIHOT_UTVID_ART_V
+            """.trimIndent()
+
+        var query = queryOf(sql)
+        return sessionOf(dataSource).use { it ->
+            it.run(
+                query.map {
+                }.asList,
             )
         }
     }
@@ -112,5 +129,5 @@ data class LagerStatus(
     val forsyning: Int,
     val sortiment: Boolean,
     val lagervare: Boolean,
-    val minmax: Boolean
+    val minmax: Boolean,
 )
