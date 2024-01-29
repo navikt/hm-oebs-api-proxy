@@ -91,17 +91,19 @@ class LagerDao(
         }
     }
 
-    fun lagerTest() {
+    fun lagerTest(): List<String> {
         @Language("OracleSQL")
         var sql =
             """
-                DESCRIBE apps.XXRTV_DIGIHOT_UTVID_ART_V
+                SELECT * FROM apps.XXRTV_DIGIHOT_UTVID_ART_V
             """.trimIndent()
 
         var query = queryOf(sql)
         return sessionOf(dataSource).use {
             it.run(
-                query.asExecute,
+                query.map { row ->
+                    row.toString()
+                }.asList,
             )
         }
     }
