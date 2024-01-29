@@ -90,24 +90,6 @@ class LagerDao(
             )
         }
     }
-
-    fun lagerTest(): List<String> {
-        @Language("OracleSQL")
-        var sql =
-            """
-                SELECT * FROM apps.XXRTV_DIGIHOT_UTVID_ART_V
-                LIMIT 1
-            """.trimIndent()
-
-        var query = queryOf(sql)
-        return sessionOf(dataSource).use {
-            it.run(
-                query.map { row ->
-                    row.toString()
-                }.asList,
-            )
-        }
-    }
 }
 
 data class LagerStatus(

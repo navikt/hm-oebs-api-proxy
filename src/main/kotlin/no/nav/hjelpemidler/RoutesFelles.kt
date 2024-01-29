@@ -34,14 +34,6 @@ fun Route.felles() {
 
             call.respond(brukerpassDao.brukerpassForFnr(fnr))
         }
-
-        post("/lagervare-deler") {
-            val fnr = call.receiveText()
-            logg.info { "fnr: $fnr" }
-            val produkter = lagerDao.lagerTest()
-            logg.info { "produkter: $produkter" }
-            call.respond(HttpStatusCode.OK)
-        }
     }
 
     authenticate("tokenX", "aad") {
@@ -81,6 +73,13 @@ fun Route.felles() {
                     NoResult("no results found for kommunenummer=\"${call.parameters["kommunenummer"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\""),
                 )
             }
+        }
+
+        get("/lager/deler/sentral/{kommunenummer}/{hmsnr}") {
+            val kommunenummer = call.parameters["kommunenummer"]!!
+            val hmsnr = call.parameters["hmsnr"]!! // TODO: gjør join for å hente ut artikkel
+            logg.info {"kommunenummer: $kommunenummer, $hmsnr: $hmsnr"}
+            call.respond(HttpStatusCode.OK)
         }
     }
 }
