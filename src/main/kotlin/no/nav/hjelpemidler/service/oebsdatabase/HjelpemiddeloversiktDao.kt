@@ -126,7 +126,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
             val missingHmsnrs: MutableList<String> = mutableListOf()
             val unexpectedDataHmsnrs: MutableMap<String, Pair<String, String>> = mutableMapOf()
             val matchesHmsnrs: MutableMap<String, String> = mutableMapOf()
-            produkterMap.forEach { hmsnr, old ->
+            produkterMap.forEach { (hmsnr, old) ->
                 val new = produkterNgMap[hmsnr]
                 if (new == null) {
                     missingHmsnrs.add(hmsnr)
