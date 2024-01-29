@@ -96,6 +96,7 @@ class LagerDao(
         var sql =
             """
                 SELECT * FROM apps.XXRTV_DIGIHOT_UTVID_ART_V
+                LIMIT 1
             """.trimIndent()
 
         var query = queryOf(sql)
