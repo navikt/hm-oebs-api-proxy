@@ -4,6 +4,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
+import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -32,6 +33,12 @@ fun Route.felles() {
             }
 
             call.respond(brukerpassDao.brukerpassForFnr(fnr))
+        }
+
+        get("/lagervare-deler") {
+            val fnr = call.receiveText()
+            logg.info { "fnr: $fnr" }
+            call.respond(HttpStatusCode.OK)
         }
     }
 
