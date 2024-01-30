@@ -25,7 +25,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_PW" to loadVaultCred("/secrets/oebsp/credentials/password"), // System.getenv("HM_OEBS_API_PROXY_DB_PW_P"),
 
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.nav.no",
-            "GRUNNDATA_API_NG_URL" to "http://hm-grunndata-search",
+            "GRUNNDATA_API_NG_URL" to "https://hm-grunndata-search.intern.nav.no",
             "OEBS_API_URL" to "http://oebs.adeo.no/webservices/rest/opprettordre/digihotordreontinfo/"
         )
     )
@@ -49,7 +49,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_PW" to loadVaultCred("/secrets/oebsq1/credentials/password"), // System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
 
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.dev.nav.no",
-            "GRUNNDATA_API_NG_URL" to "http://hm-grunndata-search",
+            "GRUNNDATA_API_NG_URL" to "https://hm-grunndata-search.intern.dev.nav.no",
 
             // T1
             // "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/"
