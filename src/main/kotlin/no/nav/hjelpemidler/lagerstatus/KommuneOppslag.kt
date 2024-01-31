@@ -14,8 +14,8 @@ class KommuneOppslag {
         javaClass.classLoader.getResourceAsStream(FILENAME)?.bufferedReader()
             ?.forEachLine { line ->
                 val splitLine = line.split(csvSplitBy).toTypedArray()
-                val lager: String = splitLine[0]
-                val kommunenummer: String = splitLine[1]
+                val kommunenummer: String = splitLine[0]
+                val lager: String = splitLine[1]
 
                 if (lager.isNotBlank() && kommunenummer.isNotBlank()) {
                     kommuneLagerTabell[kommunenummer] = lager
@@ -27,14 +27,15 @@ class KommuneOppslag {
     }
 
     fun hentOrgNavn(kommunenummer: String): String? {
-        val lagerKode = kommuneLagerTabell[kommunenummer]
-        val orgNavn = lagerMap[lagerKode]
-        logger.info("Fant orgNavn $orgNavn fra lagerkode $lagerKode. Kommunenummer = $kommunenummer")
+        val orgNavn = kommuneLagerTabell[kommunenummer]
+        // val orgNavn = lagerMap[lagerKode]
+        logger.info("Fant orgNavn $orgNavn for kommunenummer = $kommunenummer")
         return orgNavn
     }
 }
 
 val lagerMap: Map<String, String> = mapOf(
+    /*
     "01" to "*01 Østfold",
     "03" to "*03 Oslo",
     "04" to "*04 Hedmark",
@@ -53,4 +54,5 @@ val lagerMap: Map<String, String> = mapOf(
     "18" to "*18 Nordland",
     "19" to "*19 Troms",
     "20" to "*20 Finnmark"
+     */
 )
