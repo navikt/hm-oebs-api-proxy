@@ -4,7 +4,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
-import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -78,7 +77,7 @@ fun Route.felles() {
         get("/lager/deler/sentral/{kommunenummer}/{hmsnr}") {
             val kommunenummer = call.parameters["kommunenummer"]!!
             val hmsnr = call.parameters["hmsnr"]!! // TODO: gjør join for å hente ut artikkel
-            logg.info {"kommunenummer: $kommunenummer, $hmsnr: $hmsnr"}
+            logg.info { "kommunenummer: $kommunenummer, $hmsnr: $hmsnr" }
             call.respond(HttpStatusCode.OK)
         }
     }
