@@ -133,7 +133,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                 } else if (
                     old.artikkelnavn != new.articleName ||
                     old.isotittel != new.isoCategoryTitle ||
-                    old.isokortnavn != new.isoCategoryTextShort ||
+                    old.isokortnavn != new.isoCategoryTitleShort ||
                     old.produktbeskrivelse != new.attributes.text
                 ) {
                     unexpectedDataHmsnrs[hmsnr] = Pair(old.toString(), new.toString())

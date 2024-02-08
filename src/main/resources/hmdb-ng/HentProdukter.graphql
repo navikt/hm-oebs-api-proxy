@@ -5,7 +5,7 @@ query HentProdukter($hmsnrs: [String!]!) {
     articleName # artikkelnavn
 
     isoCategoryTitle # isotittel
-    isoCategoryTextShort # isokortnavn
+    isoCategoryTitleShort # isokortnavn
     productVariantURL # artikkelUrl
 
     attributes {
