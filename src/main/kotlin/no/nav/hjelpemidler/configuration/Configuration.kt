@@ -24,8 +24,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_USR" to loadVaultCred("/secrets/oebsp/credentials/username"), // System.getenv("HM_OEBS_API_PROXY_DB_USR_P"),
             "HM_OEBS_API_PROXY_DB_PW" to loadVaultCred("/secrets/oebsp/credentials/password"), // System.getenv("HM_OEBS_API_PROXY_DB_PW_P"),
 
-            "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.nav.no",
-            "GRUNNDATA_API_NG_URL" to "https://hm-grunndata-search.intern.nav.no",
+            "GRUNNDATA_API_URL" to "https://hm-grunndata-search.intern.nav.no",
             "OEBS_API_URL" to "http://oebs.adeo.no/webservices/rest/opprettordre/digihotordreontinfo/"
         )
     )
@@ -48,8 +47,7 @@ internal object Configuration {
             "HM_OEBS_API_PROXY_DB_USR" to loadVaultCred("/secrets/oebsq1/credentials/username"), // System.getenv("HM_OEBS_API_PROXY_DB_USR_Q1"),
             "HM_OEBS_API_PROXY_DB_PW" to loadVaultCred("/secrets/oebsq1/credentials/password"), // System.getenv("HM_OEBS_API_PROXY_DB_PW_Q1"),
 
-            "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.dev.nav.no",
-            "GRUNNDATA_API_NG_URL" to "https://hm-grunndata-search.intern.dev.nav.no",
+            "GRUNNDATA_API_URL" to "https://hm-grunndata-search.intern.dev.nav.no",
 
             // T1
             // "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/"
@@ -77,7 +75,6 @@ internal object Configuration {
             "AZURE_APP_CLIENT_ID" to "",
 
             "GRUNNDATA_API_URL" to "http://host.docker.internal:8880",
-            "GRUNNDATA_API_NG_URL" to "http://127.0.0.1:8084",
 
             "OEBS_API_URL" to "",
             "OEBS_API_TOKEN" to ""
@@ -133,7 +130,6 @@ internal object Configuration {
     val application: Map<String, String> = mapOf(
         "APP_PROFILE" to get("application.profile"),
         "GRUNNDATA_API_URL" to get("GRUNNDATA_API_URL"),
-        "GRUNNDATA_API_NG_URL" to get("GRUNNDATA_API_NG_URL"),
         "OEBS_BRUKER_ID" to get("HM_OEBS_OPPRETT_SF_BRUKEROD")
     )
 

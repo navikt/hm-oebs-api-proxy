@@ -93,7 +93,5 @@ spec:
           namespace: teamdigihot
           cluster: dev-gcp
     outbound:
-      rules:
-        - application: hm-grunndata-search
       external:
-        - host: hm-grunndata-api.intern.dev.nav.no
+        - host: hm-grunndata-search.intern.dev.nav.no

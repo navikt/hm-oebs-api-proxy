@@ -87,8 +87,6 @@ spec:
           namespace: teamdigihot
           cluster: prod-gcp
     outbound:
-      rules:
-        - application: hm-grunndata-search
       external:
-        - host: hm-grunndata-api.intern.nav.no
+        - host: hm-grunndata-search.intern.nav.no
         - host: hm-oebs-api-proxy.prod-fss-pub.nais.io
