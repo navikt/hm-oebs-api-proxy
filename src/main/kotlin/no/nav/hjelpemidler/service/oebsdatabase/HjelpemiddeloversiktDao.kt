@@ -155,6 +155,8 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         // Apply data to items
         val produkterByHmsnr = produkter.groupBy { it.hmsnr }
         items.map { item ->
+            berikBytteinfo(item)
+
             val produkt = produkterByHmsnr[item.artikkelNr]?.firstOrNull()
             if (produkt == null) {
                 item
@@ -162,6 +164,11 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                 berikOrdrelinje(item, produkt)
             }
         }
+    }
+
+    private fun berikBytteinfo(item: HjelpemiddelBruker) {
+        item.kanByttes = erPermanentUtlån(item.utlånsType) || erGyldigTidsbestemtUtlån(item)
+        item.kanByttesMedBrukerpass = item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer)
     }
 
     private fun berikOrdrelinje(item: HjelpemiddelBruker, produkt: Produkt): HjelpemiddelBruker {
