@@ -5,13 +5,18 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+fun berikBytteinfo(item: HjelpemiddelBruker) {
+    item.kanByttes = erPermanentUtlån(item.utlånsType) || erGyldigTidsbestemtUtlån(item)
+    item.kanByttesMedBrukerpass = item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer)
+}
+
 private val byttebareIsokoderForBrukerpass = listOf("123903", "TODO kjørehansker")
 
-fun erGyldigIsokodeForBrukerpassbytte(iso: String) = iso.take(6) in byttebareIsokoderForBrukerpass
+private fun erGyldigIsokodeForBrukerpassbytte(iso: String) = iso.take(6) in byttebareIsokoderForBrukerpass
 
-fun erPermanentUtlån(utlånsType: String?) = utlånsType == UtlånsType.PERMANENT.kode
+private fun erPermanentUtlån(utlånsType: String?) = utlånsType == UtlånsType.PERMANENT.kode
 
-fun erGyldigTidsbestemtUtlån(item: HjelpemiddelBruker): Boolean {
+private fun erGyldigTidsbestemtUtlån(item: HjelpemiddelBruker): Boolean {
     val innleveringsdato = (item.oppdatertInnleveringsdato ?: item.innleveringsdato)?.toInnleveringsdato()
         ?: return false
     return item.utlånsType == UtlånsType.TIDSBESTEMT_UTLÅN.kode && LocalDate.now() < innleveringsdato
