@@ -86,6 +86,9 @@ spec:
         - application: hm-delbestilling-api
           namespace: teamdigihot
           cluster: prod-gcp
+        - application: hm-roller
+          namespace: teamdigihot
+          cluster: prod-gcp
     outbound:
       rules:
         - application: hm-grunndata-search
