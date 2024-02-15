@@ -10,7 +10,10 @@ fun berikBytteinfo(item: HjelpemiddelBruker) {
     item.kanByttesMedBrukerpass = item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer)
 }
 
-private val byttebareIsokoderForBrukerpass = listOf("123903", "TODO kjørehansker")
+private val byttebareIsokoderForBrukerpass = listOf(
+    "123903", // Mobilitetsstokk
+    "090312", // Hansker og votter (kjørehansker)
+)
 
 private fun erGyldigIsokodeForBrukerpassbytte(iso: String) = iso.take(6) in byttebareIsokoderForBrukerpass
 
