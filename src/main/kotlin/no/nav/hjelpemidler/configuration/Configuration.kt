@@ -30,18 +30,6 @@ internal object Configuration {
         )
     )
 
-    private val devProperties = ConfigurationMap(
-        mutableMapOf(
-            "application.profile" to "dev",
-            "HM_OEBS_OPPRETT_SF_BRUKEROD" to "81400",
-            "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.dev.nav.no",
-            "GRUNNDATA_API_NG_URL" to "https://hm-grunndata-search.intern.dev.nav.no",
-        ).also {
-            it.putAll(devT1)
-            //it.putAll(devQ1)
-        }
-    )
-
     private val devQ1 = mapOf(
         "HM_OEBS_API_PROXY_DB_NAME" to "oebsq1",
         "HM_OEBS_API_PROXY_DB_URL" to loadVaultCred("/secrets/oebsq1/config/jdbc_url"), // System.getenv("HM_OEBS_API_PROXY_DB_URL_Q1"),
@@ -56,6 +44,18 @@ internal object Configuration {
         "HM_OEBS_API_PROXY_DB_USR" to loadVaultCred("/secrets/oebst1/credentials/username"), // System.getenv("HM_OEBS_API_PROXY_DB_USR_T1"),
         "HM_OEBS_API_PROXY_DB_PW" to loadVaultCred("/secrets/oebst1/credentials/password"), // System.getenv("HM_OEBS_API_PROXY_DB_PW_T1"),
         "OEBS_API_URL" to "http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/"
+    )
+
+    private val devProperties = ConfigurationMap(
+        mutableMapOf(
+            "application.profile" to "dev",
+            "HM_OEBS_OPPRETT_SF_BRUKEROD" to "81400",
+            "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.dev.nav.no",
+            "GRUNNDATA_API_NG_URL" to "https://hm-grunndata-search.intern.dev.nav.no"
+        ).also {
+            it.putAll(devT1)
+            // it.putAll(devQ1)
+        }
     )
 
     private val localProperties = ConfigurationMap(
