@@ -53,8 +53,8 @@ internal object Configuration {
             "GRUNNDATA_API_URL" to "https://hm-grunndata-api.intern.dev.nav.no",
             "GRUNNDATA_API_NG_URL" to "https://hm-grunndata-search.intern.dev.nav.no"
         ).also {
-            it.putAll(devT1)
-            // it.putAll(devQ1)
+            // it.putAll(devT1)
+            it.putAll(devQ1)
         }
     )
 
