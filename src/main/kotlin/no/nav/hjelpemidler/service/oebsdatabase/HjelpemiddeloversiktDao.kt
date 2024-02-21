@@ -46,7 +46,7 @@ class HjelpemiddeloversiktDao() {
                 kategori = "Elektriske rullestoler",
                 artikkelBeskrivelse = "",
                 artikkelNr = "301866",
-                serieNr = "99999",
+                serieNr = "999999",
                 datoUtsendelse = "2021-04-14 11:02:34",
                 hmdbBeriket = true,
                 hmdbProduktNavn = "Hepro C4",
