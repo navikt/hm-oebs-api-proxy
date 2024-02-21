@@ -7,8 +7,20 @@ import no.nav.hjelpemidler.models.Personinformasjon
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
-class PersoninformasjonDao(private val dataSource: DataSource = Configuration.dataSource) {
+class PersoninformasjonDao(
+    //private val dataSource: DataSource = Configuration.dataSource
+    ) {
     fun hentPersoninformasjon(fnr: String): List<Personinformasjon> {
+        return listOf(Personinformasjon(
+            brukerNr = "123456",
+            leveringAddresse = "Abcveien",
+            leveringPostnr = "0000",
+            leveringKommune = "Kommune",
+            leveringBy = "By",
+            primaerAdr = "Abcveien",
+            bydel = null,
+        ))
+        /*
         @Language("OracleSQL")
         val hentPersoninfoQuery =
             """
@@ -33,5 +45,7 @@ class PersoninformasjonDao(private val dataSource: DataSource = Configuration.da
             )
         }
         return personinformasjonListe
+
+         */
     }
 }
