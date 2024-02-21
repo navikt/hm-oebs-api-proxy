@@ -42,7 +42,7 @@ class HjelpemiddeloversiktDao() {
             HjelpemiddelBruker(
                 antall = "1",
                 antallEnhet = "STK",
-                kategoriNummer = "301866",
+                kategoriNummer = "122303",
                 kategori = "Elektriske rullestoler",
                 artikkelBeskrivelse = "",
                 artikkelNr = "301866",
