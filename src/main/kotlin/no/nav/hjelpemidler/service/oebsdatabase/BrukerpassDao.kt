@@ -1,17 +1,18 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
 import kotliquery.Row
+import kotliquery.queryOf
+import kotliquery.sessionOf
 import mu.KotlinLogging
+import no.nav.hjelpemidler.configuration.Configuration
+import org.intellij.lang.annotations.Language
 import java.time.LocalDate
+import javax.sql.DataSource
 
 private val logg = KotlinLogging.logger {}
 
-class BrukerpassDao() {
+class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun brukerpassForFnr(fnr: String): Brukerpass {
-        return Brukerpass(
-            brukerpass = true,
-        )
-        /*
         @Language("OracleSQL")
         var query =
             """
@@ -32,7 +33,6 @@ class BrukerpassDao() {
                 }.asSingle
             )
         } ?: Brukerpass(brukerpass = false)
-         */
     }
 }
 

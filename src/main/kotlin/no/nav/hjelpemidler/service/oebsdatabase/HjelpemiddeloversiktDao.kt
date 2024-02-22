@@ -7,65 +7,15 @@ import mu.KotlinLogging
 import no.nav.hjelpemidler.client.`hmdb-ng`.HjelpemiddeldatabaseNgClient
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Produkt
+import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Utlån
 import org.intellij.lang.annotations.Language
 import org.slf4j.LoggerFactory
+import javax.sql.DataSource
 
-class HjelpemiddeloversiktDao() {
+class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
-        return listOf(
-            HjelpemiddelBruker(
-                antall = "1",
-                antallEnhet = "STK",
-                kategoriNummer = "123903",
-                kategori = "Stokker for mobility og markering",
-                artikkelBeskrivelse = "",
-                artikkelNr = "174378",
-                serieNr = null,
-                datoUtsendelse = "2021-04-14 11:02:34",
-                hmdbBeriket = true,
-                hmdbProduktNavn = "Svarovsky AB Mobilitystokk 2-delt teleskop",
-                hmdbBeskrivelse = "2-delt teleskop orienteringsstokk, som kan slåes sammen til markeringsstokk. Håndtaket er mahogni imitert treverk, men kan også leveres med gummi-håndtak eller skinn-håndtak. Stokken er fast og har fin balanse. Stokken kan leveres med alle typer tupper.",
-                hmdbKategori = "Stokker for mobility og markering",
-                hmdbBilde = "https://www.hjelpemiddeldatabasen.no/blobs/snet/36266.jpg?r=21112023143334",
-                hmdbURL = "https://www.hjelpemiddeldatabasen.no/r11x.asp?linkinfo=36266&art0=74572&nart=1&pdisp=sh",
-                kanByttes = true,
-                kanByttesMedBrukerpass = true,
-                artikkelStatus = "",
-                innleveringsdato = null,
-                utlånsType = "P",
-                hmdbKategoriKortnavn = "",
-                oppdatertInnleveringsdato = null,
-                ordrenummer = "123",
-            ),
-            HjelpemiddelBruker(
-                antall = "1",
-                antallEnhet = "STK",
-                kategoriNummer = "122303",
-                kategori = "Elektriske rullestoler",
-                artikkelBeskrivelse = "",
-                artikkelNr = "301866",
-                serieNr = "999999",
-                datoUtsendelse = "2021-04-14 11:02:34",
-                hmdbBeriket = true,
-                hmdbProduktNavn = "Hepro C4",
-                hmdbBeskrivelse = "",
-                hmdbKategori = "Elektriske rullestoler",
-                hmdbBilde = "",
-                hmdbURL = "",
-                kanByttes = true,
-                kanByttesMedBrukerpass = true,
-                artikkelStatus = "",
-                innleveringsdato = null,
-                utlånsType = "P",
-                hmdbKategoriKortnavn = "",
-                oppdatertInnleveringsdato = null,
-                ordrenummer = "123",
-            ),
-        )
-
-        /*
         @Language("OracleSQL")
         val query =
             """
@@ -99,12 +49,9 @@ class HjelpemiddeloversiktDao() {
             )
         }
         return berikOrdrelinjer(items)
-         */
     }
 
     fun utlånPåIsokode(fnr: String, isokode: String): List<UtlånPåIsokode> {
-        return emptyList()
-        /*
         @Language("OracleSQL")
         val query =
             """
@@ -127,13 +74,9 @@ class HjelpemiddeloversiktDao() {
         }
 
         return items
-
-         */
     }
 
     fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? {
-        return null
-        /*
         @Language("OracleSQL")
         val query =
             """
@@ -158,8 +101,6 @@ class HjelpemiddeloversiktDao() {
         }
 
         return item
-
-         */
     }
 
     data class UtlånPåIsokode(

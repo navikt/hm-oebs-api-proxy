@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.Ignore
 
 internal class PersoninformasjonDaoTest {
-
-    /*
     @Test
     @Ignore
     fun `skal kunne hente personinformasjon`() {
@@ -17,6 +15,4 @@ internal class PersoninformasjonDaoTest {
             }
         }
     }
-
-     */
 }
