@@ -22,10 +22,10 @@ spec:
     path: /metrics
   resources:
     limits:
-      cpu: 2000m
+      cpu: 500m
       memory: 3000Mi
     requests:
-      cpu: 500m
+      cpu: 50m
       memory: 600Mi
   envFrom:
     - secret: hm-oebs-api-proxy-secret
