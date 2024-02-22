@@ -45,16 +45,41 @@ class HjelpemiddeloversiktDaoTest {
         berikBytteinfo(item)
         assertTrue(item.kanByttes!!)
     }
+
+    @Test
+    fun `skal være mulig for brukerpass å bytte hjelpemidler innenfor godtatt isokode`() {
+        val item = item(
+            type = UtlånsType.PERMANENT,
+            kategoriNummer = "123903"
+
+        )
+        berikBytteinfo(item)
+        assertTrue(item.kanByttes!!)
+        assertTrue(item.kanByttesMedBrukerpass!!)
+    }
+
+    @Test
+    fun `skal ikke være mulig for brukerpass å bytte hjelpemidler utenfor godtatt isokode`() {
+        val item = item(
+            type = UtlånsType.PERMANENT,
+            kategoriNummer = "111111"
+
+        )
+        berikBytteinfo(item)
+        assertTrue(item.kanByttes!!)
+        assertFalse(item.kanByttesMedBrukerpass!!)
+    }
 }
 
 private fun item(
     type: UtlånsType = UtlånsType.PERMANENT,
     innlevering: LocalDate? = LocalDate.now(),
-    oppdatertInnlevering: LocalDate? = null
+    oppdatertInnlevering: LocalDate? = null,
+    kategoriNummer: String = ""
 ) = HjelpemiddelBruker(
     antall = "",
     antallEnhet = "",
-    kategoriNummer = "",
+    kategoriNummer = kategoriNummer,
     kategori = "",
     artikkelBeskrivelse = "",
     artikkelNr = "",

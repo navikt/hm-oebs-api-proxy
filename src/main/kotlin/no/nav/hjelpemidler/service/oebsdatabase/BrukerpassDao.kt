@@ -40,7 +40,7 @@ data class Brukerpass(
     val brukerpass: Boolean,
     val kontraktNummer: String? = null,
     val startDate: LocalDate? = null,
-    val endDate: LocalDate? = null,
+    val endDate: LocalDate? = null
 )
 
 fun testHelper(row: Row) {

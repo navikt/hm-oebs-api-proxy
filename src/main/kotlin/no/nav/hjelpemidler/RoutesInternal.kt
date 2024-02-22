@@ -12,7 +12,6 @@ import io.prometheus.client.exporter.common.TextFormat
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 
-
 fun Route.internal() {
     get("/isalive") {
         // Let's check if the datasource has been closed
