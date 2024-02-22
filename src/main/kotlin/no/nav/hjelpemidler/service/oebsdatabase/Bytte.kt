@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
+import no.nav.hjelpemidler.configuration.isProd
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -7,7 +8,7 @@ import java.time.format.DateTimeFormatter
 
 fun berikBytteinfo(item: HjelpemiddelBruker) {
     item.kanByttes = erPermanentUtlån(item.utlånsType) || erGyldigTidsbestemtUtlån(item)
-    item.kanByttesMedBrukerpass = item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer)
+    item.kanByttesMedBrukerpass = if (isProd()) false else item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer) // TODO: fjern før lansering av brukerpassbytte
 }
 
 private val byttebareIsokoderForBrukerpass = listOf(
