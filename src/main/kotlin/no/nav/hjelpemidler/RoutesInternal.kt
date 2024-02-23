@@ -31,6 +31,7 @@ fun Route.internal() {
             return@get call.respondText("NOT READY", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
         }
         Prometheus.oebsDbAvailable.set(1.0)
+
         call.respondText("READY", ContentType.Text.Plain)
     }
 

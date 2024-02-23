@@ -20,7 +20,11 @@ data class HjelpemiddelBruker(
     var hmdbKategori: String? = null,
     var hmdbBilde: String? = null,
     var hmdbURL: String? = null,
-    var hmdbKategoriKortnavn: String? = null
+    var hmdbKategoriKortnavn: String? = null,
+
+    // Berikede felter for bytte
+    var kanByttes: Boolean? = null,
+    var kanByttesMedBrukerpass: Boolean? = null
 
     /*
         val FOREKOMST_NUMMER: String,

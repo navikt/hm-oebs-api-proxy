@@ -19,8 +19,8 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         @Language("OracleSQL")
         val query =
             """
-            SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER, 
-                   SERIE_NUMMER, UTLÅNS_DATO, ORDRE_NUMMER, KATEGORI3_NUMMER, ARTIKKELSTATUS, 
+            SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER,
+                   SERIE_NUMMER, UTLÅNS_DATO, ORDRE_NUMMER, KATEGORI3_NUMMER, ARTIKKELSTATUS,
                    UTLÅNS_TYPE, INNLEVERINGSDATO, OPPDATERT_INNLEVERINGSDATO
             FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
             WHERE FNR = ?
@@ -155,6 +155,8 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         // Apply data to items
         val produkterByHmsnr = produkter.groupBy { it.hmsnr }
         items.map { item ->
+            berikBytteinfo(item)
+
             val produkt = produkterByHmsnr[item.artikkelNr]?.firstOrNull()
             if (produkt == null) {
                 item
