@@ -76,7 +76,11 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         """.trimIndent()
         }
 
-        brukerpassRollerMedByttbareHjelpemidlerRes = resultat.distinctBy { it.fnr }
+        brukerpassRollerMedByttbareHjelpemidlerRes = resultat
+            .filter { it.kanByttes }
+            .distinctBy { it.fnr }
+
+        logg.info { "endelig resultat: ${brukerpassRollerMedByttbareHjelpemidlerRes!!.size} stk" }
 
         return brukerpassRollerMedByttbareHjelpemidlerRes!!
     }
