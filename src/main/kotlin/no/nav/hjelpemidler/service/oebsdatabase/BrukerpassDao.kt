@@ -66,6 +66,7 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
             antall: ${resultat.size}
             antall unike fnr: ${resultat.map { it.fnr }.distinct().size}
             antall kanByttes: ${resultat.filter { it.kanByttes }.size}
+            duplikate fnr: ${resultat.groupBy { it.fnr }.filter { it.value.size > 1 }}
         """.trimIndent()
         }
 
