@@ -47,7 +47,7 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                 AND (b.UTLÅNS_TYPE = 'P' OR b.UTLÅNS_TYPE = 'F')
             """.trimIndent()
 
-        return sessionOf(dataSource).use { it ->
+        val resultat: List<Brukerpassrollebytter> = sessionOf(dataSource).use { it ->
             it.run(
                 queryOf(query).map { row ->
                     Brukerpassrollebytter(
@@ -59,6 +59,17 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                 }.asList
             )
         }
+
+        logg.info {
+            """
+            brukerpassRollerMedByttbareHjelpemidler resultat:
+            antall: ${resultat.size}
+            antall unike fnr: ${resultat.map { it.fnr }.distinct().size}
+            antall kanByttes: ${resultat.filter { it.kanByttes }.size}
+        """.trimIndent()
+        }
+
+        return resultat
     }
 
     data class Brukerpassrollebytter(
@@ -66,7 +77,13 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         val utlånsType: String?,
         val innleveringsDato: String?,
         val oppdatertInnleveringsDato: String?,
-    )
+    ) {
+        val kanByttes = erPermanentUtlån(utlånsType) || erGyldigTidsbestemtUtlån(
+            oppdatertInnleveringsDato,
+            innleveringsDato,
+            utlånsType
+        )
+    }
 }
 
 data class Brukerpass(

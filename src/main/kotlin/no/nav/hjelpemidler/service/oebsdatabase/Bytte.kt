@@ -7,8 +7,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 fun berikBytteinfo(item: HjelpemiddelBruker) {
-    item.kanByttes = erPermanentUtlån(item.utlånsType) || erGyldigTidsbestemtUtlån(item)
-    item.kanByttesMedBrukerpass = if (isProd()) false else item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer) // TODO: fjern før lansering av brukerpassbytte
+    item.kanByttes = erPermanentUtlån(item.utlånsType) || erGyldigTidsbestemtUtlån(
+        item.oppdatertInnleveringsdato,
+        item.innleveringsdato,
+        item.utlånsType
+    )
+    item.kanByttesMedBrukerpass =
+        if (isProd()) false else item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer) // TODO: fjern før lansering av brukerpassbytte
 }
 
 private val byttebareIsokoderForBrukerpass = listOf(
@@ -18,12 +23,16 @@ private val byttebareIsokoderForBrukerpass = listOf(
 
 private fun erGyldigIsokodeForBrukerpassbytte(iso: String) = iso.take(6) in byttebareIsokoderForBrukerpass
 
-private fun erPermanentUtlån(utlånsType: String?) = utlånsType == UtlånsType.PERMANENT.kode
+fun erPermanentUtlån(utlånsType: String?) = utlånsType == UtlånsType.PERMANENT.kode
 
-private fun erGyldigTidsbestemtUtlån(item: HjelpemiddelBruker): Boolean {
-    val innleveringsdato = (item.oppdatertInnleveringsdato ?: item.innleveringsdato)?.toInnleveringsdato()
+fun erGyldigTidsbestemtUtlån(
+    oppdatertInnleveringsdato: String?,
+    innleveringsdato: String?,
+    utlånsType: String?
+): Boolean {
+    val innleveringsdato = (oppdatertInnleveringsdato ?: innleveringsdato)?.toInnleveringsdato()
         ?: return false
-    return item.utlånsType == UtlånsType.TIDSBESTEMT_UTLÅN.kode && LocalDate.now() < innleveringsdato
+    return utlånsType == UtlånsType.TIDSBESTEMT_UTLÅN.kode && LocalDate.now() < innleveringsdato
 }
 
 private val oebsDatoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
