@@ -35,12 +35,12 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         } ?: Brukerpass(brukerpass = false)
     }
 
-    fun brukerpassRollerMedByttbareHjelpemidler(): List<String> {
+    fun brukerpassRollerMedByttbareHjelpemidler(): List<Brukerpassrollebytter> {
         logg.info { "Gjør spørring brukerpassRollerMedByttbareHjelpemidler..." }
         @Language("OracleSQL")
         var query =
             """
-                SELECT a.FNR, a.KONTRAKT_NUMMER, a.SJEKK_NAVN, a.START_DATE, a.END_DATE
+                SELECT DISTINCT a.FNR, b.UTLÅNS_TYPE, b.INNLEVERINGSDATO, b.OPPDATERT_INNLEVERINGSDATO
                 FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V a
                 INNER JOIN apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V b ON a.FNR = b.FNR
                 WHERE (b.KATEGORI3_NUMMER = '123903' OR b.KATEGORI3_NUMMER = '090312')
@@ -50,11 +50,23 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         return sessionOf(dataSource).use { it ->
             it.run(
                 queryOf(query).map { row ->
-                    row.string("FNR")
+                    Brukerpassrollebytter(
+                        fnr = row.string("FNR"),
+                        utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
+                        innleveringsDato = row.stringOrNull("INNLEVERINGSDATO"),
+                        oppdatertInnleveringsDato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO"),
+                    )
                 }.asList
             )
         }
     }
+
+    data class Brukerpassrollebytter(
+        val fnr: String,
+        val utlånsType: String?,
+        val innleveringsDato: String?,
+        val oppdatertInnleveringsDato: String?,
+    )
 }
 
 data class Brukerpass(
