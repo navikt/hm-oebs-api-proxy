@@ -33,6 +33,11 @@ fun Route.felles() {
 
             call.respond(brukerpassDao.brukerpassForFnr(fnr))
         }
+
+        get("/hent-brukerpassbytte-brukere") {
+            // Returner liste av fnr av brukere som har brukerpassrolle og utlån på isokoder byttebareIsokoderForBrukerpass
+            call.respond(brukerpassDao.brukerpassRollerMedByttbareHjelpemidler())
+        }
     }
 
     authenticate("tokenX", "aad") {
