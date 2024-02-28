@@ -46,7 +46,7 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         @Language("OracleSQL")
         var query =
             """
-                SELECT DISTINCT a.FNR, b.UTLÅNS_TYPE, b.INNLEVERINGSDATO, b.OPPDATERT_INNLEVERINGSDATO
+                SELECT a.FNR, b.UTLÅNS_TYPE, b.INNLEVERINGSDATO, b.OPPDATERT_INNLEVERINGSDATO
                 FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V a
                 INNER JOIN apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V b ON a.FNR = b.FNR
                 WHERE (b.KATEGORI3_NUMMER = '123903' OR b.KATEGORI3_NUMMER = '090312')
