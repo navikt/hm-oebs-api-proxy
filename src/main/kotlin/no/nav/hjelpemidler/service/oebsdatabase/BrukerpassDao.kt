@@ -35,7 +35,8 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         } ?: Brukerpass(brukerpass = false)
     }
 
-    fun brukerpassRollerMedByttbareHjelpemidler(): List<Brukerpass> {
+    fun brukerpassRollerMedByttbareHjelpemidler(): List<String> {
+        logg.info { "Gjør spørring brukerpassRollerMedByttbareHjelpemidler..." }
         @Language("OracleSQL")
         var query =
             """
@@ -49,12 +50,7 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         return sessionOf(dataSource).use { it ->
             it.run(
                 queryOf(query).map { row ->
-                    Brukerpass(
-                        brukerpass = true,
-                        kontraktNummer = row.stringOrNull("KONTRAKT_NUMMER"),
-                        row.localDateOrNull("START_DATE"),
-                        row.localDateOrNull("END_DATE")
-                    )
+                    row.string("FNR")
                 }.asList
             )
         }
