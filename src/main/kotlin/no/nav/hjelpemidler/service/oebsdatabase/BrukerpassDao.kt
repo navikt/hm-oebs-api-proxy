@@ -49,8 +49,8 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                 SELECT a.FNR, b.UTLÅNS_TYPE, b.INNLEVERINGSDATO, b.OPPDATERT_INNLEVERINGSDATO
                 FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V a
                 INNER JOIN apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V b ON a.FNR = b.FNR
-                AND (b.KATEGORI3_NUMMER = '123903' OR b.KATEGORI3_NUMMER = '090312')
-                AND (b.UTLÅNS_TYPE = 'P' OR b.UTLÅNS_TYPE = 'F')
+                WHERE b.KATEGORI3_NUMMER IN ('123903', '090312')
+                AND b.UTLÅNS_TYPE IN ('P', 'F')
             """.trimIndent()
 
         val resultat: List<Brukerpassrollebytter> = sessionOf(dataSource).use { it ->
