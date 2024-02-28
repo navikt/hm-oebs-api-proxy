@@ -35,7 +35,13 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         } ?: Brukerpass(brukerpass = false)
     }
 
+    var brukerpassRollerMedByttbareHjelpemidlerRes: List<Brukerpassrollebytter>? = null
+
     fun brukerpassRollerMedByttbareHjelpemidler(): List<Brukerpassrollebytter> {
+        if (brukerpassRollerMedByttbareHjelpemidlerRes != null) {
+            return brukerpassRollerMedByttbareHjelpemidlerRes!!
+        }
+
         logg.info { "Gjør spørring brukerpassRollerMedByttbareHjelpemidler..." }
         @Language("OracleSQL")
         var query =
@@ -70,7 +76,9 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         """.trimIndent()
         }
 
-        return resultat.distinctBy { it.fnr }
+        brukerpassRollerMedByttbareHjelpemidlerRes = resultat.distinctBy { it.fnr }
+
+        return brukerpassRollerMedByttbareHjelpemidlerRes!!
     }
 
     data class Brukerpassrollebytter(
