@@ -35,58 +35,58 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         } ?: Brukerpass(brukerpass = false)
     }
 
-    var brukerpassRollerMedByttbareHjelpemidlerRes: List<Brukerpassrollebytter>? = null
+    var brukerpassbrukereMedByttbareHjelpemidlerCache: List<String>? = null
 
-    fun brukerpassRollerMedByttbareHjelpemidler(): List<Brukerpassrollebytter> {
+    fun brukerpassRollerMedByttbareHjelpemidler(): List<String> {
         /*if (brukerpassRollerMedByttbareHjelpemidlerRes != null) {
             return brukerpassRollerMedByttbareHjelpemidlerRes!!
         }*/
 
-        logg.info { "Gjør spørring brukerpassRollerMedByttbareHjelpemidler..." }
-        @Language("OracleSQL")
-        var query =
-            """
-                SELECT a.FNR, b.UTLÅNS_TYPE, b.INNLEVERINGSDATO, b.OPPDATERT_INNLEVERINGSDATO
-                FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V a
-                INNER JOIN apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V b ON a.FNR = b.FNR
-                WHERE b.KATEGORI3_NUMMER IN ('123903', '090312')
-                AND b.UTLÅNS_TYPE IN ('P', 'F')
-            """.trimIndent()
-
-        val resultat: List<Brukerpassrollebytter> = sessionOf(dataSource).use { it ->
+        logg.info { "Henter brukerpassbrukere..." }
+        val brukerpassbrukere: List<String> = sessionOf(dataSource).use { it ->
             it.run(
-                queryOf(query).map { row ->
-                    Brukerpassrollebytter(
-                        fnr = row.string("FNR"),
-                        utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
-                        innleveringsDato = row.stringOrNull("INNLEVERINGSDATO"),
-                        oppdatertInnleveringsDato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO"),
-                    )
-                }.asList
+                queryOf("SELECT FNR FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V")
+                    .map { row ->
+                        row.string("FNR")
+                    }.asList
             )
         }
 
-        logg.info {
-            """
-            brukerpassRollerMedByttbareHjelpemidler resultat:
-            antall: ${resultat.size}
-            antall unike fnr: ${resultat.map { it.fnr }.distinct().size}
-            antall kanByttes: ${resultat.filter { it.kanByttes }.size}
-            duplikate fnr: ${resultat.groupBy { it.fnr }.filter { it.value.size > 1 }}
-        """.trimIndent()
+        val antallBrukerpassBrukere = brukerpassbrukere.size
+
+        logg.info { "Sjekker utlån for brukerpassbrukere" }
+        val brukerpassbrukereMedTilgangTilBytte = sessionOf(dataSource).use { session ->
+            brukerpassbrukere.filterIndexed { i, fnr ->
+                logg.info { "Sjekker fnr $i/$antallBrukerpassBrukere" }
+                val utlån = session.run(
+                    queryOf(
+                        """
+                        SELECT UTLÅNS_TYPE, INNLEVERINGSDATO, OPPDATERT_INNLEVERINGSDATO
+                        FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V 
+                        WHERE FNR = ?
+                        AND KATEGORI3_NUMMER IN ('123903', '090312')
+                        AND UTLÅNS_TYPE IN ('P', 'F')
+                        """.trimIndent(),
+                        fnr
+                    ).map { row ->
+                        BrukerpassUtlån(
+                            utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
+                            innleveringsDato = row.stringOrNull("INNLEVERINGSDATO"),
+                            oppdatertInnleveringsDato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO"),
+                        )
+                    }.asList
+                )
+
+                utlån.any { it.kanByttes }
+            }
         }
 
-        brukerpassRollerMedByttbareHjelpemidlerRes = resultat
-            .filter { it.kanByttes }
-            .distinctBy { it.fnr }
+        brukerpassbrukereMedByttbareHjelpemidlerCache = brukerpassbrukereMedTilgangTilBytte
 
-        logg.info { "endelig resultat: ${brukerpassRollerMedByttbareHjelpemidlerRes!!.size} stk" }
-
-        return brukerpassRollerMedByttbareHjelpemidlerRes!!
+        return brukerpassbrukereMedByttbareHjelpemidlerCache!!
     }
 
-    data class Brukerpassrollebytter(
-        val fnr: String,
+    data class BrukerpassUtlån(
         val utlånsType: String?,
         val innleveringsDato: String?,
         val oppdatertInnleveringsDato: String?,
