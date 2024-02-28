@@ -39,11 +39,10 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         @Language("OracleSQL")
         var query =
             """
-                SELECT FNR, KONTRAKT_NUMMER, SJEKK_NAVN, START_DATE, END_DATE
+                SELECT a.FNR, a.KONTRAKT_NUMMER, a.SJEKK_NAVN, a.START_DATE, a.END_DATE
                 FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V a
-                INNER JOIN apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V b
-                WHERE a.FNR = b.FNR
-                AND (b.KATEGORI3_NUMMER = '123903' OR b.KATEGORI3_NUMMER = '090312')
+                INNER JOIN apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V b ON a.FNR = b.FNR
+                WHERE (b.KATEGORI3_NUMMER = '123903' OR b.KATEGORI3_NUMMER = '090312')
                 AND (b.UTLÅNS_TYPE = 'P' OR b.UTLÅNS_TYPE = 'F')
             """.trimIndent()
 
