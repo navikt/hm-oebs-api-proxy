@@ -42,9 +42,7 @@ fun Route.felles() {
             val fnr = call.receive<FnrDto>().fnr
             // Returner liste av fnr av brukere som har brukerpassrolle og utlån på isokoder byttebareIsokoderForBrukerpass
             call.respond(
-                mapOf(
-                    "harGyldigUtlån" to brukerpassDao.harGyldigUtlånForBrukerpassbytte(fnr)
-                )
+                BrukerpassbytteDto(brukerpassDao.harGyldigUtlånForBrukerpassbytte(fnr))
             )
         }
     }
@@ -92,4 +90,8 @@ fun Route.felles() {
 
 private data class FnrDto(
     val fnr: String
+)
+
+private data class BrukerpassbytteDto(
+    val harGyldigUtlån: Boolean
 )
