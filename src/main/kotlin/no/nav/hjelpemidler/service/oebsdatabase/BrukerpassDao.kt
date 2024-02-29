@@ -58,13 +58,13 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                         WHERE FNR = ?
                         AND KATEGORI3_NUMMER IN ('123903', '090312')
                         AND UTLÅNS_TYPE IN ('P', 'F')
-                        """.trimIndent(),
+                    """.trimIndent(),
                     fnr
                 ).map { row ->
                     BrukerpassUtlån(
                         utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
                         innleveringsDato = row.stringOrNull("INNLEVERINGSDATO"),
-                        oppdatertInnleveringsDato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO"),
+                        oppdatertInnleveringsDato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO")
                     )
                 }.asList
             )
@@ -76,14 +76,13 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
 data class BrukerpassUtlån(
     val utlånsType: String?,
     val innleveringsDato: String?,
-    val oppdatertInnleveringsDato: String?,
+    val oppdatertInnleveringsDato: String?
 ) {
     val kanByttes = erPermanentUtlån(utlånsType) || erGyldigTidsbestemtUtlån(
         oppdatertInnleveringsDato,
         innleveringsDato,
         utlånsType
     )
-}
 }
 
 data class Brukerpass(
