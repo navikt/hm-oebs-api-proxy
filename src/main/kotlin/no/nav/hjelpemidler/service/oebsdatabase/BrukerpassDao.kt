@@ -35,15 +35,9 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
         } ?: Brukerpass(brukerpass = false)
     }
 
-    var brukerpassbrukereMedByttbareHjelpemidlerCache: List<String>? = null
-
-    fun brukerpassRollerMedByttbareHjelpemidler(): List<String> {
-        /*if (brukerpassRollerMedByttbareHjelpemidlerRes != null) {
-            return brukerpassRollerMedByttbareHjelpemidlerRes!!
-        }*/
-
+    fun hentAlleBrukerpassbrukere(): List<String> {
         logg.info { "Henter brukerpassbrukere..." }
-        val brukerpassbrukere: List<String> = sessionOf(dataSource).use { it ->
+        return sessionOf(dataSource).use { it ->
             it.run(
                 queryOf("SELECT FNR FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V")
                     .map { row ->
@@ -51,52 +45,45 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                     }.asList
             )
         }
+    }
 
-        val antallBrukerpassBrukere = brukerpassbrukere.size
-
-        logg.info { "Sjekker utlån for brukerpassbrukere" }
-        val brukerpassbrukereMedTilgangTilBytte = sessionOf(dataSource).use { session ->
-            brukerpassbrukere.filterIndexed { i, fnr ->
-                logg.info { "Sjekker fnr $i/$antallBrukerpassBrukere" }
-                val utlån = session.run(
-                    queryOf(
-                        """
+    fun harGyldigUtlånForBrukerpassbytte(fnr: String): Boolean {
+        logg.info { "Sjekker om bruker har gyldig utlån for brukerpassbytte" }
+        return sessionOf(dataSource).use { session ->
+            val utlån = session.run(
+                queryOf(
+                    """
                         SELECT UTLÅNS_TYPE, INNLEVERINGSDATO, OPPDATERT_INNLEVERINGSDATO
                         FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V 
                         WHERE FNR = ?
                         AND KATEGORI3_NUMMER IN ('123903', '090312')
                         AND UTLÅNS_TYPE IN ('P', 'F')
                         """.trimIndent(),
-                        fnr
-                    ).map { row ->
-                        BrukerpassUtlån(
-                            utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
-                            innleveringsDato = row.stringOrNull("INNLEVERINGSDATO"),
-                            oppdatertInnleveringsDato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO"),
-                        )
-                    }.asList
-                )
-
-                utlån.any { it.kanByttes }
-            }
+                    fnr
+                ).map { row ->
+                    BrukerpassUtlån(
+                        utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
+                        innleveringsDato = row.stringOrNull("INNLEVERINGSDATO"),
+                        oppdatertInnleveringsDato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO"),
+                    )
+                }.asList
+            )
+            utlån.any { it.kanByttes }
         }
-
-        brukerpassbrukereMedByttbareHjelpemidlerCache = brukerpassbrukereMedTilgangTilBytte
-
-        return brukerpassbrukereMedByttbareHjelpemidlerCache!!
     }
+}
 
-    data class BrukerpassUtlån(
-        val utlånsType: String?,
-        val innleveringsDato: String?,
-        val oppdatertInnleveringsDato: String?,
-    ) {
-        val kanByttes = erPermanentUtlån(utlånsType) || erGyldigTidsbestemtUtlån(
-            oppdatertInnleveringsDato,
-            innleveringsDato,
-            utlånsType
-        )
-    }
+data class BrukerpassUtlån(
+    val utlånsType: String?,
+    val innleveringsDato: String?,
+    val oppdatertInnleveringsDato: String?,
+) {
+    val kanByttes = erPermanentUtlån(utlånsType) || erGyldigTidsbestemtUtlån(
+        oppdatertInnleveringsDato,
+        innleveringsDato,
+        utlånsType
+    )
+}
 }
 
 data class Brukerpass(
