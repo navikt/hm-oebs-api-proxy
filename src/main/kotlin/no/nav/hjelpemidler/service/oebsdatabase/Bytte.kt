@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 
 fun berikBytteinfo(item: HjelpemiddelBruker) {
     item.kanByttes = erPermanentUtlån(item.utlånsType) || erGyldigTidsbestemtUtlån(item)
-    item.kanByttesMedBrukerpass = if (isProd()) false else item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer) // TODO: fjern før lansering av brukerpassbytte
+    item.kanByttesMedBrukerpass = item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer)
 }
 
 private val byttebareIsokoderForBrukerpass = listOf(
