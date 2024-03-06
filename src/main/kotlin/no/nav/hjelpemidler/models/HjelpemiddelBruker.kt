@@ -24,7 +24,7 @@ data class HjelpemiddelBruker(
 
     // Berikede felter for bytte
     var kanByttes: Boolean? = null,
-    var kanByttesMedBrukerpass: Boolean? = null
+    var kanByttesMedBrukerpass: Boolean? = null,
 
     /*
         val FOREKOMST_NUMMER: String,

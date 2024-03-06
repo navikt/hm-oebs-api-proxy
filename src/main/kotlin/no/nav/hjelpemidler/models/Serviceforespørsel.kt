@@ -23,12 +23,12 @@ enum class Stønadsklasse(stønadsklasse: String) {
     HJDATR("Hjelpemidler dagligliv trening"),
     HJFØ("Hjelpemidler dagligliv førerhunder"),
     HJSH("Hjelpemidler dagligliv servicehunder"),
-    HJDAAK("Hjelpemidler dagligliv aktivitet")
+    HJDAAK("Hjelpemidler dagligliv aktivitet"),
 }
 
 enum class Resultat(resultat: String) {
     I("Innvilget"),
     DI("Delvis innvilget"),
     IM("Innvilget muntlig"),
-    IN("Innvilget ny situasjon")
+    IN("Innvilget ny situasjon"),
 }

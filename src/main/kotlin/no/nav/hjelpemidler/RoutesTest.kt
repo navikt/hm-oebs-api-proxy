@@ -12,5 +12,5 @@ fun Route.test() {
     get("/test-lager/{hmsNr}") {
         call.respond(lagerDao.lagerStatus(call.parameters["hmsNr"]!!))
     }
-    */
+     */
 }

@@ -35,9 +35,9 @@ class ServiceforespørselDao(private val dataSource: DataSource = Configuration.
                         "processed" to "N",
                         "oppdatertAv" to Configuration.application["OEBS_BRUKER_ID"],
                         "jobId" to -1,
-                        "beskrivelse" to sf.problemsammendrag
-                    )
-                ).asUpdate
+                        "beskrivelse" to sf.problemsammendrag,
+                    ),
+                ).asUpdate,
             )
         }
     }

@@ -36,14 +36,12 @@ import io.prometheus.client.CollectorRegistry
 import mu.KotlinLogging
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselFeilDao
 import org.slf4j.event.Level
-import kotlin.time.ExperimentalTime
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 fun main(args: Array<String>) = EngineMain.main(args)
 
-@ExperimentalTime
 fun Application.module() {
     environment.monitor.subscribe(ApplicationStarted) {
         // loggFeilendeSf()
@@ -78,7 +76,7 @@ fun Application.module() {
         registry = PrometheusMeterRegistry(
             PrometheusConfig.DEFAULT,
             CollectorRegistry.defaultRegistry,
-            Clock.SYSTEM
+            Clock.SYSTEM,
         )
         meterBinders = listOf(
             ClassLoaderMetrics(),
@@ -87,7 +85,7 @@ fun Application.module() {
             ProcessorMetrics(),
             JvmThreadMetrics(),
             LogbackMetrics(),
-            KafkaConsumerMetrics()
+            KafkaConsumerMetrics(),
         )
     }
 

@@ -60,7 +60,7 @@ fun Route.felles() {
 
         get("/lager/sentral/{kommunenummer}/{hmsNr}") {
             data class NoResult(
-                val error: String
+                val error: String,
             )
 
             val result = lagerDao.lagerStatusSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)
@@ -69,7 +69,7 @@ fun Route.felles() {
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    NoResult("no results found for kommunenummer=\"${call.parameters["kommunenummer"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\"")
+                    NoResult("no results found for kommunenummer=\"${call.parameters["kommunenummer"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\""),
                 )
             }
         }
@@ -77,5 +77,5 @@ fun Route.felles() {
 }
 
 private data class FnrDto(
-    val fnr: String
+    val fnr: String,
 )

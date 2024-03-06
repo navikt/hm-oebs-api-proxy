@@ -40,9 +40,9 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
                     TittelForHmsNr(
                         hmsNr = row.string("ARTIKKEL"),
                         type = row.string("BRUKERARTIKKELTYPE"),
-                        title = row.string("ARTIKKEL_BESKRIVELSE")
+                        title = row.string("ARTIKKEL_BESKRIVELSE"),
                     )
-                }.asList
+                }.asList,
             )
         }
     }

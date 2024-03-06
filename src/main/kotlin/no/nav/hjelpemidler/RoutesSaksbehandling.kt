@@ -123,14 +123,14 @@ private fun validateFnr(fnr: String) {
 
 private data class HarUtlåntIsokodeRequest(
     val fnr: String,
-    val isokode: String
+    val isokode: String,
 )
 
 private data class UtlånPåArtnrOgSerienrRequest(
     val artnr: String,
-    val serienr: String
+    val serienr: String,
 )
 
 private data class UtlånPåArtnrOgSerienrResponse(
-    val utlån: Utlån?
+    val utlån: Utlån?,
 )

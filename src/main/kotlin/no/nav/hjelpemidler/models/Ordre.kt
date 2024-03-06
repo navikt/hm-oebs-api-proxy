@@ -9,23 +9,23 @@ data class Ordre(
     val ordretype: OrdreType = OrdreType.BESTILLING,
     val saksnummer: String,
     val artikler: List<Artikkel>,
-    val shippinginstructions: String
+    val shippinginstructions: String,
 )
 
 data class Artikkel(val hmsnr: String, val antall: String)
 
 enum class OrdreType {
-    BESTILLING
+    BESTILLING,
 }
 
 data class OebsJsonFormat(
     @JsonProperty("P_JSON_MELDING")
     val jsonMelding: String,
     @JsonProperty("P_RETUR_MELDING")
-    val returMelding: String = ""
+    val returMelding: String = "",
 ) {
     constructor(jsonMelding: Any, returMelding: String = "") : this(
         jsonMapper.writeValueAsString(jsonMelding),
-        returMelding
+        returMelding,
     )
 }

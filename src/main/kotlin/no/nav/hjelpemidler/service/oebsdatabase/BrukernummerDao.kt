@@ -21,9 +21,9 @@ class BrukernummerDao(private val dataSource: DataSource = Configuration.dataSou
             it.run(
                 queryOf(hentBrukernummerQuery, fnr.value).map { row ->
                     Brukernummer(
-                        brukernummer = row.string("BRUKER_NUMMER")
+                        brukernummer = row.string("BRUKER_NUMMER"),
                     )
-                }.asSingle
+                }.asSingle,
             )
         }
         return brukernummer

@@ -52,5 +52,5 @@ val lagerMap: Map<String, String> = mapOf(
     "17" to "*17 Nord-Trøndelag",
     "18" to "*18 Nordland",
     "19" to "*19 Troms",
-    "20" to "*20 Finnmark"
+    "20" to "*20 Finnmark",
 )

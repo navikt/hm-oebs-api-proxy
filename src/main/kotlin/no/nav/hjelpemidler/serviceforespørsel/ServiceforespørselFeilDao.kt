@@ -20,7 +20,7 @@ class ServiceforespørselFeilDao(private val dataSource: DataSource = Configurat
         val items = sessionOf(dataSource).use {
             it.run(
                 queryOf(
-                    finnSFQuery
+                    finnSFQuery,
                 ).map { row ->
                     SfFeil(
                         id = row.stringOrNull("ID"),
@@ -31,9 +31,9 @@ class ServiceforespørselFeilDao(private val dataSource: DataSource = Configurat
                         feilmelding = row.stringOrNull("FEILMELDING"),
                         kommentar = row.stringOrNull("KOMMENTAR"),
                         creationDate = row.stringOrNull("CREATION_DATE"),
-                        lastUpdateDate = row.stringOrNull("LAST_UPDATE_DATE")
+                        lastUpdateDate = row.stringOrNull("LAST_UPDATE_DATE"),
                     )
-                }.asList
+                }.asList,
             )
         }
         return items
