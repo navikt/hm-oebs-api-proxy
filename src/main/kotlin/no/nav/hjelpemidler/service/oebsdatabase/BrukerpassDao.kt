@@ -34,6 +34,55 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
             )
         } ?: Brukerpass(brukerpass = false)
     }
+
+    fun hentAlleBrukerpassbrukere(): List<String> {
+        logg.info { "Henter brukerpassbrukere..." }
+        return sessionOf(dataSource).use { it ->
+            it.run(
+                queryOf("SELECT FNR FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V")
+                    .map { row ->
+                        row.string("FNR")
+                    }.asList
+            )
+        }
+    }
+
+    fun harGyldigUtlånForBrukerpassbytte(fnr: String): Boolean {
+        logg.info { "Sjekker om bruker har gyldig utlån for brukerpassbytte" }
+        return sessionOf(dataSource).use { session ->
+            val utlån = session.run(
+                queryOf(
+                    """
+                        SELECT UTLÅNS_TYPE, INNLEVERINGSDATO, OPPDATERT_INNLEVERINGSDATO
+                        FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V 
+                        WHERE FNR = ?
+                        AND KATEGORI3_NUMMER IN ('123903', '090312')
+                        AND UTLÅNS_TYPE IN ('P', 'F')
+                    """.trimIndent(),
+                    fnr
+                ).map { row ->
+                    BrukerpassUtlån(
+                        utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
+                        innleveringsDato = row.stringOrNull("INNLEVERINGSDATO"),
+                        oppdatertInnleveringsDato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO")
+                    )
+                }.asList
+            )
+            utlån.any { it.kanByttes }
+        }
+    }
+}
+
+data class BrukerpassUtlån(
+    val utlånsType: String?,
+    val innleveringsDato: String?,
+    val oppdatertInnleveringsDato: String?
+) {
+    val kanByttes = erPermanentUtlån(utlånsType) || erGyldigTidsbestemtUtlån(
+        oppdatertInnleveringsDato,
+        innleveringsDato,
+        utlånsType
+    )
 }
 
 data class Brukerpass(
