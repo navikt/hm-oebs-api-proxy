@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.serviceforespørsel
 
+import kotliquery.Parameter
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.hjelpemidler.configuration.Configuration
@@ -47,8 +48,11 @@ class ServiceforespørselDao(private val dataSource: DataSource = Configuration.
                         "processed" to "N",
                         "oppdatertAv" to Configuration.application["OEBS_BRUKER_ID"],
                         "jobId" to -1,
-                        "beskrivelse" to (sf.problemsammendrag ?: ""),
-                        "artikler" to jsonMapper.writeValueAsString(sf.artikler),
+                        "beskrivelse" to Parameter<String?>(sf.problemsammendrag, String::class.java),
+                        "artikler" to when {
+                            sf.artikler.isEmpty() -> Parameter<String?>(null, String::class.java)
+                            else -> jsonMapper.writeValueAsString(sf.artikler)
+                        },
                     ),
                 ).asUpdate,
             )
