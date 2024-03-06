@@ -9,6 +9,7 @@ data class Serviceforespørsel(
     val kilde: String = "DIGIHOT",
     val jobId: String = "-1",
     val problemsammendrag: String? = null,
+    val artikler: List<Artikkel> = emptyList(),
 )
 
 enum class Stønadsklasse(stønadsklasse: String) {
