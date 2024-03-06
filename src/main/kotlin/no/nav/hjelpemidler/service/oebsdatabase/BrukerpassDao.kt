@@ -13,7 +13,7 @@ private val logg = KotlinLogging.logger {}
 
 class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun brukerpassForFnr(fnr: String): Brukerpass {
-        @Language("OracleSQL")
+        @Language("Oracle")
         var query =
             """
                 SELECT KONTRAKT_NUMMER, SJEKK_NAVN, START_DATE, END_DATE

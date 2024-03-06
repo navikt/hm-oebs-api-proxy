@@ -21,7 +21,7 @@ class LagerDao(
     }
 
     private fun lagerStatusInner(hmsnr: String, orgNavn: String? = null): List<LagerStatus> {
-        @Language("OracleSQL")
+        @Language("Oracle")
         var sql =
             """
                 SELECT
@@ -57,15 +57,15 @@ class LagerDao(
                 query.map { row ->
                     LagerStatus(
                         erPåLager = (
-                            (row.intOrNull("fysisk") ?: 0) +
-                                (row.intOrNull("bestillinger") ?: 0) +
-                                (row.intOrNull("anmodning") ?: 0) +
-                                (row.intOrNull("intanmodning") ?: 0)
-                            ) > (
-                            (row.intOrNull("behovsmeldt") ?: 0) +
-                                (row.intOrNull("reservert") ?: 0) +
-                                (row.intOrNull("restordre") ?: 0)
-                            ),
+                                (row.intOrNull("fysisk") ?: 0) +
+                                        (row.intOrNull("bestillinger") ?: 0) +
+                                        (row.intOrNull("anmodning") ?: 0) +
+                                        (row.intOrNull("intanmodning") ?: 0)
+                                ) > (
+                                (row.intOrNull("behovsmeldt") ?: 0) +
+                                        (row.intOrNull("reservert") ?: 0) +
+                                        (row.intOrNull("restordre") ?: 0)
+                                ),
 
                         organisasjons_id = row.intOrNull("organisasjons_id") ?: -1,
                         organisasjons_navn = row.stringOrNull("organisasjons_navn") ?: "<ukjent>",

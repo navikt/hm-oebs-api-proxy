@@ -10,11 +10,11 @@ import javax.sql.DataSource
 class ServiceforespørselFeilDao(private val dataSource: DataSource = Configuration.dataSource) {
 
     fun finnSfMedFeil(): List<SfFeil> {
-        @Language("OracleSQL")
+        @Language("Oracle")
         val finnSFQuery =
             """
-            select ID, SAKSNUMMER, REFERANSENUMMER, PROCESSED, SF_NUMMER, FEILMELDING, KOMMENTAR, CREATION_DATE, LAST_UPDATE_DATE  from apps.xxrtv_cs_digihot_sf_opprett
-            where FEILMELDING IS NOT NULL
+            SELECT ID, SAKSNUMMER, REFERANSENUMMER, PROCESSED, SF_NUMMER, FEILMELDING, KOMMENTAR, CREATION_DATE, LAST_UPDATE_DATE  FROM apps.xxrtv_cs_digihot_sf_opprett
+            WHERE FEILMELDING IS NOT NULL
             """.trimIndent()
 
         val items = sessionOf(dataSource).use {

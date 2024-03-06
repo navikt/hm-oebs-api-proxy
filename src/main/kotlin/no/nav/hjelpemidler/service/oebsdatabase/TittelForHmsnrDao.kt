@@ -23,7 +23,7 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
     }
 
     private fun helper(hmsnrs: Set<String>): List<TittelForHmsNr> {
-        @Language("OracleSQL")
+        @Language("Oracle")
         var query =
             """
                 SELECT ARTIKKEL, BRUKERARTIKKELTYPE, ARTIKKEL_BESKRIVELSE

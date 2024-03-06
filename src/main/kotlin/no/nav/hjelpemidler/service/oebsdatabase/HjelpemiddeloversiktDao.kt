@@ -16,7 +16,7 @@ import javax.sql.DataSource
 
 class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
-        @Language("OracleSQL")
+        @Language("Oracle")
         val query =
             """
             SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER,
@@ -52,7 +52,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
     }
 
     fun utlånPåIsokode(fnr: String, isokode: String): List<UtlånPåIsokode> {
-        @Language("OracleSQL")
+        @Language("Oracle")
         val query =
             """
             SELECT KATEGORI3_NUMMER, UTLÅNS_DATO
@@ -77,7 +77,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
     }
 
     fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? {
-        @Language("OracleSQL")
+        @Language("Oracle")
         val query =
             """
             SELECT FNR, ARTIKKELNUMMER, SERIE_NUMMER, UTLÅNS_DATO  

@@ -9,7 +9,7 @@ import javax.sql.DataSource
 
 class BrukernummerDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun hentBrukernummer(fnr: Fødselsnummer): Brukernummer? {
-        @Language("OracleSQL")
+        @Language("Oracle")
         val hentBrukernummerQuery =
             """
             SELECT BRUKER_NUMMER
