@@ -114,7 +114,7 @@ internal object Configuration {
             idleTimeout = 10001
             connectionTimeout = 1000
             maxLifetime = 30001
-            driverClassName = "oracle.jdbc.driver.OracleDriver"
+            driverClassName = "oracle.jdbc.OracleDriver"
             jdbcUrl = get("HM_OEBS_API_PROXY_DB_URL")
         }
     }
