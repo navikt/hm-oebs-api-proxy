@@ -4,5 +4,5 @@ data class Utlån(
     val fnr: String,
     val artnr: String,
     val serienr: String,
-    val utlånsDato: String
+    val utlånsDato: String,
 )

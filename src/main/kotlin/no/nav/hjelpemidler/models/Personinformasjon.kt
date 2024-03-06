@@ -7,5 +7,5 @@ data class Personinformasjon(
     val leveringPostnr: String,
     val leveringBy: String,
     val primaerAdr: String,
-    val bydel: String?
+    val bydel: String?,
 )

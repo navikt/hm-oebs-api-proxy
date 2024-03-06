@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.client.`hmdb-ng`
+package no.nav.hjelpemidler.client.hmdbng
 
 import com.expediagroup.graphql.client.jackson.GraphQLClientJacksonSerializer
 import com.expediagroup.graphql.client.ktor.GraphQLKtorClient
@@ -6,18 +6,18 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
-import java.net.URL
+import java.net.URI
 
 object HjelpemiddeldatabaseNgClient {
     private val log = KotlinLogging.logger {}
     private val client =
         GraphQLKtorClient(
-            url = URL("${Configuration.application["GRUNNDATA_API_NG_URL"]!!}/graphql"),
+            url = URI("${Configuration.application["GRUNNDATA_API_NG_URL"]!!}/graphql").toURL(),
             httpClient = HttpClient(engineFactory = Apache),
-            serializer = GraphQLClientJacksonSerializer()
+            serializer = GraphQLClientJacksonSerializer(),
         )
 
-    suspend fun hentProdukter(hmsnrs: Set<String>): List<no.nav.hjelpemidler.client.`hmdb-ng`.hentprodukter.Product> {
+    suspend fun hentProdukter(hmsnrs: Set<String>): List<no.nav.hjelpemidler.client.hmdbng.hentprodukter.Product> {
         if (hmsnrs.isEmpty()) return emptyList()
         val request = HentProdukter(variables = HentProdukter.Variables(hmsnrs = hmsnrs.toList()))
         return try {

@@ -18,7 +18,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.configuration.Configuration
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import java.net.ProxySelector
-import java.net.URL
+import java.net.URI
 import java.util.concurrent.TimeUnit
 
 private fun httpClientWithProxy() = HttpClient(Apache) {
@@ -40,11 +40,11 @@ fun Application.installAuthentication() {
     runBlocking {
         tokenXConfig = WellKnownConfig(
             metadata = httpClientWithProxy().get(Configuration.tokenX["TOKEN_X_WELL_KNOWN_URL"]!!).body(),
-            clientId = Configuration.tokenX["TOKEN_X_CLIENT_ID"]!!
+            clientId = Configuration.tokenX["TOKEN_X_CLIENT_ID"]!!,
         )
     }
 
-    val jwkProviderTokenX = JwkProviderBuilder(URL(tokenXConfig!!.metadata.jwksUri))
+    val jwkProviderTokenX = JwkProviderBuilder(URI(tokenXConfig!!.metadata.jwksUri).toURL())
         // cache up to 10 JWKs for 24 hours
         .cached(10, 24, TimeUnit.HOURS)
         // if not cached, only allow max 10 different keys per minute to be fetched from external provider
@@ -56,11 +56,11 @@ fun Application.installAuthentication() {
     runBlocking {
         aadConfig = WellKnownConfig(
             metadata = httpClientWithProxy().get(Configuration.azureAD["AZURE_APP_WELL_KNOWN_URL"]!!).body(),
-            clientId = Configuration.azureAD["AZURE_APP_CLIENT_ID"]!!
+            clientId = Configuration.azureAD["AZURE_APP_CLIENT_ID"]!!,
         )
     }
 
-    val jwkProviderAad = JwkProviderBuilder(URL(aadConfig!!.metadata.jwksUri))
+    val jwkProviderAad = JwkProviderBuilder(URI(aadConfig!!.metadata.jwksUri).toURL())
         // cache up to 10 JWKs for 24 hours
         .cached(10, 24, TimeUnit.HOURS)
         // if not cached, only allow max 10 different keys per minute to be fetched from external provider
@@ -106,10 +106,10 @@ fun Application.installAuthentication() {
 
 private data class WellKnownConfig(
     val metadata: Metadata,
-    val clientId: String
+    val clientId: String,
 ) {
     data class Metadata(
         @JsonProperty("issuer") val issuer: String,
-        @JsonProperty("jwks_uri") val jwksUri: String
+        @JsonProperty("jwks_uri") val jwksUri: String,
     )
 }

@@ -10,14 +10,14 @@ import javax.sql.DataSource
 class ServiceforespørselDao(private val dataSource: DataSource = Configuration.dataSource) {
 
     fun opprettServiceforespørsel(sf: Serviceforespørsel) {
-        @Language("OracleSQL")
+        @Language("Oracle")
         val opprettSFQuery =
             """
-            
-            insert into apps.xxrtv_cs_digihot_sf_opprett 
-            (ID, FNR, NAVN, STONADSKLASS,SAKSTYPE,RESULTAT,SFDATO ,REFERANSENUMMER,KILDE,PROCESSED,LAST_UPDATE_DATE,LAST_UPDATED_BY,CREATION_DATE,CREATED_BY, JOB_ID, SAKSBLOKK)
-            values 
-            (apps.XXRTV_CS_DIGIHOT_SF_OPPRETT_S.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, sysdate, :referansenummer, :kilde, :processed, sysdate, :oppdatertAv, sysdate, :oppdatertAv, :jobId, 'X')
+                INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
+                (ID, FNR, NAVN, STONADSKLASS, SAKSTYPE, RESULTAT, SFDATO, REFERANSENUMMER, KILDE, PROCESSED, LAST_UPDATE_DATE,
+                 LAST_UPDATED_BY, CREATION_DATE, CREATED_BY, JOB_ID, SAKSBLOKK, BESKRIVELSE)
+                VALUES (apps.XXRTV_CS_DIGIHOT_SF_OPPRETT_S.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, SYSDATE,
+                        :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X', :beskrivelse)
             """.trimIndent()
 
         sessionOf(dataSource).use {
@@ -34,9 +34,10 @@ class ServiceforespørselDao(private val dataSource: DataSource = Configuration.
                         "kilde" to sf.kilde,
                         "processed" to "N",
                         "oppdatertAv" to Configuration.application["OEBS_BRUKER_ID"],
-                        "jobId" to -1
-                    )
-                ).asUpdate
+                        "jobId" to -1,
+                        "beskrivelse" to (sf.problemsammendrag ?: ""),
+                    ),
+                ).asUpdate,
             )
         }
     }

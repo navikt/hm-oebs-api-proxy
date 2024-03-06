@@ -22,7 +22,7 @@ class HjelpemiddeloversiktDaoTest {
     fun `skal sette kanByttes false for korttidsutlån`() {
         val item = item(
             type = UtlånsType.KORTTIDSUTLÅN,
-            innlevering = LocalDate.now().plusDays(1)
+            innlevering = LocalDate.now().plusDays(1),
         )
         berikBytteinfo(item)
         assertFalse(item.kanByttes!!)
@@ -40,7 +40,7 @@ class HjelpemiddeloversiktDaoTest {
         val item = item(
             innlevering = LocalDate.now().minusDays(1),
             oppdatertInnlevering = LocalDate.now().plusDays(1),
-            type = UtlånsType.TIDSBESTEMT_UTLÅN
+            type = UtlånsType.TIDSBESTEMT_UTLÅN,
         )
         berikBytteinfo(item)
         assertTrue(item.kanByttes!!)
@@ -50,7 +50,7 @@ class HjelpemiddeloversiktDaoTest {
     fun `skal være mulig for brukerpass å bytte hjelpemidler innenfor godtatt isokode`() {
         val item = item(
             type = UtlånsType.PERMANENT,
-            kategoriNummer = "123903"
+            kategoriNummer = "123903",
 
         )
         berikBytteinfo(item)
@@ -62,7 +62,7 @@ class HjelpemiddeloversiktDaoTest {
     fun `skal ikke være mulig for brukerpass å bytte hjelpemidler utenfor godtatt isokode`() {
         val item = item(
             type = UtlånsType.PERMANENT,
-            kategoriNummer = "111111"
+            kategoriNummer = "111111",
 
         )
         berikBytteinfo(item)
@@ -75,7 +75,7 @@ private fun item(
     type: UtlånsType = UtlånsType.PERMANENT,
     innlevering: LocalDate? = LocalDate.now(),
     oppdatertInnlevering: LocalDate? = null,
-    kategoriNummer: String = ""
+    kategoriNummer: String = "",
 ) = HjelpemiddelBruker(
     antall = "",
     antallEnhet = "",
@@ -89,7 +89,7 @@ private fun item(
     artikkelStatus = "",
     utlånsType = type.kode,
     innleveringsdato = innlevering?.let(::toInnleveringsdato),
-    oppdatertInnleveringsdato = oppdatertInnlevering?.let(::toInnleveringsdato)
+    oppdatertInnleveringsdato = oppdatertInnlevering?.let(::toInnleveringsdato),
 )
 
 private val oebsDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")

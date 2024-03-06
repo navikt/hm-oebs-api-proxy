@@ -41,7 +41,7 @@ data class HjelpemiddelProdukt(
     var kategori: String?,
     var techdataAsText: String?,
     val cleanTechdataAsText: String?,
-    val cleanposttitle: String?
+    val cleanposttitle: String?,
 )
 
 /*
@@ -85,14 +85,14 @@ data class HjelpemiddelProduktTechDataAttribute(
     val artid: String,
     val techlabeldk: String?,
     val datavalue: String?,
-    val techdataunit: String?
+    val techdataunit: String?,
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class HjelpemiddelProduktTechDataAttributesInWords(
     val prodid: String?,
     val artid: String?,
-    val techdata: String?
+    val techdata: String?,
 )
 
 /*{

@@ -6,15 +6,15 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
-import java.net.URL
+import java.net.URI
 
 object HjelpemiddeldatabaseClient {
     private val log = KotlinLogging.logger {}
     private val client =
         GraphQLKtorClient(
-            url = URL("${Configuration.application["GRUNNDATA_API_URL"]!!}/graphql"),
+            url = URI("${Configuration.application["GRUNNDATA_API_URL"]!!}/graphql").toURL(),
             httpClient = HttpClient(engineFactory = Apache),
-            serializer = GraphQLClientJacksonSerializer()
+            serializer = GraphQLClientJacksonSerializer(),
         )
 
     suspend fun hentProdukter(hmsnr: Set<String>): List<no.nav.hjelpemidler.client.hmdb.hentprodukter.Produkt> {

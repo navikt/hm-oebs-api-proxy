@@ -4,9 +4,9 @@ import kotlinx.coroutines.runBlocking
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
-import no.nav.hjelpemidler.client.`hmdb-ng`.HjelpemiddeldatabaseNgClient
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Produkt
+import no.nav.hjelpemidler.client.hmdbng.HjelpemiddeldatabaseNgClient
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Utlån
@@ -16,7 +16,7 @@ import javax.sql.DataSource
 
 class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
-        @Language("OracleSQL")
+        @Language("Oracle")
         val query =
             """
             SELECT ANTALL, ENHET, KATEGORI3_BESKRIVELSE, ARTIKKEL_BESKRIVELSE, ARTIKKELNUMMER,
@@ -43,16 +43,16 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                         artikkelStatus = row.string("ARTIKKELSTATUS"),
                         utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
                         innleveringsdato = row.stringOrNull("INNLEVERINGSDATO"),
-                        oppdatertInnleveringsdato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO")
+                        oppdatertInnleveringsdato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO"),
                     )
-                }.asList
+                }.asList,
             )
         }
         return berikOrdrelinjer(items)
     }
 
     fun utlånPåIsokode(fnr: String, isokode: String): List<UtlånPåIsokode> {
-        @Language("OracleSQL")
+        @Language("Oracle")
         val query =
             """
             SELECT KATEGORI3_NUMMER, UTLÅNS_DATO
@@ -67,9 +67,9 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                 queryOf(query, fnr, isokode).map { row ->
                     UtlånPåIsokode(
                         kategoriNummer = row.string("KATEGORI3_NUMMER"),
-                        datoUtsendelse = row.string("UTLÅNS_DATO")
+                        datoUtsendelse = row.string("UTLÅNS_DATO"),
                     )
-                }.asList
+                }.asList,
             )
         }
 
@@ -77,7 +77,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
     }
 
     fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? {
-        @Language("OracleSQL")
+        @Language("Oracle")
         val query =
             """
             SELECT FNR, ARTIKKELNUMMER, SERIE_NUMMER, UTLÅNS_DATO  
@@ -94,9 +94,9 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                         fnr = row.string("FNR"),
                         artnr = row.string("ARTIKKELNUMMER"),
                         serienr = row.string("SERIE_NUMMER"),
-                        utlånsDato = row.string("UTLÅNS_DATO")
+                        utlånsDato = row.string("UTLÅNS_DATO"),
                     )
-                }.asSingle
+                }.asSingle,
             )
         }
 
@@ -105,7 +105,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
 
     data class UtlånPåIsokode(
         val kategoriNummer: String,
-        val datoUtsendelse: String
+        val datoUtsendelse: String,
     )
 
     private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {

@@ -7,7 +7,8 @@ data class Serviceforespørsel(
     val resultat: Resultat,
     val referansenummer: String,
     val kilde: String = "DIGIHOT",
-    val jobId: String = "-1"
+    val jobId: String = "-1",
+    val problemsammendrag: String? = null,
 )
 
 enum class Stønadsklasse(stønadsklasse: String) {
@@ -22,12 +23,12 @@ enum class Stønadsklasse(stønadsklasse: String) {
     HJDATR("Hjelpemidler dagligliv trening"),
     HJFØ("Hjelpemidler dagligliv førerhunder"),
     HJSH("Hjelpemidler dagligliv servicehunder"),
-    HJDAAK("Hjelpemidler dagligliv aktivitet")
+    HJDAAK("Hjelpemidler dagligliv aktivitet"),
 }
 
 enum class Resultat(resultat: String) {
     I("Innvilget"),
     DI("Delvis innvilget"),
     IM("Innvilget muntlig"),
-    IN("Innvilget ny situasjon")
+    IN("Innvilget ny situasjon"),
 }

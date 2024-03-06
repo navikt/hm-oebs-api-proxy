@@ -9,7 +9,7 @@ import javax.sql.DataSource
 
 class PersoninformasjonDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun hentPersoninformasjon(fnr: String): List<Personinformasjon> {
-        @Language("OracleSQL")
+        @Language("Oracle")
         val hentPersoninfoQuery =
             """
             SELECT BRUKER_NUMMER, LEVERINGS_ADDRESSE, LEVERINGS_KOMMUNE, LEVERINGS_POSTNUMMER, LEVERINGS_BY, PRIMAER_ADR, BYDEL
@@ -27,9 +27,9 @@ class PersoninformasjonDao(private val dataSource: DataSource = Configuration.da
                         leveringKommune = row.stringOrNull("LEVERINGS_KOMMUNE") ?: "",
                         leveringBy = row.stringOrNull("LEVERINGS_BY") ?: "",
                         primaerAdr = row.string("PRIMAER_ADR"),
-                        bydel = row.stringOrNull("BYDEL")
+                        bydel = row.stringOrNull("BYDEL"),
                     )
-                }.asList
+                }.asList,
             )
         }
         return personinformasjonListe
