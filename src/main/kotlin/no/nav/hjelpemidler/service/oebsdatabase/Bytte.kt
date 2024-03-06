@@ -26,7 +26,7 @@ fun erPermanentUtlån(utlånsType: String?) = utlånsType == UtlånsType.PERMANE
 fun erGyldigTidsbestemtUtlån(
     oppdatertInnleveringsdato: String?,
     innleveringsdato: String?,
-    utlånsType: String?
+    utlånsType: String?,
 ): Boolean {
     val innleveringsdato = (oppdatertInnleveringsdato ?: innleveringsdato)?.toInnleveringsdato()
         ?: return false

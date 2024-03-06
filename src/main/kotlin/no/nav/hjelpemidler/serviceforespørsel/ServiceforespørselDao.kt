@@ -3,6 +3,7 @@ package no.nav.hjelpemidler.serviceforespørsel
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.configuration.isProd
 import no.nav.hjelpemidler.jsonMapper
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import org.intellij.lang.annotations.Language
@@ -21,10 +22,20 @@ class ServiceforespørselDao(private val dataSource: DataSource = Configuration.
                         :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X', :beskrivelse, :artikler)
             """.trimIndent()
 
+        @Language("Oracle")
+        val opprettSFQueryLegacy =
+            """
+                INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
+                (ID, FNR, NAVN, STONADSKLASS, SAKSTYPE, RESULTAT, SFDATO, REFERANSENUMMER, KILDE, PROCESSED, LAST_UPDATE_DATE,
+                 LAST_UPDATED_BY, CREATION_DATE, CREATED_BY, JOB_ID, SAKSBLOKK, BESKRIVELSE, JSON_ARTIKKELINFO_IN)
+                VALUES (apps.XXRTV_CS_DIGIHOT_SF_OPPRETT_S.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, SYSDATE,
+                        :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X')
+            """.trimIndent()
+
         sessionOf(dataSource).use {
             it.run(
                 queryOf(
-                    opprettSFQuery,
+                    if (isProd()) opprettSFQueryLegacy else opprettSFQuery,
                     mapOf(
                         "fnr" to sf.fødselsnummer,
                         "navn" to sf.navn,
