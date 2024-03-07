@@ -33,18 +33,6 @@ fun Route.felles() {
 
             call.respond(brukerpassDao.brukerpassForFnr(fnr))
         }
-
-        get("/brukerpassbrukere") {
-            call.respond(brukerpassDao.hentAlleBrukerpassbrukere())
-        }
-
-        post("/har-gyldig-brukerpassbytte-utlaan") {
-            val fnr = call.receive<FnrDto>().fnr
-            // Returner liste av fnr av brukere som har brukerpassrolle og utlån på isokoder byttebareIsokoderForBrukerpass
-            call.respond(
-                BrukerpassbytteDto(brukerpassDao.harGyldigUtlånForBrukerpassbytte(fnr)),
-            )
-        }
     }
 
     authenticate("tokenX", "aad") {
@@ -90,8 +78,4 @@ fun Route.felles() {
 
 private data class FnrDto(
     val fnr: String,
-)
-
-private data class BrukerpassbytteDto(
-    val harGyldigUtlån: Boolean,
 )

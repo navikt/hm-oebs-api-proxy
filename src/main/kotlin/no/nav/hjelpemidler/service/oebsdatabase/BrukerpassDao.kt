@@ -1,15 +1,11 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
-import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import org.intellij.lang.annotations.Language
 import java.time.LocalDate
 import javax.sql.DataSource
-
-private val logg = KotlinLogging.logger {}
 
 class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun brukerpassForFnr(fnr: String): Brukerpass {
@@ -21,7 +17,7 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                 WHERE FNR = ?
             """.trimIndent()
 
-        return sessionOf(dataSource).use { it ->
+        return sessionOf(dataSource).use {
             it.run(
                 queryOf(query, fnr).map { row ->
                     Brukerpass(
@@ -34,55 +30,6 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
             )
         } ?: Brukerpass(brukerpass = false)
     }
-
-    fun hentAlleBrukerpassbrukere(): List<String> {
-        logg.info { "Henter brukerpassbrukere..." }
-        return sessionOf(dataSource).use { it ->
-            it.run(
-                queryOf("SELECT FNR FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V")
-                    .map { row ->
-                        row.string("FNR")
-                    }.asList,
-            )
-        }
-    }
-
-    fun harGyldigUtlånForBrukerpassbytte(fnr: String): Boolean {
-        logg.info { "Sjekker om bruker har gyldig utlån for brukerpassbytte" }
-        return sessionOf(dataSource).use { session ->
-            val utlån = session.run(
-                queryOf(
-                    """
-                        SELECT UTLÅNS_TYPE, INNLEVERINGSDATO, OPPDATERT_INNLEVERINGSDATO
-                        FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V 
-                        WHERE FNR = ?
-                        AND KATEGORI3_NUMMER IN ('123903', '090312')
-                        AND UTLÅNS_TYPE IN ('P', 'F')
-                    """.trimIndent(),
-                    fnr,
-                ).map { row ->
-                    BrukerpassUtlån(
-                        utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
-                        innleveringsDato = row.stringOrNull("INNLEVERINGSDATO"),
-                        oppdatertInnleveringsDato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO"),
-                    )
-                }.asList,
-            )
-            utlån.any { it.kanByttes }
-        }
-    }
-}
-
-data class BrukerpassUtlån(
-    val utlånsType: String?,
-    val innleveringsDato: String?,
-    val oppdatertInnleveringsDato: String?,
-) {
-    val kanByttes = erPermanentUtlån(utlånsType) || erGyldigTidsbestemtUtlån(
-        oppdatertInnleveringsDato,
-        innleveringsDato,
-        utlånsType,
-    )
 }
 
 data class Brukerpass(
@@ -91,16 +38,3 @@ data class Brukerpass(
     val startDate: LocalDate? = null,
     val endDate: LocalDate? = null,
 )
-
-fun testHelper(row: Row) {
-    logg.info("DEBUG: Row start:")
-    val c = row.underlying.metaData.columnCount
-    for (i in 1..c) {
-        logg.info("DEBUG: Column #$i")
-        val label = row.underlying.metaData.getColumnLabel(i)
-        val name = row.underlying.metaData.getColumnName(i)
-        val type = row.underlying.metaData.getColumnTypeName(i)
-        logg.info("DEBUG: Column #$i - $label/$name - $type")
-    }
-    logg.info("DEBUG: Row end.")
-}
