@@ -1,17 +1,13 @@
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLIntrospectSchemaTask
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "no.nav.hjelpemidler"
-version = "1.0-SNAPSHOT"
-
 plugins {
-    kotlin("jvm") version "1.9.22"
-    id("io.ktor.plugin") version "2.3.8"
-    id("com.expediagroup.graphql") version "7.0.2"
-    id("com.diffplug.spotless") version "6.25.0"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktor)
+    alias(libs.plugins.graphql)
+    alias(libs.plugins.spotless)
 }
 
 application {
@@ -19,64 +15,56 @@ application {
     mainClass.set("no.nav.hjelpemidler.ApplicationKt")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    implementation(kotlin("stdlib"))
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.micrometer.registry.prometheus)
     implementation("com.natpryce:konfig:1.6.10.0")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.12.3")
 
     // Logging
-    implementation("io.github.microutils:kotlin-logging:3.0.5")
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.1")
-    runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.4") {
+    implementation(libs.kotlin.logging)
+    runtimeOnly(libs.logback.classic)
+    runtimeOnly(libs.logstash.logback.encoder) {
         exclude("com.fasterxml.jackson.core")
     }
 
     // Jackson
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1")
+    implementation(libs.jackson.datatype.jsr310)
 
     // GraphQL
-    val graphQLVersion = "7.0.2"
-    implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphQLVersion") {
+    implementation(libs.graphql.kotlin.ktor.client) {
         exclude("com.expediagroup", "graphql-kotlin-client-serialization") // prefer jackson
         exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
         exclude("io.ktor", "ktor-client-cio") // prefer ktor-client-apache
     }
-    implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphQLVersion")
+    implementation(libs.graphql.kotlin.client.jackson)
 
     // Database
-    implementation("com.github.seratch:kotliquery:1.9.0")
-    implementation("com.zaxxer:HikariCP:5.1.0")
-    runtimeOnly("com.oracle.database.jdbc:ojdbc11:23.3.0.23.09")
+    implementation(libs.kotliquery)
+    implementation(libs.hikaricp)
+    runtimeOnly(libs.ojdbc11)
 
     // Ktor
-    implementation("io.ktor:ktor-serialization-jackson")
+    implementation(libs.ktor.serialization.jackson)
 
     // Ktor Server
-    implementation("io.ktor:ktor-server-auth")
-    implementation("io.ktor:ktor-server-auth-jwt")
-    implementation("io.ktor:ktor-server-call-id")
-    implementation("io.ktor:ktor-server-call-logging")
-    implementation("io.ktor:ktor-server-cio-jvm")
-    implementation("io.ktor:ktor-server-content-negotiation")
-    implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-server-metrics-micrometer")
+    implementation(libs.ktor.server.auth.jwt)
+    implementation(libs.ktor.server.call.id)
+    implementation(libs.ktor.server.call.logging)
+    implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.metrics.micrometer)
+    implementation(libs.ktor.server.netty)
 
     // Ktor Client
-    implementation("io.ktor:ktor-client-apache-jvm")
-    implementation("io.ktor:ktor-client-auth-jvm")
-    implementation("io.ktor:ktor-client-content-negotiation")
-    implementation("io.ktor:ktor-client-core-jvm")
-    implementation("io.ktor:ktor-client-jackson-jvm")
-    implementation("io.ktor:ktor-client-logging-jvm")
+    implementation(libs.ktor.client.apache)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.logging)
 
     // Testing
-    testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-client-mock-jvm")
-    testImplementation("org.testcontainers:oracle-xe:1.19.7")
+    testImplementation(libs.kotlin.test.junit5)
+    testImplementation(libs.ktor.client.mock)
+    testImplementation(libs.testcontainers.oracle.xe)
     constraints {
         implementation("org.apache.commons:commons-compress:1.26.0")
     }
@@ -97,18 +85,11 @@ spotless {
     }
 }
 
-kotlin {
-    jvmToolchain(21)
-}
+kotlin { jvmToolchain(21) }
 
 tasks.test {
     useJUnitPlatform()
     testLogging {
-        showExceptions = true
-        showStackTraces = true
-        showStandardStreams = true
-        outputs.upToDateWhen { false }
-        exceptionFormat = TestExceptionFormat.FULL
         events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
     }
 }

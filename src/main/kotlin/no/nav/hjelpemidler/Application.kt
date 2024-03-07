@@ -12,8 +12,8 @@ import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.install
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
-import io.ktor.server.cio.EngineMain
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
+import io.ktor.server.netty.EngineMain
 import io.ktor.server.plugins.callid.CALL_ID_DEFAULT_DICTIONARY
 import io.ktor.server.plugins.callid.CallId
 import io.ktor.server.plugins.callid.callIdMdc
