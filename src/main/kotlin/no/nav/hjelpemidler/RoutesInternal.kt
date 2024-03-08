@@ -9,7 +9,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.database.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 
 fun Route.internal() {

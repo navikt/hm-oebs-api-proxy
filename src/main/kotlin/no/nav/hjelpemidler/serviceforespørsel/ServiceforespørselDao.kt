@@ -3,8 +3,8 @@ package no.nav.hjelpemidler.serviceforespørsel
 import kotliquery.Parameter
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import no.nav.hjelpemidler.configuration.Configuration
-import no.nav.hjelpemidler.configuration.isProd
+import no.nav.hjelpemidler.database.Configuration
+import no.nav.hjelpemidler.isProd
 import no.nav.hjelpemidler.jsonMapper
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import org.intellij.lang.annotations.Language
@@ -46,7 +46,7 @@ class ServiceforespørselDao(private val dataSource: DataSource = Configuration.
                         "referansenummer" to sf.referansenummer,
                         "kilde" to sf.kilde,
                         "processed" to "N",
-                        "oppdatertAv" to Configuration.application["OEBS_BRUKER_ID"],
+                        "oppdatertAv" to no.nav.hjelpemidler.Configuration.OEBS_BRUKER_ID,
                         "jobId" to -1,
                         "beskrivelse" to Parameter<String?>(sf.problemsammendrag, String::class.java),
                         "artikler" to when {

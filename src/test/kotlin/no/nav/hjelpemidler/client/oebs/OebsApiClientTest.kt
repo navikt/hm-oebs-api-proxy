@@ -10,10 +10,9 @@ import no.nav.hjelpemidler.models.OrdreArtikkel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class OebsApiClientTest {
-
+class OebsApiClientTest {
     @Test
-    internal fun `oppretter ordre i oebs`() {
+    fun `oppretter ordre i oebs`() {
         val engine = MockEngine {
             respond(
                 """{ "OutputParameters": { "P_RETUR_MELDING": "foobar" } }""",

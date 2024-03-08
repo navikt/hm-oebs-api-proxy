@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler
 
-import io.ktor.client.engine.apache.Apache
+import io.ktor.client.engine.cio.CIO
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
@@ -27,7 +27,8 @@ private val personinformasjonDao = PersoninformasjonDao()
 private val opprettServiceforespørselDao = ServiceforespørselDao()
 private val hjelpemiddeloversiktDao = HjelpemiddeloversiktDao()
 private val brukernummerDao = BrukernummerDao()
-private val oebsApiClient = OebsApiClient(Apache.create())
+
+private val oebsApiClient = OebsApiClient(CIO.create())
 
 fun Route.saksbehandling() {
     // Authenticated database proxy requests
@@ -43,6 +44,7 @@ fun Route.saksbehandling() {
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }
+
         post("/opprettSF") {
             try {
                 val sf = call.receive<Serviceforespørsel>()

@@ -100,3 +100,22 @@ spec:
         - application: hm-grunndata-search
       external:
         - host: hm-grunndata-api.intern.dev.nav.no
+  env:
+    - name: OEBS_BRUKER_ID
+      value: "81400"
+    - name: OEBS_API_URL_Q1
+      value: http://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/
+    - name: OEBS_API_URL_T1
+      value: http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/
+    - name: OEBS_API_URL
+      value: "$(OEBS_API_URL_Q1)"
+    - name: OEBS_DB_Q1
+      value: oebsq1
+    - name: OEBS_DB_T1
+      value: oebst1
+    - name: OEBS_DB
+      value: "$(OEBS_DB_Q1)"
+    - name: GRUNNDATA_API_URL
+      value: https://hm-grunndata-api.intern.dev.nav.no
+    - name: GRUNNDATA_API_NG_URL
+      value: https://hm-grunndata-search.intern.dev.nav.no

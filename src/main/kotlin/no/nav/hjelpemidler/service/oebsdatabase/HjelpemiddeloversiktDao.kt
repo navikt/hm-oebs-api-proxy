@@ -7,7 +7,7 @@ import mu.KotlinLogging
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Produkt
 import no.nav.hjelpemidler.client.hmdbng.HjelpemiddeldatabaseNgClient
-import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.database.Configuration
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Utlån
 import org.intellij.lang.annotations.Language

@@ -1,7 +1,6 @@
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLIntrospectSchemaTask
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -18,7 +17,7 @@ application {
 dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.micrometer.registry.prometheus)
-    implementation("com.natpryce:konfig:1.6.10.0")
+    implementation(libs.hm.http)
 
     // Logging
     implementation(libs.kotlin.logging)
@@ -34,7 +33,6 @@ dependencies {
     implementation(libs.graphql.kotlin.ktor.client) {
         exclude("com.expediagroup", "graphql-kotlin-client-serialization") // prefer jackson
         exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
-        exclude("io.ktor", "ktor-client-cio") // prefer ktor-client-apache
     }
     implementation(libs.graphql.kotlin.client.jackson)
 
@@ -54,12 +52,6 @@ dependencies {
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.metrics.micrometer)
     implementation(libs.ktor.server.netty)
-
-    // Ktor Client
-    implementation(libs.ktor.client.apache)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.logging)
 
     // Testing
     testImplementation(libs.kotlin.test.junit5)
@@ -92,11 +84,6 @@ tasks.test {
     testLogging {
         events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
     }
-}
-
-tasks.withType<KotlinCompile> {
-    dependsOn("spotlessApply")
-    dependsOn("spotlessCheck")
 }
 
 graphql {

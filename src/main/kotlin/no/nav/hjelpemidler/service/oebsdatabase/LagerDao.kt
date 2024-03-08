@@ -2,7 +2,7 @@ package no.nav.hjelpemidler.service.oebsdatabase
 
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.database.Configuration
 import no.nav.hjelpemidler.lagerstatus.KommuneOppslag
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
