@@ -7,6 +7,7 @@ import no.nav.hjelpemidler.Configuration
 
 object Configuration {
     private val log = KotlinLogging.logger {}
+
     val dataSource by lazy {
         val configuration = HikariConfig().apply {
             jdbcUrl = Configuration.OEBS_DB_JDBC_URL

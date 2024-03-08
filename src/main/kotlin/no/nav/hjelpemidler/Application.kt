@@ -96,7 +96,6 @@ fun Application.module() {
         hjelpemiddelsiden()
         saksbehandling()
         felles()
-        test()
     }
 }
 
