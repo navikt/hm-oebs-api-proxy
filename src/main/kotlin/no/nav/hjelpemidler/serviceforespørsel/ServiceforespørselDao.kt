@@ -50,7 +50,7 @@ class ServiceforespørselDao(private val dataSource: DataSource = Configuration.
                         "jobId" to -1,
                         "beskrivelse" to Parameter<String?>(sf.problemsammendrag, String::class.java),
                         "artikler" to when {
-                            sf.artikler.isEmpty() -> Parameter<String?>(null, String::class.java)
+                            sf.artikler.isNullOrEmpty() -> Parameter<String?>(null, String::class.java)
                             else -> jsonMapper.writeValueAsString(sf.artikler)
                         },
                     ),
