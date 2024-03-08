@@ -70,7 +70,7 @@ class OebsApiClient(engine: HttpClientEngine) {
             return "Ordreopprettelse sendt til OEBS: ${responseBody["OutputParameters"]?.get("P_RETUR_MELDING")}"
         }
 
-        val responseBody = response.bodyAsText()
+        val responseBody = runCatching { response.bodyAsText() }.getOrNull()
         error(
             "Feil under kall til OEBS-API, status: ${response.status}, body: $responseBody",
         )

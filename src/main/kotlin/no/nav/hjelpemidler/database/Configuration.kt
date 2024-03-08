@@ -5,9 +5,8 @@ import com.zaxxer.hikari.HikariDataSource
 import mu.KotlinLogging
 import no.nav.hjelpemidler.Configuration
 
-private val log = KotlinLogging.logger {}
-
 object Configuration {
+    private val log = KotlinLogging.logger {}
     val dataSource by lazy {
         val configuration = HikariConfig().apply {
             jdbcUrl = Configuration.OEBS_DB_JDBC_URL
@@ -20,7 +19,7 @@ object Configuration {
             maximumPoolSize = 10
             minimumIdle = 1
         }
-        log.info { "Oppretter datasource, jdbcUrl: ${configuration.jdbcUrl}" }
+        log.info { "Oppretter datasource, jdbcUrl: '${configuration.jdbcUrl}'" }
         HikariDataSource(configuration)
     }
 }

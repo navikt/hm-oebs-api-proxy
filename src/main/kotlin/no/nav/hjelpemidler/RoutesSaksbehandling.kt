@@ -40,7 +40,7 @@ fun Route.saksbehandling() {
                 logg.info { "Oppretter ordre, saksnummer: ${bestilling.saksnummer}, hjelpemidler: ${bestilling.artikler}" }
                 call.respond(HttpStatusCode.Created, bestillingsResponse)
             } catch (e: Exception) {
-                logg.error(e) { "Noe gikk feil med opprettelse av Ordre" }
+                logg.error(e) { "Noe gikk feil med opprettelse av ordre" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }
@@ -49,7 +49,7 @@ fun Route.saksbehandling() {
             try {
                 val sf = call.receive<Serviceforespørsel>()
                 opprettServiceforespørselDao.opprettServiceforespørsel(sf)
-                logg.info("Serviceforspørsel for sak ${sf.referansenummer} opprettet")
+                logg.info("Serviceforespørsel for sakId: ${sf.referansenummer} opprettet")
                 call.respond(HttpStatusCode.Created)
             } catch (e: Exception) {
                 logg.error(e) { "Noe gikk feil med opprettelse av SF" }
