@@ -34,6 +34,7 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import io.prometheus.client.CollectorRegistry
 import mu.KotlinLogging
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselFeilDao
 import org.slf4j.event.Level
 
@@ -43,6 +44,7 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module() {
+    logg.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}}" }
     environment.monitor.subscribe(ApplicationStarted) {
         // loggFeilendeSf()
     }
