@@ -1,15 +1,11 @@
-package no.nav.hjelpemidler
+package no.nav.hjelpemidler.models
 
-import no.nav.hjelpemidler.models.Artikkel
-import no.nav.hjelpemidler.models.OebsJsonFormat
-import no.nav.hjelpemidler.models.Ordre
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class OebsApiJsonMapperTest {
-
+class OebsApiJsonMapperTest {
     @Test
-    fun `mapper ordre til Oebs sitt nøsta Json format`() {
+    fun `Mapper ordre til Oebs sitt nøsta Json format`() {
         val oebsJsonFormat = OebsJsonFormat(
             Ordre(
                 "04331234565",

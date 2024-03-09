@@ -1,9 +1,8 @@
 package no.nav.hjelpemidler.serviceforespørsel
 
 import kotliquery.Parameter
-import kotliquery.queryOf
-import kotliquery.sessionOf
 import no.nav.hjelpemidler.database.Configuration
+import no.nav.hjelpemidler.database.update
 import no.nav.hjelpemidler.isProd
 import no.nav.hjelpemidler.jsonMapper
 import no.nav.hjelpemidler.models.Serviceforespørsel
@@ -11,8 +10,7 @@ import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
 class ServiceforespørselDao(private val dataSource: DataSource = Configuration.dataSource) {
-
-    fun opprettServiceforespørsel(sf: Serviceforespørsel) {
+    fun opprettServiceforespørsel(sf: Serviceforespørsel): Int {
         @Language("Oracle")
         val opprettSFQuery =
             """
@@ -33,29 +31,25 @@ class ServiceforespørselDao(private val dataSource: DataSource = Configuration.
                         :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X')
             """.trimIndent()
 
-        sessionOf(dataSource).use {
-            it.run(
-                queryOf(
-                    if (isProd()) opprettSFQueryLegacy else opprettSFQuery,
-                    mapOf(
-                        "fnr" to sf.fødselsnummer,
-                        "navn" to sf.navn,
-                        "stonadsklasse" to sf.stønadsklasse.name,
-                        "sakstype" to "S",
-                        "resultat" to sf.resultat.name,
-                        "referansenummer" to sf.referansenummer,
-                        "kilde" to sf.kilde,
-                        "processed" to "N",
-                        "oppdatertAv" to no.nav.hjelpemidler.Configuration.OEBS_BRUKER_ID,
-                        "jobId" to -1,
-                        "beskrivelse" to Parameter<String?>(sf.problemsammendrag, String::class.java),
-                        "artikler" to when {
-                            sf.artikler.isNullOrEmpty() -> Parameter<String?>(null, String::class.java)
-                            else -> jsonMapper.writeValueAsString(sf.artikler)
-                        },
-                    ),
-                ).asUpdate,
-            )
-        }
+        return dataSource.update(
+            if (isProd()) opprettSFQueryLegacy else opprettSFQuery,
+            mapOf(
+                "fnr" to sf.fødselsnummer,
+                "navn" to sf.navn,
+                "stonadsklasse" to sf.stønadsklasse.name,
+                "sakstype" to "S",
+                "resultat" to sf.resultat.name,
+                "referansenummer" to sf.referansenummer,
+                "kilde" to sf.kilde,
+                "processed" to "N",
+                "oppdatertAv" to no.nav.hjelpemidler.Configuration.OEBS_BRUKER_ID,
+                "jobId" to -1,
+                "beskrivelse" to Parameter<String?>(sf.problemsammendrag, String::class.java),
+                "artikler" to when {
+                    sf.artikler.isNullOrEmpty() -> Parameter<String?>(null, String::class.java)
+                    else -> jsonMapper.writeValueAsString(sf.artikler)
+                },
+            ),
+        )
     }
 }

@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 
 class OebsApiClientTest {
     @Test
-    fun `oppretter ordre i oebs`() {
+    fun `Oppretter ordre i oebs`() {
         val engine = MockEngine {
             respond(
                 """{ "OutputParameters": { "P_RETUR_MELDING": "foobar" } }""",

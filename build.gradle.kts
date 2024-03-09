@@ -55,11 +55,9 @@ dependencies {
 
     // Testing
     testImplementation(libs.kotlin.test.junit5)
+    testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.ktor.client.mock)
-    testImplementation(libs.testcontainers.oracle.xe)
-    constraints {
-        implementation("org.apache.commons:commons-compress:1.26.0")
-    }
+    testRuntimeOnly(libs.h2)
 }
 
 spotless {
