@@ -36,6 +36,14 @@ fun <T> DataSource.list(
     it.run(queryOf(sql, queryParameters).map(mapper).asList)
 }
 
+fun <T> DataSource.list(
+    @Language("Oracle") sql: String,
+    vararg queryParameters: Any?,
+    mapper: (Row) -> T,
+): List<T> = withSession {
+    it.run(queryOf(sql, queryParameters).map(mapper).asList)
+}
+
 fun DataSource.update(
     @Language("Oracle") sql: String,
     queryParameters: QueryParameters = emptyMap(),
