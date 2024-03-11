@@ -33,7 +33,7 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
         // Put hmsnrs.count() number of comma separated question marks in the query IN-clause
         query = query.replace("(?)", "(" + (0 until hmsnrs.count()).joinToString { "?" } + ")")
 
-        return dataSource.list(query, hmsnrs.toTypedArray()) { row ->
+        return dataSource.list(query, *hmsnrs.toTypedArray()) { row ->
             TittelForHmsNr(
                 hmsNr = row.string("ARTIKKEL"),
                 type = row.string("BRUKERARTIKKELTYPE"),

@@ -41,7 +41,7 @@ fun <T> DataSource.list(
     vararg queryParameters: Any?,
     mapper: (Row) -> T,
 ): List<T> = withSession {
-    it.run(queryOf(sql, queryParameters).map(mapper).asList)
+    it.run(queryOf(sql, *queryParameters).map(mapper).asList)
 }
 
 fun DataSource.update(
