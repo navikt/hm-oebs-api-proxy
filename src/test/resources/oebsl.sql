@@ -71,7 +71,8 @@ INSERT INTO apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V (BRUKER_NUMMER, FNR, EGEN_ANSATT, 
                                                LEVERINGS_KOMMUNE, LEVERINGS_POSTNUMMER, LEVERINGS_BY, PRIMAER_ADR,
                                                STATUS_BRUKERNR, STATUS_FNR, STATUS_ADR_P_STED, STATUS_ADR_C_STED,
                                                STATUS_ADR_BRU)
-VALUES ('1', '12345678910', '', '', '', '', '0000', '', '', 'test', '', '0000', '', '0', '', '', '', '', '');
+VALUES ('1', '12345678910', '', '', '', '', '0000', '', '', 'test', '', '0000', '', '0', '', '', '', '', ''),
+       ('1', '12345678910', '', '', '', '', '0000', '', '', 'test', '', '0000', '', '0', '', '', '', '', '');
 
 -- Bruker tabell for å simulere view i OEBS
 CREATE TABLE IF NOT EXISTS apps.XXRTV_DIGIHOT_OEBS_ART_BESKR_V

@@ -12,6 +12,7 @@ class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSourc
                 SELECT KONTRAKT_NUMMER, SJEKK_NAVN, START_DATE, END_DATE
                 FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V
                 WHERE FNR = :fnr
+                FETCH NEXT 1 ROW ONLY
             """.trimIndent(),
             mapOf("fnr" to fnr),
         ) { row ->

@@ -12,6 +12,7 @@ class BrukernummerDao(private val dataSource: DataSource = Configuration.dataSou
                 SELECT BRUKER_NUMMER
                 FROM apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V
                 WHERE FNR = :fnr
+                FETCH NEXT 1 ROW ONLY
             """.trimIndent(),
             mapOf("fnr" to fnr.value),
         ) { row ->

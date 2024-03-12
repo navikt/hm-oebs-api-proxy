@@ -83,6 +83,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
                 WHERE ARTIKKELNUMMER = :artnr
                   AND SERIE_NUMMER = :serienr
                 ORDER BY UTLÅNS_DATO DESC
+                FETCH NEXT 1 ROW ONLY
             """.trimIndent(),
             mapOf("artnr" to artnr, "serienr" to serienr),
         ) { row ->
