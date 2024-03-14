@@ -49,7 +49,7 @@ fun Route.saksbehandling() {
             try {
                 val sf = call.receive<Serviceforespørsel>()
                 opprettServiceforespørselDao.opprettServiceforespørsel(sf)
-                logg.info("Serviceforespørsel for sakId: ${sf.referansenummer} opprettet")
+                logg.info("Serviceforespørsel for sakId: ${sf.referansenummer} opprettet, hjelpemidler: ${sf.artikler}")
                 call.respond(HttpStatusCode.Created)
             } catch (e: Exception) {
                 logg.error(e) { "Noe gikk feil med opprettelse av SF" }
