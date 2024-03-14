@@ -3,36 +3,20 @@ package no.nav.hjelpemidler.serviceforespørsel
 import kotliquery.Parameter
 import no.nav.hjelpemidler.database.Configuration
 import no.nav.hjelpemidler.database.update
-import no.nav.hjelpemidler.isProd
 import no.nav.hjelpemidler.jsonMapper
 import no.nav.hjelpemidler.models.Serviceforespørsel
-import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
 class ServiceforespørselDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun opprettServiceforespørsel(sf: Serviceforespørsel): Int {
-        @Language("Oracle")
-        val opprettSFQuery =
+        return dataSource.update(
             """
                 INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
                 (ID, FNR, NAVN, STONADSKLASS, SAKSTYPE, RESULTAT, SFDATO, REFERANSENUMMER, KILDE, PROCESSED, LAST_UPDATE_DATE,
                  LAST_UPDATED_BY, CREATION_DATE, CREATED_BY, JOB_ID, SAKSBLOKK, BESKRIVELSE, JSON_ARTIKKELINFO_IN)
                 VALUES (apps.XXRTV_CS_DIGIHOT_SF_OPPRETT_S.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, SYSDATE,
                         :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X', :beskrivelse, :artikler)
-            """.trimIndent()
-
-        @Language("Oracle")
-        val opprettSFQueryLegacy =
-            """
-                INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
-                (ID, FNR, NAVN, STONADSKLASS, SAKSTYPE, RESULTAT, SFDATO, REFERANSENUMMER, KILDE, PROCESSED, LAST_UPDATE_DATE,
-                 LAST_UPDATED_BY, CREATION_DATE, CREATED_BY, JOB_ID, SAKSBLOKK)
-                VALUES (apps.XXRTV_CS_DIGIHOT_SF_OPPRETT_S.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, SYSDATE,
-                        :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X')
-            """.trimIndent()
-
-        return dataSource.update(
-            if (isProd()) opprettSFQueryLegacy else opprettSFQuery,
+            """.trimIndent(),
             mapOf(
                 "fnr" to sf.fødselsnummer,
                 "navn" to sf.navn,
