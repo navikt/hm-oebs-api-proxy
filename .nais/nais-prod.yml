@@ -22,10 +22,10 @@ spec:
     path: /metrics
   resources:
     limits:
-      cpu: 2000m
+      cpu: 500m
       memory: 3000Mi
     requests:
-      cpu: 500m
+      cpu: 50m
       memory: 600Mi
   envFrom:
     - secret: hm-oebs-api-proxy-secret
@@ -86,7 +86,22 @@ spec:
         - application: hm-delbestilling-api
           namespace: teamdigihot
           cluster: prod-gcp
+        - application: hm-roller
+          namespace: teamdigihot
+          cluster: prod-gcp
+        - application: hm-soknadsbehandling
+          namespace: teamdigihot
+          cluster: prod-gcp
     outbound:
       external:
         - host: hm-grunndata-search.intern.nav.no
         - host: hm-oebs-api-proxy.prod-fss-pub.nais.io
+  env:
+    - name: OEBS_BRUKER_ID
+      value: "81760"
+    - name: OEBS_API_URL
+      value: http://oebs.adeo.no/webservices/rest/opprettordre/digihotordreontinfo/
+    - name: OEBS_DB
+      value: oebsp
+    - name: GRUNNDATA_API_URL
+      value: https://hm-grunndata-search.intern.nav.no

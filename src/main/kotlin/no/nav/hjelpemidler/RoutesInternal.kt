@@ -9,7 +9,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.database.Configuration
 import no.nav.hjelpemidler.metrics.Prometheus
 
 fun Route.internal() {
@@ -31,6 +31,7 @@ fun Route.internal() {
             return@get call.respondText("NOT READY", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
         }
         Prometheus.oebsDbAvailable.set(1.0)
+
         call.respondText("READY", ContentType.Text.Plain)
     }
 

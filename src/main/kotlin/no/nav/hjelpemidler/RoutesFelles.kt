@@ -9,7 +9,6 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import mu.KotlinLogging
-import no.nav.hjelpemidler.configuration.isNotProd
 import no.nav.hjelpemidler.lagerstatus.KommuneOppslag
 import no.nav.hjelpemidler.service.oebsdatabase.BrukerpassDao
 import no.nav.hjelpemidler.service.oebsdatabase.LagerDao
@@ -60,7 +59,7 @@ fun Route.felles() {
 
         get("/lager/sentral/{kommunenummer}/{hmsNr}") {
             data class NoResult(
-                val error: String
+                val error: String,
             )
 
             val result = lagerDao.lagerStatusSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)
@@ -69,7 +68,7 @@ fun Route.felles() {
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    NoResult("no results found for kommunenummer=\"${call.parameters["kommunenummer"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\"")
+                    NoResult("no results found for kommunenummer=\"${call.parameters["kommunenummer"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\""),
                 )
             }
         }
@@ -77,5 +76,5 @@ fun Route.felles() {
 }
 
 private data class FnrDto(
-    val fnr: String
+    val fnr: String,
 )

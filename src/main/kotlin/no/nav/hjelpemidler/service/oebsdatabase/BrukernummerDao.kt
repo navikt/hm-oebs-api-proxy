@@ -1,32 +1,25 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
-import kotliquery.queryOf
-import kotliquery.sessionOf
-import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.database.Configuration
+import no.nav.hjelpemidler.database.singleOrNull
 import no.nav.hjelpemidler.models.Fødselsnummer
-import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
 
 class BrukernummerDao(private val dataSource: DataSource = Configuration.dataSource) {
     fun hentBrukernummer(fnr: Fødselsnummer): Brukernummer? {
-        @Language("OracleSQL")
-        val hentBrukernummerQuery =
+        return dataSource.singleOrNull(
             """
-            SELECT BRUKER_NUMMER
-            FROM apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V
-            WHERE FNR = ?
-            """.trimIndent()
-
-        val brukernummer = sessionOf(dataSource).use {
-            it.run(
-                queryOf(hentBrukernummerQuery, fnr.value).map { row ->
-                    Brukernummer(
-                        brukernummer = row.string("BRUKER_NUMMER")
-                    )
-                }.asSingle
+                SELECT BRUKER_NUMMER
+                FROM apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V
+                WHERE FNR = :fnr
+                FETCH NEXT 1 ROW ONLY
+            """.trimIndent(),
+            mapOf("fnr" to fnr.value),
+        ) { row ->
+            Brukernummer(
+                brukernummer = row.string("BRUKER_NUMMER"),
             )
         }
-        return brukernummer
     }
 }
 

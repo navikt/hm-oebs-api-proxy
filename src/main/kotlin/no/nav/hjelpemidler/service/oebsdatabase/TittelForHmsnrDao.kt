@@ -1,8 +1,7 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
-import kotliquery.queryOf
-import kotliquery.sessionOf
-import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.database.Configuration
+import no.nav.hjelpemidler.database.list
 import no.nav.hjelpemidler.models.TittelForHmsNr
 import org.intellij.lang.annotations.Language
 import javax.sql.DataSource
@@ -23,7 +22,7 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
     }
 
     private fun helper(hmsnrs: Set<String>): List<TittelForHmsNr> {
-        @Language("OracleSQL")
+        @Language("Oracle")
         var query =
             """
                 SELECT ARTIKKEL, BRUKERARTIKKELTYPE, ARTIKKEL_BESKRIVELSE
@@ -34,15 +33,11 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
         // Put hmsnrs.count() number of comma separated question marks in the query IN-clause
         query = query.replace("(?)", "(" + (0 until hmsnrs.count()).joinToString { "?" } + ")")
 
-        return sessionOf(dataSource).use { it ->
-            it.run(
-                queryOf(query, params = hmsnrs.toTypedArray()).map { row ->
-                    TittelForHmsNr(
-                        hmsNr = row.string("ARTIKKEL"),
-                        type = row.string("BRUKERARTIKKELTYPE"),
-                        title = row.string("ARTIKKEL_BESKRIVELSE")
-                    )
-                }.asList
+        return dataSource.list(query, *hmsnrs.toTypedArray()) { row ->
+            TittelForHmsNr(
+                hmsNr = row.string("ARTIKKEL"),
+                type = row.string("BRUKERARTIKKELTYPE"),
+                title = row.string("ARTIKKEL_BESKRIVELSE"),
             )
         }
     }

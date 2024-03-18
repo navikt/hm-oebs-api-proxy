@@ -1,7 +1,7 @@
+*.iml
+.DS_Store
+.arkiv
 .gradle
 .idea
-.arkiv
-.DS_Store
 build
 out
-*.iml

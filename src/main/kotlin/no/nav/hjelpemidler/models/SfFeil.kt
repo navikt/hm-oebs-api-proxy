@@ -9,5 +9,5 @@ data class SfFeil(
     val feilmelding: String?,
     val kommentar: String?,
     val creationDate: String?,
-    val lastUpdateDate: String?
+    val lastUpdateDate: String?,
 )

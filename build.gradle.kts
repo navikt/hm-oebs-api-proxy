@@ -1,17 +1,12 @@
 
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLIntrospectSchemaTask
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-group = "no.nav.hjelpemidler"
-version = "1.0-SNAPSHOT"
 
 plugins {
-    application
-    kotlin("jvm") version "1.9.0"
-    id("com.expediagroup.graphql") version "6.2.5"
-    id("com.diffplug.spotless") version "6.11.0"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktor)
+    alias(libs.plugins.graphql)
+    alias(libs.plugins.spotless)
 }
 
 application {
@@ -19,83 +14,59 @@ application {
     mainClass.set("no.nav.hjelpemidler.ApplicationKt")
 }
 
-repositories {
-    mavenCentral()
-    maven("https://jitpack.io")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation("com.github.guepardoapps:kulid:2.0.0.0")
-    implementation("com.natpryce:konfig:1.6.10.0")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.9.4")
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.micrometer.registry.prometheus)
+    implementation(libs.hm.http)
 
     // Logging
-    implementation("io.github.microutils:kotlin-logging:3.0.0")
-    runtimeOnly("ch.qos.logback:logback-classic:1.4.3")
-    runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.2") {
+    implementation(libs.kotlin.logging)
+    runtimeOnly(libs.logback.classic)
+    runtimeOnly(libs.logstash.logback.encoder) {
         exclude("com.fasterxml.jackson.core")
     }
 
     // Jackson
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
+    implementation(libs.jackson.datatype.jsr310)
 
     // GraphQL
-    val graphQLVersion = "6.2.5"
-    implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphQLVersion") {
+    implementation(libs.graphql.kotlin.ktor.client) {
         exclude("com.expediagroup", "graphql-kotlin-client-serialization") // prefer jackson
         exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
-        exclude("io.ktor", "ktor-client-cio") // prefer ktor-client-apache
     }
-    implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphQLVersion")
+    implementation(libs.graphql.kotlin.client.jackson)
 
     // Database
-    implementation("com.github.seratch:kotliquery:1.9.0")
-    implementation("com.zaxxer:HikariCP:5.0.1")
-    runtimeOnly("com.oracle.database.jdbc:ojdbc11:21.7.0.0")
+    implementation(libs.kotliquery)
+    implementation(libs.hikaricp)
+    runtimeOnly(libs.ojdbc11)
 
     // Ktor
-    val ktorVersion = "2.3.3"
-    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    implementation(libs.ktor.serialization.jackson)
 
     // Ktor Server
-    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-server-cio-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
-    implementation("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
-    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
-    implementation("io.ktor:ktor-server-call-id:$ktorVersion")
-
-    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
-    constraints {
-        implementation("com.auth0:jwks-rsa:0.22.1") {
-            because("Guava vulnerable to insecure use of temporary directory (<32.0.0)")
-        }
-    }
-
-    // Ktor Client
-    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-client-jackson-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-auth-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
+    implementation(libs.ktor.server.auth.jwt)
+    implementation(libs.ktor.server.call.id)
+    implementation(libs.ktor.server.call.logging)
+    implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.metrics.micrometer)
+    implementation(libs.ktor.server.netty)
 
     // Testing
-    testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
-    testImplementation("org.testcontainers:oracle-xe:1.17.4")
+    testImplementation(libs.kotlin.test.junit5)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.ktor.client.mock)
+    testRuntimeOnly(libs.h2)
 }
 
 spotless {
     kotlin {
-        ktlint()
+        ktlint().editorConfigOverride(
+            mapOf(
+                "ktlint_standard_value-argument-comment" to "disabled",
+            ),
+        )
         targetExclude("build/generated/source/**/*")
     }
     kotlinGradle {
@@ -104,41 +75,13 @@ spotless {
     }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
+kotlin { jvmToolchain(21) }
 
-tasks.withType<Test> {
+tasks.test {
     useJUnitPlatform()
     testLogging {
-        showExceptions = true
-        showStackTraces = true
-        showStandardStreams = true
-        outputs.upToDateWhen { false }
-        exceptionFormat = TestExceptionFormat.FULL
         events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
     }
-}
-
-tasks.withType<Jar> {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    manifest {
-        attributes["Main-Class"] = application.mainClass
-    }
-    from(
-        configurations.runtimeClasspath.get().map {
-            if (it.isDirectory) it else zipTree(it)
-        }
-    )
-}
-
-tasks.withType<Wrapper> {
-    gradleVersion = "7.4.2"
-}
-
-tasks.named("compileKotlin") {
-    dependsOn("spotlessApply")
-    dependsOn("spotlessCheck")
 }
 
 graphql {
