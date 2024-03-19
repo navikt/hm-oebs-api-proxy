@@ -113,7 +113,8 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         items.map { item ->
             berikBytteinfo(item)
 
-            val produkt = produkterByHmsnr[item.artikkelNr]?.firstOrNull()
+            // Sorted by identifier (artid, like old grunndata-api), but still get the ACTIVE one if there are higher sorted INACTIVE ones.
+            val produkt = produkterByHmsnr[item.artikkelNr]?.sortedBy { it.identifier }?.minByOrNull { it.status }
             if (produkt == null) {
                 item
             } else {
