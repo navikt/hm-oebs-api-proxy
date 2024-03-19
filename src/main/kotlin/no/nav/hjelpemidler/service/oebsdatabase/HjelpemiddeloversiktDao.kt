@@ -114,7 +114,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
             val produkterNgMap = runCatching { HjelpemiddeldatabaseNgClient.hentProdukter(hmsnr) }.getOrElse { e ->
                 log2.error(e) { "DEBUG GRUNNDATA: Exception while fetching hmdb-ng: $e" }
                 listOf()
-            }.groupBy { it.hmsArtNr!! }.mapValues { it.value.first() }
+            }.groupBy { it.hmsArtNr!! }.mapValues { it.value.sortedBy { it.identifier }.minByOrNull { it.status } }
 
             val missingHmsnrs: MutableList<String> = mutableListOf()
             val unexpectedDataHmsnrs: MutableMap<String, Pair<String, String>> = mutableMapOf()

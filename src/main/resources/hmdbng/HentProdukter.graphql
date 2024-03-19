@@ -4,6 +4,10 @@ query HentProdukter($hmsnrs: [String!]!) {
 
     articleName # artikkelnavn
 
+    # Used for sorting results:
+    identifier
+    status
+
     isoCategoryTitle # isotittel
     isoCategoryTitleShort # isokortnavn
     productVariantURL # artikkelUrl
