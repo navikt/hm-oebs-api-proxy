@@ -96,10 +96,8 @@ spec:
           namespace: teamdigihot
           cluster: dev-gcp
     outbound:
-      rules:
-        - application: hm-grunndata-search
       external:
-        - host: hm-grunndata-api.intern.dev.nav.no
+        - host: hm-grunndata-search.intern.dev.nav.no
   env:
     - name: OEBS_BRUKER_ID
       value: "81400"
@@ -116,6 +114,4 @@ spec:
     - name: OEBS_DB
       value: "$(OEBS_DB_Q1)"
     - name: GRUNNDATA_API_URL
-      value: https://hm-grunndata-api.intern.dev.nav.no
-    - name: GRUNNDATA_API_NG_URL
       value: https://hm-grunndata-search.intern.dev.nav.no
