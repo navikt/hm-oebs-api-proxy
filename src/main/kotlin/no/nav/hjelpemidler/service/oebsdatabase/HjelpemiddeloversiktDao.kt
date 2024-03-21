@@ -111,7 +111,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         // TODO: Remove when old grunndata-api is replaced in prod., and old hmdb is hmdb-ng
         runCatching {
             val produkterMap = produkter.groupBy { it.hmsnr!! }.mapValues { it.value.first() }
-            val produkterNgMap = runCatching { HjelpemiddeldatabaseNgClient.hentProdukter(hmsnr) }.getOrElse { e ->
+            val produkterNgMap = runCatching { HjelpemiddeldatabaseNgClient.hentProdukter(produkterMap.map { it.key }.toSet()) }.getOrElse { e ->
                 log2.error(e) { "DEBUG GRUNNDATA: Exception while fetching hmdb-ng: $e" }
                 listOf()
             }.groupBy { it.hmsArtNr!! }.mapValues { it.value.sortedBy { it.identifier }.minByOrNull { it.status } }
