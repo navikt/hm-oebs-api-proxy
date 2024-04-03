@@ -1,11 +1,25 @@
-query HentProdukter($hmsnr: [String!]!) {
-  produkter(filter: { hmsnr: $hmsnr }) {
-    hmsnr
-    artikkelnavn
-    produktbeskrivelse
-    isotittel
-    blobUrlLite
-    artikkelUrl
-    isokortnavn
+query HentProdukter($hmsnrs: [String!]!) {
+  products(hmsnrs: $hmsnrs) {
+    hmsArtNr # hmsnr
+
+    articleName # artikkelnavn
+
+    # Used for sorting results:
+    identifier
+    status
+
+    isoCategoryTitle # isotittel
+    isoCategoryTitleShort # isokortnavn
+    productVariantURL # artikkelUrl
+
+    attributes {
+      text # produktbeskrivelse
+    }
+
+    media {
+      uri # blobUrlLite
+      priority
+      type
+    }
   }
 }

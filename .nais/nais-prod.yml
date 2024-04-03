@@ -93,10 +93,8 @@ spec:
           namespace: teamdigihot
           cluster: prod-gcp
     outbound:
-      rules:
-        - application: hm-grunndata-search
       external:
-        - host: hm-grunndata-api.intern.nav.no
+        - host: hm-grunndata-search.intern.nav.no
         - host: hm-oebs-api-proxy.prod-fss-pub.nais.io
   env:
     - name: OEBS_BRUKER_ID
@@ -106,6 +104,4 @@ spec:
     - name: OEBS_DB
       value: oebsp
     - name: GRUNNDATA_API_URL
-      value: https://hm-grunndata-api.intern.nav.no
-    - name: GRUNNDATA_API_NG_URL
       value: https://hm-grunndata-search.intern.nav.no

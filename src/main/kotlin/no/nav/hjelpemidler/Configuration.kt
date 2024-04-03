@@ -15,7 +15,6 @@ object Configuration {
     val OEBS_API_TOKEN by EnvironmentVariable
 
     val GRUNNDATA_API_URL by EnvironmentVariable
-    val GRUNNDATA_API_NG_URL by EnvironmentVariable
 
     /**
      * Mulige verdier: 'oebsq1' | 'oebst1' | 'oebsp'

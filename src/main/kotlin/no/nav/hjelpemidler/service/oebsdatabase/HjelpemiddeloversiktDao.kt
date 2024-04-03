@@ -3,8 +3,8 @@ package no.nav.hjelpemidler.service.oebsdatabase
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
-import no.nav.hjelpemidler.client.hmdb.hentprodukter.Produkt
-import no.nav.hjelpemidler.client.hmdbng.HjelpemiddeldatabaseNgClient
+import no.nav.hjelpemidler.client.hmdb.enums.MediaType
+import no.nav.hjelpemidler.client.hmdb.hentprodukter.Product
 import no.nav.hjelpemidler.database.Configuration
 import no.nav.hjelpemidler.database.list
 import no.nav.hjelpemidler.database.singleOrNull
@@ -106,51 +106,15 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         val hmsnr = items.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet()
 
         // Fetch data for hmsnr from hm-grunndata-api
-        val produkter: List<Produkt> = HjelpemiddeldatabaseClient.hentProdukter(hmsnr)
-
-        // TODO: Remove when old grunndata-api is replaced in prod., and old hmdb is hmdb-ng
-        runCatching {
-            val produkterMap = produkter.groupBy { it.hmsnr!! }.mapValues { it.value.first() }
-            val produkterNgMap = runCatching { HjelpemiddeldatabaseNgClient.hentProdukter(produkterMap.map { it.key }.toSet()) }.getOrElse { e ->
-                log2.error(e) { "DEBUG GRUNNDATA: Exception while fetching hmdb-ng: $e" }
-                listOf()
-            }.groupBy { it.hmsArtNr!! }.mapValues { it.value.sortedBy { it.identifier }.minByOrNull { it.status } }
-
-            val missingHmsnrs: MutableList<String> = mutableListOf()
-            val unexpectedDataHmsnrs: MutableMap<String, Pair<String, String>> = mutableMapOf()
-            val matchesHmsnrs: MutableMap<String, String> = mutableMapOf()
-            produkterMap.forEach { (hmsnr, old) ->
-                val new = produkterNgMap[hmsnr]
-                if (new == null) {
-                    missingHmsnrs.add(hmsnr)
-                } else if (
-                    old.artikkelnavn != new.articleName ||
-                    old.isotittel != new.isoCategoryTitle ||
-                    old.isokortnavn != new.isoCategoryTitleShort ||
-                    old.produktbeskrivelse != new.attributes.text
-                ) {
-                    unexpectedDataHmsnrs[hmsnr] = Pair(old.toString(), new.toString())
-                } else {
-                    matchesHmsnrs[hmsnr] = old.isokortnavn.toString()
-                }
-            }
-            if (missingHmsnrs.isNotEmpty()) {
-                log.info("DEBUG GRUNNDATA: new dataset missing results for hmsnrs=$missingHmsnrs")
-            }
-            if (unexpectedDataHmsnrs.isNotEmpty()) {
-                log.info("DEBUG GRUNNDATA: new dataset has mismatching data: $unexpectedDataHmsnrs")
-            }
-            if (matchesHmsnrs.isNotEmpty()) {
-                log.info("DEBUG GRUNNDATA: new dataset matches old for hmsnrs/data: $matchesHmsnrs")
-            }
-        }.getOrNull()
+        val produkter: List<Product> = HjelpemiddeldatabaseClient.hentProdukter(hmsnr)
 
         // Apply data to items
-        val produkterByHmsnr = produkter.groupBy { it.hmsnr }
+        val produkterByHmsnr = produkter.groupBy { it.hmsArtNr }
         items.map { item ->
             berikBytteinfo(item)
 
-            val produkt = produkterByHmsnr[item.artikkelNr]?.firstOrNull()
+            // Sorted by identifier (artid, like old grunndata-api), but still get the ACTIVE one if there are higher sorted INACTIVE ones.
+            val produkt = produkterByHmsnr[item.artikkelNr]?.sortedBy { it.identifier }?.minByOrNull { it.status }
             if (produkt == null) {
                 item
             } else {
@@ -159,15 +123,20 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         }
     }
 
-    private fun berikOrdrelinje(item: HjelpemiddelBruker, produkt: Produkt): HjelpemiddelBruker {
+    private fun berikOrdrelinje(item: HjelpemiddelBruker, produkt: Product): HjelpemiddelBruker {
         item.apply {
             item.hmdbBeriket = true
-            item.hmdbProduktNavn = produkt.artikkelnavn
-            item.hmdbBeskrivelse = produkt.produktbeskrivelse
-            item.hmdbKategori = produkt.isotittel
-            item.hmdbBilde = produkt.blobUrlLite
-            item.hmdbURL = produkt.artikkelUrl
-            item.hmdbKategoriKortnavn = produkt.isokortnavn
+            item.hmdbProduktNavn = produkt.articleName
+            item.hmdbBeskrivelse = produkt.attributes.text
+            item.hmdbKategori = produkt.isoCategoryTitle
+            item.hmdbBilde = produkt.media
+                .filter { it.type == MediaType.IMAGE }
+                .minByOrNull { it.priority }
+                ?.uri?.let {
+                    "https://finnhjelpemiddel.nav.no/imageproxy/400d/$it"
+                }
+            item.hmdbURL = produkt.productVariantURL
+            item.hmdbKategoriKortnavn = produkt.isoCategoryTitleShort
         }
         return item
     }
