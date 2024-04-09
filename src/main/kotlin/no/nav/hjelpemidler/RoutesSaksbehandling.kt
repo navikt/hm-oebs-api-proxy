@@ -114,6 +114,19 @@ fun Route.saksbehandling() {
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }
+
+        if (isNotProd()) {
+            post("/utlanArtnr") {
+                try {
+                    val artnr = call.receiveText()
+                    val utlån = hjelpemiddeloversiktDao.utlånPåArtnr(artnr)
+                    call.respond(utlån)
+                } catch (e: Exception) {
+                    logg.error(e) { "Noe gikk feil med sjekk av utlån på artnr" }
+                    call.respond(HttpStatusCode.InternalServerError, e)
+                }
+            }
+        }
     }
 }
 

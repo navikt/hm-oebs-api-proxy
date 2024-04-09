@@ -96,6 +96,19 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
         }
     }
 
+    fun utlånPåArtnr(artnr: String): List<String> {
+        return dataSource.list(
+            """
+            SELECT FNR  
+            FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
+            WHERE ARTIKKELNUMMER = :artnr
+            """.trimIndent(),
+            mapOf("artnr" to artnr),
+        ) { row ->
+            row.string("FNR")
+        }
+    }
+
     data class UtlånPåIsokode(
         val kategoriNummer: String,
         val datoUtsendelse: String,
