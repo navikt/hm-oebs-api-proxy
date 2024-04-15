@@ -21,8 +21,7 @@ object Configuration {
      */
     val OEBS_DB by EnvironmentVariable
 
-    @External
-    val OEBS_DB_JDBC_URL by vaultSecret("/secrets/$OEBS_DB/config/jdbc_url")
+    val OEBS_DB_JDBC_URL_T2 by EnvironmentVariable
 
     @External
     val OEBS_DB_USERNAME by vaultSecret("/secrets/$OEBS_DB/credentials/username")

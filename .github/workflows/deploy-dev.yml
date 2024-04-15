@@ -9,8 +9,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
-      - grunndata-search
-      - finn-utlån
+      - test-t2
 
 jobs:
   build:

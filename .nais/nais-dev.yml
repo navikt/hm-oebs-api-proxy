@@ -111,6 +111,8 @@ spec:
       value: oebsq1
     - name: OEBS_DB_T1
       value: oebst1
+    - name: OEBS_DB_T2
+      value: oebst2
     - name: OEBS_DB
       value: "$(OEBS_DB_Q1)"
     - name: GRUNNDATA_API_URL
