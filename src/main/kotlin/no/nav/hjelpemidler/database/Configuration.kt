@@ -9,7 +9,7 @@ object Configuration {
             username = Configuration.OEBS_DB_USERNAME
             password = Configuration.OEBS_DB_PASSWORD
             driverClassName = "oracle.jdbc.OracleDriver"
-            connectionTimeout = 1000
+            connectionTimeout = 10000
             idleTimeout = 10001
             maxLifetime = 30001
             maximumPoolSize = 10
