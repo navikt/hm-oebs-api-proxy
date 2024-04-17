@@ -67,14 +67,23 @@ fun Route.saksbehandling() {
 
         post("/getBrukernummer") {
             val fødselsnummer = Fødselsnummer(call.receiveText())
-            val hentBrukernummer: Brukernummer? = brukernummerDao.hentBrukernummer(fødselsnummer)
+            val hentBrukernummer: Brukernummer? = try {
+                 brukernummerDao.hentBrukernummer(fødselsnummer)
+            } catch (e: Exception) {
+                logg.error(e) { "Henting av brukernummer feilet" }
+                null
+            }
+
+
 
             when (hentBrukernummer) {
                 null -> {
+                    logg.info { "Fant ikke bruker i OeBS" }
                     call.respond(status = HttpStatusCode.NotFound, "Bruker ikke funnet i OEBS")
                 }
 
                 else -> {
+                    logg.info { "Fant brukernummer $hentBrukernummer" }
                     call.respond(hentBrukernummer)
                 }
             }
