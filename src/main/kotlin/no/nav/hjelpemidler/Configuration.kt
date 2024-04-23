@@ -24,6 +24,9 @@ object Configuration {
     @External
     val OEBS_DB_JDBC_URL by vaultSecret("/secrets/$OEBS_DB/config/jdbc_url")
 
+    // JDBC_URL for T2 ligger i k8s secret, ikke i Vault.
+    // val OEBS_DB_JDBC_URL_T2 by EnvironmentVariable
+
     @External
     val OEBS_DB_USERNAME by vaultSecret("/secrets/$OEBS_DB/credentials/username")
 
