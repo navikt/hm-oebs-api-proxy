@@ -65,6 +65,9 @@ spec:
         - application: hm-saksberiker
           namespace: teamdigihot
           cluster: prod-gcp
+        - application: hm-saksfordeling
+          namespace: teamdigihot
+          cluster: prod-gcp
         - application: hm-oebs-sink
           namespace: teamdigihot
           cluster: prod-gcp
