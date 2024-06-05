@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.jackson.JacksonConverter
@@ -20,19 +21,8 @@ import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.path
 import io.ktor.server.routing.routing
-import io.micrometer.core.instrument.Clock
-import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics
-import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
-import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
-import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
-import io.micrometer.core.instrument.binder.kafka.KafkaConsumerMetrics
-import io.micrometer.core.instrument.binder.logging.LogbackMetrics
-import io.micrometer.core.instrument.binder.system.ProcessorMetrics
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.prometheus.client.CollectorRegistry
-import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselFeilDao
 import org.slf4j.event.Level
 
@@ -69,20 +59,7 @@ fun Application.module() {
     }
 
     install(MicrometerMetrics) {
-        registry = PrometheusMeterRegistry(
-            PrometheusConfig.DEFAULT,
-            CollectorRegistry.defaultRegistry,
-            Clock.SYSTEM,
-        )
-        meterBinders = listOf(
-            ClassLoaderMetrics(),
-            JvmMemoryMetrics(),
-            JvmGcMetrics(),
-            ProcessorMetrics(),
-            JvmThreadMetrics(),
-            LogbackMetrics(),
-            KafkaConsumerMetrics(),
-        )
+        registry = Prometheus.registry
     }
 
     routing {
@@ -101,10 +78,10 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
     } ?: error("No JWT principal found in request")
 
 private fun loggFeilendeSf() {
-    logg.info("Henter feilende SF-er")
+    logg.info { "Henter feilende SF-er" }
     val listeAvFeilendeSf = ServiceforespørselFeilDao().finnSfMedFeil()
-    logg.info("Antall feilende SF: ${listeAvFeilendeSf.size}")
+    logg.info { "Antall feilende SF: ${listeAvFeilendeSf.size}" }
     listeAvFeilendeSf.map {
-        logg.info("Feilende SF: $it")
+        logg.info { "Feilende SF: $it" }
     }
 }

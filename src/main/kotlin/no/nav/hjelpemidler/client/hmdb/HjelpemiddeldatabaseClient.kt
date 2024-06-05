@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler.client.hmdb
 
 import com.expediagroup.graphql.client.ktor.GraphQLKtorClient
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.Configuration
 import no.nav.hjelpemidler.client.graphQLClientSerializer
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Product
@@ -21,7 +21,7 @@ object HjelpemiddeldatabaseClient {
             val response = client.execute(request)
             when {
                 response.errors != null -> {
-                    log.error("Feil under henting av data fra hjelpemiddeldatabasen, hmsnrs=$hmsnrs, errors=${response.errors?.map { it.message }}")
+                    log.error { "Feil under henting av data fra hjelpemiddeldatabasen, hmsnrs: $hmsnrs, errors: '${response.errors?.map { it.message }}'" }
                     emptyList()
                 }
 
@@ -29,7 +29,7 @@ object HjelpemiddeldatabaseClient {
                 else -> emptyList()
             }
         } catch (e: Exception) {
-            log.error("Feil under henting av data fra hjelpemiddeldatabasen, hmsnrs=$hmsnrs", e)
+            log.error(e) { "Feil under henting av data fra hjelpemiddeldatabasen, hmsnrs: $hmsnrs" }
             return emptyList()
         }
     }

@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
@@ -8,7 +9,6 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
-import mu.KotlinLogging
 import no.nav.hjelpemidler.service.oebsdatabase.BrukerpassDao
 import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
 import no.nav.hjelpemidler.service.oebsdatabase.TittelForHmsnrDao
@@ -27,9 +27,9 @@ fun Route.hjelpemiddelsiden() {
             // Extract FNR to lookup from idporten logon
             val fnr = call.getTokenInfo()["pid"]?.asText() ?: error("Could not find 'pid' claim in token")
             if (isNotProd()) {
-                logg.info("Processing request for /hjelpemidler-bruker (on-behalf-of: $fnr)")
+                logg.info { "Processing request for /hjelpemidler-bruker (on-behalf-of: $fnr)" }
             } else {
-                logg.info("Processing request for /hjelpemidler-bruker")
+                logg.info { "Processing request for /hjelpemidler-bruker" }
             }
 
             // Extra sanity check of FNR

@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.engine.cio.CIO
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -9,7 +10,6 @@ import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
-import mu.KotlinLogging
 import no.nav.hjelpemidler.client.oebs.OebsApiClient
 import no.nav.hjelpemidler.models.BestillingsOrdreRequest
 import no.nav.hjelpemidler.models.Fødselsnummer
@@ -49,7 +49,7 @@ fun Route.saksbehandling() {
             try {
                 val sf = call.receive<Serviceforespørsel>()
                 opprettServiceforespørselDao.opprettServiceforespørsel(sf)
-                logg.info("Serviceforespørsel for sakId: ${sf.referansenummer} opprettet, hjelpemidler: ${sf.artikler}")
+                logg.info { "Serviceforespørsel for sakId: ${sf.referansenummer} opprettet, hjelpemidler: ${sf.artikler}" }
                 call.respond(HttpStatusCode.Created)
             } catch (e: Exception) {
                 logg.error(e) { "Noe gikk feil med opprettelse av SF" }

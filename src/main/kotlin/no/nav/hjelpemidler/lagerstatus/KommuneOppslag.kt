@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.lagerstatus
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private const val FILENAME = "lager/regionstabell.csv"
 private val logger = KotlinLogging.logger { }
@@ -22,13 +22,13 @@ class KommuneOppslag {
                     error("There was an error parsing data from file for kommunenummer: '$kommunenummer' and lagernummer: '$lager'")
                 }
             }
-        logger.info("Leste ${kommuneLagerTabell.size} lagre fra regionstabell")
+        logger.info { "Leste ${kommuneLagerTabell.size} lagre fra regionstabell" }
     }
 
     fun hentOrgNavn(kommunenummer: String): String? {
         val lagerkode = kommuneLagerTabell[kommunenummer]
         val orgNavn = lagerMap[lagerkode]
-        logger.info("Fant orgNavn: $orgNavn fra lagerkode: $lagerkode, kommunenummer = $kommunenummer")
+        logger.info { "Fant orgNavn: $orgNavn fra lagerkode: $lagerkode, kommunenummer: $kommunenummer" }
         return orgNavn
     }
 }

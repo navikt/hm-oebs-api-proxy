@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking
-import mu.KotlinLogging
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.enums.MediaType
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Product

@@ -1,14 +1,14 @@
 package no.nav.hjelpemidler.metrics
 
-import io.prometheus.client.CollectorRegistry
-import io.prometheus.client.Gauge
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import java.util.concurrent.atomic.AtomicInteger
 
 object Prometheus {
-    val collectorRegistry = CollectorRegistry.defaultRegistry
+    val registry: PrometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
-    val oebsDbAvailable = Gauge
-        .build()
-        .name("HM_OEBS_API_PROXY_oebs_db_available")
-        .help("OEBS oracle-database tilgjengelig")
-        .register(collectorRegistry)
+    val oebsDbAvailable: AtomicInteger = registry.gauge(
+        "hm_oebs_api_proxy_oebs_db_available",
+        AtomicInteger(0),
+    )!!
 }

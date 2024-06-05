@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.client.oebs
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.defaultRequest
@@ -16,7 +17,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import mu.KotlinLogging
 import no.nav.hjelpemidler.Configuration
 import no.nav.hjelpemidler.http.createHttpClient
 import no.nav.hjelpemidler.http.logging
@@ -62,11 +62,11 @@ class OebsApiClient(engine: HttpClientEngine) {
             },
         )
 
-        log.info("Kaller OEBS-API, url: $apiUrl")
+        log.info { "Kaller OEBS-API, url: $apiUrl" }
         val response = httpPostRequest(bestilling)
         if (response.status == HttpStatusCode.OK) {
             val responseBody = response.body<Map<String, Map<String, String>>>()
-            log.info("Fikk svar fra OEBS: $responseBody")
+            log.info { "Fikk svar fra OEBS: $responseBody" }
             return "Ordreopprettelse sendt til OEBS: ${responseBody["OutputParameters"]?.get("P_RETUR_MELDING")}"
         }
 

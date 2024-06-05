@@ -30,11 +30,11 @@ dependencies {
     implementation(libs.jackson.datatype.jsr310)
 
     // GraphQL
-    implementation(libs.graphql.kotlin.ktor.client) {
+    implementation(libs.graphql.ktor.client) {
         exclude("com.expediagroup", "graphql-kotlin-client-serialization") // prefer jackson
         exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
     }
-    implementation(libs.graphql.kotlin.client.jackson)
+    implementation(libs.graphql.client.jackson)
 
     // Database
     implementation(libs.kotliquery)

@@ -1,5 +1,3 @@
-rootProject.name = "hm-oebs-api-proxy"
-
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
@@ -17,7 +15,9 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from("no.nav.hjelpemidler:hm-katalog:0.1.32")
+            from("no.nav.hjelpemidler:hm-katalog:0.2.5")
         }
     }
 }
+
+rootProject.name = "hm-oebs-api-proxy"

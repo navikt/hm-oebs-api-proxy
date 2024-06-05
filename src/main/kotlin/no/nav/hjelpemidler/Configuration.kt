@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.configuration.EnvironmentVariable
 import no.nav.hjelpemidler.configuration.External
