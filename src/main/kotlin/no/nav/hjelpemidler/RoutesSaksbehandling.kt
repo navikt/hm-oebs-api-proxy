@@ -45,7 +45,11 @@ fun Route.saksbehandling(database: Database) {
                     val personinformasjon = personinformasjonDao.hentPersoninformasjon(serviceforespørsel.fødselsnummer)
                     serviceforespørselDao.opprettServiceforespørsel(
                         when {
-                            personinformasjon.isEmpty() -> serviceforespørsel.copy(artikler = null)
+                            personinformasjon.isEmpty() -> {
+                                log.warn { "Bruker har ingen aktive adresser i OEBS, overfører ikke kostnadslinjer" }
+                                serviceforespørsel.copy(artikler = null)
+                            }
+
                             else -> serviceforespørsel
                         },
                     )
