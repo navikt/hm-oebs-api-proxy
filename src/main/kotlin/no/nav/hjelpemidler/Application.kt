@@ -1,6 +1,5 @@
 package no.nav.hjelpemidler
 
-import com.fasterxml.jackson.databind.JsonNode
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -21,11 +20,14 @@ import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.path
 import io.ktor.server.routing.routing
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.database.createDataSource
 import no.nav.hjelpemidler.metrics.Prometheus
-import no.nav.hjelpemidler.models.SfFeil
+import no.nav.hjelpemidler.models.Fødselsnummer
+import no.nav.hjelpemidler.models.ServiceforespørselFeil
 import org.slf4j.event.Level
 
 private val log = KotlinLogging.logger {}
@@ -83,18 +85,19 @@ fun Application.module() {
     }
 }
 
-fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
-    .principal<JWTPrincipal>()
-    ?.let { principal ->
-        principal.payload.claims.entries
-            .associate { claim -> claim.key to claim.value.`as`(JsonNode::class.java) }
-    } ?: error("No JWT principal found in request")
+/**
+ * pid-claim fra pålogging med ID-porten
+ */
+val ApplicationCall.pid: Fødselsnummer
+    get() = authentication.principal<JWTPrincipal>()
+        ?.getClaim("pid", Fødselsnummer::class) ?: error("Token mangler pid-claim")
 
-private fun loggFeilendeSf() {
-    log.info { "Henter feilende SF-er" }
-    val listeAvFeilendeSf = emptyList<SfFeil>() // ServiceforespørselFeilDao().finnSfMedFeil()
-    log.info { "Antall feilende SF: ${listeAvFeilendeSf.size}" }
-    listeAvFeilendeSf.map {
-        log.info { "Feilende SF: $it" }
+private fun loggFeilendeServiceforespørsler() = runBlocking(Dispatchers.IO) {
+    log.info { "Henter feilende serviceforespørsler" }
+    val serviceforespørselFeil =
+        emptyList<ServiceforespørselFeil>() // ServiceforespørselFeilDao().finnFeilendeServiceforespørsler()
+    log.info { "Antall feilende serviceforespørsler: ${serviceforespørselFeil.size}" }
+    serviceforespørselFeil.forEach {
+        log.info { "Feilende serviceforespørsel: $it" }
     }
 }

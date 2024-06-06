@@ -4,14 +4,13 @@ import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotliquery.sessionOf
-import no.nav.hjelpemidler.service.oebsdatabase.BrukernummerDao
-import no.nav.hjelpemidler.service.oebsdatabase.BrukerpassDao
-import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
-import no.nav.hjelpemidler.service.oebsdatabase.LagerDao
-import no.nav.hjelpemidler.service.oebsdatabase.PersoninformasjonDao
-import no.nav.hjelpemidler.service.oebsdatabase.TittelForHmsnrDao
-import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
-import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselFeilDao
+import no.nav.hjelpemidler.service.BrukernummerDao
+import no.nav.hjelpemidler.service.BrukerpassDao
+import no.nav.hjelpemidler.service.HjelpemiddeloversiktDao
+import no.nav.hjelpemidler.service.LagerDao
+import no.nav.hjelpemidler.service.PersoninformasjonDao
+import no.nav.hjelpemidler.service.ServiceforespørselDao
+import no.nav.hjelpemidler.service.TittelForHmsnrDao
 import java.io.Closeable
 import javax.sql.DataSource
 
@@ -39,7 +38,6 @@ class Database(private val dataSource: DataSource) : Closeable {
         val lagerDao = LagerDao(tx)
         val personinformasjonDao = PersoninformasjonDao(tx)
         val serviceforespørselDao = ServiceforespørselDao(tx)
-        val serviceforespørselFeilDao = ServiceforespørselFeilDao(tx)
         val tittelForHmsnrDao = TittelForHmsnrDao(tx)
     }
 }

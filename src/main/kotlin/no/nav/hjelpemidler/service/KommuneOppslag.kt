@@ -1,8 +1,7 @@
-package no.nav.hjelpemidler.lagerstatus
+package no.nav.hjelpemidler.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-private const val FILENAME = "lager/regionstabell.csv"
 private val log = KotlinLogging.logger { }
 
 class KommuneOppslag {
@@ -10,7 +9,7 @@ class KommuneOppslag {
 
     init {
         val csvSplitBy = ";"
-        javaClass.classLoader.getResourceAsStream(FILENAME)?.bufferedReader()
+        javaClass.classLoader.getResourceAsStream("lager/regionstabell.csv")?.bufferedReader()
             ?.forEachLine { line ->
                 val splitLine = line.split(csvSplitBy).toTypedArray()
                 val lager: String = splitLine[0]

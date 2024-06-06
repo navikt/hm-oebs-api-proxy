@@ -1,7 +1,7 @@
-package no.nav.hjelpemidler.service.oebsdatabase
+package no.nav.hjelpemidler.service
 
 import kotlinx.coroutines.runBlocking
-import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
+import no.nav.hjelpemidler.client.GrunndataClient
 import no.nav.hjelpemidler.client.hmdb.enums.MediaType
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Product
 import no.nav.hjelpemidler.database.JdbcOperations
@@ -13,22 +13,22 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
         @Language("Oracle")
         val query = """
-            SELECT ANTALL,
-                   ENHET,
-                   KATEGORI3_NUMMER,
-                   KATEGORI3_BESKRIVELSE,
-                   ARTIKKEL_BESKRIVELSE,
-                   ARTIKKELNUMMER,
-                   SERIE_NUMMER,
-                   UTLÅNS_DATO,
-                   ORDRE_NUMMER,
-                   ARTIKKELSTATUS,
-                   UTLÅNS_TYPE,
-                   INNLEVERINGSDATO,
-                   OPPDATERT_INNLEVERINGSDATO
-            FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
-            WHERE FNR = :fnr
-            ORDER BY UTLÅNS_DATO DESC
+            SELECT antall,
+                   enhet,
+                   kategori3_nummer,
+                   kategori3_beskrivelse,
+                   artikkel_beskrivelse,
+                   artikkelnummer,
+                   serie_nummer,
+                   utlåns_dato,
+                   ordre_nummer,
+                   artikkelstatus,
+                   utlåns_type,
+                   innleveringsdato,
+                   oppdatert_innleveringsdato
+            FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+            WHERE fnr = :fnr
+            ORDER BY utlåns_dato DESC
         """.trimIndent()
 
         val items = tx.list(query, mapOf("fnr" to fnr)) { row ->
@@ -55,11 +55,11 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
     fun utlånPåIsokode(fnr: String, isokode: String): List<UtlånPåIsokode> {
         return tx.list(
             """
-                SELECT KATEGORI3_NUMMER, UTLÅNS_DATO
-                FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
-                WHERE FNR = :fnr
-                  AND KATEGORI3_NUMMER = :isokode
-                ORDER BY UTLÅNS_DATO DESC
+                SELECT kategori3_nummer, utlåns_dato
+                FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+                WHERE fnr = :fnr
+                  AND kategori3_nummer = :isokode
+                ORDER BY utlåns_dato DESC
             """.trimIndent(),
             mapOf("fnr" to fnr, "isokode" to isokode),
         ) { row ->
@@ -73,11 +73,11 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
     fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? {
         return tx.singleOrNull(
             """
-                SELECT FNR, ARTIKKELNUMMER, SERIE_NUMMER, UTLÅNS_DATO
-                FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
-                WHERE ARTIKKELNUMMER = :artnr
-                  AND SERIE_NUMMER = :serienr
-                ORDER BY UTLÅNS_DATO DESC
+                SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato
+                FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+                WHERE artikkelnummer = :artnr
+                  AND serie_nummer = :serienr
+                ORDER BY utlåns_dato DESC
                 FETCH NEXT 1 ROW ONLY
             """.trimIndent(),
             mapOf("artnr" to artnr, "serienr" to serienr),
@@ -94,9 +94,9 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
     fun utlånPåArtnr(artnr: String): List<String> {
         return tx.list(
             """
-            SELECT FNR  
-            FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
-            WHERE ARTIKKELNUMMER = :artnr
+            SELECT fnr  
+            FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+            WHERE artikkelnummer = :artnr
             """.trimIndent(),
             mapOf("artnr" to artnr),
         ) { row ->
@@ -114,7 +114,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         val hmsnr = items.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet()
 
         // Fetch data for hmsnr from hm-grunndata-api
-        val produkter: List<Product> = HjelpemiddeldatabaseClient.hentProdukter(hmsnr)
+        val produkter: List<Product> = GrunndataClient.hentProdukter(hmsnr)
 
         // Apply data to items
         val produkterByHmsnr = produkter.groupBy { it.hmsArtNr }

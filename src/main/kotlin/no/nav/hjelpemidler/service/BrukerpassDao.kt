@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.service.oebsdatabase
+package no.nav.hjelpemidler.service
 
 import no.nav.hjelpemidler.database.JdbcOperations
 import java.time.LocalDate
@@ -7,9 +7,9 @@ class BrukerpassDao(private val tx: JdbcOperations) {
     fun brukerpassForFnr(fnr: String): Brukerpass {
         return tx.singleOrNull(
             """
-                SELECT KONTRAKT_NUMMER, SJEKK_NAVN, START_DATE, END_DATE
-                FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V
-                WHERE FNR = :fnr
+                SELECT kontrakt_nummer, sjekk_navn, start_date, end_date
+                FROM apps.xxrtv_digihot_oebs_brukerp_v
+                WHERE fnr = :fnr
                 FETCH NEXT 1 ROW ONLY
             """.trimIndent(),
             mapOf("fnr" to fnr),

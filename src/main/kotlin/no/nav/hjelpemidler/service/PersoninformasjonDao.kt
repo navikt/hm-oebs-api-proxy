@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.service.oebsdatabase
+package no.nav.hjelpemidler.service
 
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.models.Personinformasjon
@@ -7,9 +7,9 @@ class PersoninformasjonDao(private val tx: JdbcOperations) {
     fun hentPersoninformasjon(fnr: String): List<Personinformasjon> {
         return tx.list(
             """
-                SELECT BRUKER_NUMMER, LEVERINGS_ADDRESSE, LEVERINGS_KOMMUNE, LEVERINGS_POSTNUMMER, LEVERINGS_BY, PRIMAER_ADR, BYDEL
-                FROM apps.XXRTV_DIGIHOT_OEBS_ADR_FNR_V
-                WHERE FNR = :fnr
+                SELECT bruker_nummer, leverings_addresse, leverings_kommune, leverings_postnummer, leverings_by, primaer_adr, bydel
+                FROM apps.xxrtv_digihot_oebs_adr_fnr_v
+                WHERE fnr = :fnr
             """.trimIndent(),
             mapOf("fnr" to fnr),
         ) { row ->

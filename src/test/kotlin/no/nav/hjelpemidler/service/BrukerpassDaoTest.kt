@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.service.oebsdatabase
+package no.nav.hjelpemidler.service
 
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest

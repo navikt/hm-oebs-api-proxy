@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.lagerstatus
+package no.nav.hjelpemidler.service
 
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.shouldBe

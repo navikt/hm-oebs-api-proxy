@@ -10,13 +10,14 @@ import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
-import no.nav.hjelpemidler.client.oebs.OebsApiClient
+import no.nav.hjelpemidler.client.OebsApiClient
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Utlån
-import no.nav.hjelpemidler.service.oebsdatabase.Brukernummer
+import no.nav.hjelpemidler.models.receiveFødselsnummer
+import no.nav.hjelpemidler.service.Brukernummer
 
 private val log = KotlinLogging.logger {}
 
@@ -50,46 +51,36 @@ fun Route.saksbehandling(database: Database) {
         }
 
         post("/getLeveringsaddresse") {
-            val fnr = call.receiveText()
-            // Extra sanity check of FNR
-            validateFnr(fnr)
-            val personinformasjon = database.transaction { personinformasjonDao.hentPersoninformasjon(fnr) }
+            val fnr = call.receiveFødselsnummer()
+            val personinformasjon = database.transaction { personinformasjonDao.hentPersoninformasjon(fnr.value) }
             call.respond(personinformasjon)
         }
 
         post("/getBrukernummer") {
-            val fødselsnummer = Fødselsnummer(call.receiveText())
+            val fnr = call.receiveFødselsnummer()
             val hentBrukernummer: Brukernummer? = database.transaction {
-                brukernummerDao.hentBrukernummer(fødselsnummer)
+                brukernummerDao.hentBrukernummer(fnr)
             }
 
             when (hentBrukernummer) {
-                null -> {
-                    call.respond(status = HttpStatusCode.NotFound, "Bruker ikke funnet i OEBS")
-                }
-
-                else -> {
-                    call.respond(hentBrukernummer)
-                }
+                null -> call.respond(status = HttpStatusCode.NotFound, "Bruker ikke funnet i OEBS")
+                else -> call.respond(hentBrukernummer)
             }
         }
 
         post("/getHjelpemiddelOversikt") {
-            val fnr = call.receiveText()
-            // Extra sanity check of FNR
-            validateFnr(fnr)
-            val hjelpemiddeloversikt = database.transaction { hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr) }
+            val fnr = call.receiveFødselsnummer()
+            val hjelpemiddeloversikt = database.transaction {
+                hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr.value)
+            }
             call.respond(hjelpemiddeloversikt)
         }
 
         post("/harUtlantIsokode") {
             try {
-                val req = call.receive<HarUtlåntIsokodeRequest>()
-                val fnr = req.fnr
-                val isokode = req.isokode
-                validateFnr(fnr)
+                val request = call.receive<HarUtlåntIsokodeRequest>()
                 val harUtlåntIsokode = database.transaction {
-                    hjelpemiddeloversiktDao.utlånPåIsokode(fnr, isokode)
+                    hjelpemiddeloversiktDao.utlånPåIsokode(request.fnr.value, request.isokode)
                 }.isNotEmpty()
                 call.respond(harUtlåntIsokode)
             } catch (e: Exception) {
@@ -126,14 +117,8 @@ fun Route.saksbehandling(database: Database) {
     }
 }
 
-private fun validateFnr(fnr: String) {
-    if (!"\\d{11}".toRegex().matches(fnr)) {
-        error("invalid fnr in 'pid', does not match regex")
-    }
-}
-
 private data class HarUtlåntIsokodeRequest(
-    val fnr: String,
+    val fnr: Fødselsnummer,
     val isokode: String,
 )
 

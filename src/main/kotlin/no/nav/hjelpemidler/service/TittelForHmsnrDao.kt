@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.service.oebsdatabase
+package no.nav.hjelpemidler.service
 
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.models.TittelForHmsNr
@@ -23,9 +23,9 @@ class TittelForHmsnrDao(private val tx: JdbcOperations) {
         @Language("Oracle")
         var query =
             """
-                SELECT ARTIKKEL, BRUKERARTIKKELTYPE, ARTIKKEL_BESKRIVELSE
-                FROM apps.XXRTV_DIGIHOT_OEBS_ART_BESKR_V
-                WHERE ARTIKKEL IN (?)
+                SELECT artikkel, brukerartikkeltype, artikkel_beskrivelse
+                FROM apps.xxrtv_digihot_oebs_art_beskr_v
+                WHERE artikkel IN (?)
             """.trimIndent()
 
         // Put hmsnrs.count() number of comma separated question marks in the query IN-clause

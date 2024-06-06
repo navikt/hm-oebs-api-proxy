@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.service.oebsdatabase
+package no.nav.hjelpemidler.service
 
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import java.time.LocalDate

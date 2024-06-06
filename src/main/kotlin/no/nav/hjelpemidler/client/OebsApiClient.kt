@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.client.oebs
+package no.nav.hjelpemidler.client
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
@@ -56,7 +56,7 @@ class OebsApiClient(engine: HttpClientEngine) {
             saksnummer = request.saksnummer,
             artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) },
             shippinginstructions = when {
-                // Tidligere, når vi ikke sendte inn shippingsinstructions, så satte OEBS automatisk formidlernavn som info på ordrelinjene
+                // Tidligere, når vi ikke sendte inn shippinginstructions, så satte OEBS automatisk formidlernavn som info på ordrelinjene
                 request.forsendelsesinfo.isNullOrBlank() -> request.formidlernavn
                 else -> request.forsendelsesinfo
             },

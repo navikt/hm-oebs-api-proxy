@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.models
 
-data class SfFeil(
+data class ServiceforespørselFeil(
     val id: String?,
     val saksnummer: String?,
     val referansenummer: String?,

@@ -1,7 +1,6 @@
-package no.nav.hjelpemidler.service.oebsdatabase
+package no.nav.hjelpemidler.service
 
 import no.nav.hjelpemidler.database.JdbcOperations
-import no.nav.hjelpemidler.lagerstatus.KommuneOppslag
 import org.intellij.lang.annotations.Language
 
 class LagerDao(private val tx: JdbcOperations) {
@@ -37,7 +36,7 @@ class LagerDao(private val tx: JdbcOperations) {
                    sortiment,
                    lagervare,
                    minmax
-            FROM apps.XXRTV_DIGIHOT_UTVID_ART_V
+            FROM apps.xxrtv_digihot_utvid_art_v
             WHERE artikkelnummer = :hmsnr
         """.trimIndent()
 

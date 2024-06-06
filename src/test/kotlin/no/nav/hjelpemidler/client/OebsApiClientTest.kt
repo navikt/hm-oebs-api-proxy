@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.client.oebs
+package no.nav.hjelpemidler.client
 
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond

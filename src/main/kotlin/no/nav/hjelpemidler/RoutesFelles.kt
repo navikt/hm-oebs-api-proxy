@@ -10,29 +10,26 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.database.Database
+import no.nav.hjelpemidler.models.Fødselsnummer
 
 private val log = KotlinLogging.logger {}
 
 fun Route.felles(database: Database) {
     authenticate("aad") {
         post("/hent-brukerpass") {
+            data class FnrDto(
+                val fnr: Fødselsnummer,
+            )
+
             val fnr = call.receive<FnrDto>().fnr
-
-            // Extra sanity check of FNR
-            if (!"\\d{11}".toRegex().matches(fnr)) {
-                error("invalid fnr from body, does not match regex")
-            }
-
-            val brukerpass = database.transaction { brukerpassDao.brukerpassForFnr(fnr) }
-
+            val brukerpass = database.transaction { brukerpassDao.brukerpassForFnr(fnr.value) }
             call.respond(brukerpass)
         }
     }
 
     authenticate("tokenX", "aad") {
         get("/brukerpass") {
-            // Extract FNR to lookup from idporten logon
-            val fnr = call.getTokenInfo()["pid"]?.asText() ?: error("Could not find 'pid' claim in token")
+            val fnr = call.pid
 
             if (isNotProd()) {
                 log.info { "Processing request for /brukerpass (on-behalf-of: $fnr)" }
@@ -40,12 +37,7 @@ fun Route.felles(database: Database) {
                 log.info { "Processing request for /brukerpass" }
             }
 
-            // Extra sanity check of FNR
-            if (!"\\d{11}".toRegex().matches(fnr)) {
-                error("invalid fnr in 'pid', does not match regex")
-            }
-
-            val brukerpass = database.transaction { brukerpassDao.brukerpassForFnr(fnr) }
+            val brukerpass = database.transaction { brukerpassDao.brukerpassForFnr(fnr.value) }
 
             call.respond(brukerpass)
         }
@@ -74,7 +66,3 @@ fun Route.felles(database: Database) {
         }
     }
 }
-
-private data class FnrDto(
-    val fnr: String,
-)
