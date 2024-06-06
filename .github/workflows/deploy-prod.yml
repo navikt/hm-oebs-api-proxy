@@ -1,10 +1,13 @@
-name: Deploy til prod
+name: Deploy til prod-fss
+
 on:
   release:
-    types: [ published ]
+    types:
+      - published
 
 jobs:
   deploy-prod:
+    name: Deploy til prod-fss
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -14,7 +17,7 @@ jobs:
       - name: Sjekk ut koden
         uses: actions/checkout@v4
 
-      - name: Nais login
+      - name: NAIS-login
         uses: nais/login@v0
         id: nais-login
         with:
@@ -22,7 +25,7 @@ jobs:
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
-      - name: Lag miljøvariabel IMAGE
+      - name: Definer release tag
         env:
           VERSION_TAG: ${{ github.event.release.tag_name }}
           REGISTRY: ${{ steps.nais-login.outputs.registry }}
@@ -39,7 +42,7 @@ jobs:
           CLUSTER: prod-fss
           RESOURCE: .nais/nais-prod.yml
 
-      - name: Post production
+      - name: Etter deploy
         uses: navikt/digihot-deploy/actions/post-production@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

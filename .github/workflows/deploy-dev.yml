@@ -1,4 +1,4 @@
-name: Bygg og deploy til dev
+name: Bygg og deploy til dev-fss
 
 on:
   push:
@@ -9,12 +9,10 @@ on:
       - "CODEOWNERS"
     branches:
       - main
-      - grunndata-search
-      - finn-utlån
 
 jobs:
   build:
-    name: Bygg og deploy til dev
+    name: Bygg og deploy til dev-fss
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,27 +22,27 @@ jobs:
       - name: Sjekk ut koden
         uses: actions/checkout@v4
 
-      - name: Valider Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
+      - name: Valider Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v3
 
-      - name: Setup Java
+      - name: Sett opp Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
           java-version: 21
+          distribution: temurin
 
-      - name: Setup Gradle
+      - name: Sett opp Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Bygg app
+      - name: Bygg applikasjon
         run: ./gradlew build --no-daemon
 
-      - name: Pre deploy
+      - name: Før deploy
         uses: navikt/digihot-deploy/actions/pre-deploy@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Bygg og push image
+      - name: Bygg og push Docker image
         uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
@@ -61,7 +59,7 @@ jobs:
           RESOURCE: .nais/nais-dev.yml
           IMAGE: ${{steps.docker-build-push.outputs.image}}
 
-      - name: Post deploy
+      - name: Etter deploy
         if: github.ref == 'refs/heads/main'
         uses: navikt/digihot-deploy/actions/post-deploy@v2
         env:
