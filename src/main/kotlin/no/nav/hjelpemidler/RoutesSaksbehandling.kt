@@ -14,6 +14,7 @@ import no.nav.hjelpemidler.client.OebsApiClient
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.Fødselsnummer
+import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.models.receiveFødselsnummer
@@ -43,10 +44,11 @@ fun Route.saksbehandling(database: Database) {
                 val serviceforespørsel = call.receive<Serviceforespørsel>()
                 database.transaction {
                     val personinformasjon = personinformasjonDao.hentPersoninformasjon(serviceforespørsel.fødselsnummer)
+                        .filter(Personinformasjon::aktiv)
                     serviceforespørselDao.opprettServiceforespørsel(
                         when {
                             personinformasjon.isEmpty() -> {
-                                log.warn { "Bruker har ingen aktive adresser i OEBS, overfører ikke kostnadslinjer" }
+                                log.warn { "Bruker har ingen aktive adresser i OEBS, tar ikke med kostnadslinjer i serviceforespørsel" }
                                 serviceforespørsel.copy(artikler = null)
                             }
 
@@ -57,7 +59,7 @@ fun Route.saksbehandling(database: Database) {
                 log.info { "Serviceforespørsel for sakId: ${serviceforespørsel.referansenummer} opprettet, hjelpemidler: ${serviceforespørsel.artikler}" }
                 call.respond(HttpStatusCode.Created)
             } catch (e: Exception) {
-                log.error(e) { "Noe gikk feil med opprettelse av SF" }
+                log.error(e) { "Noe gikk feil med opprettelse av serviceforespørsel" }
                 throw e
             }
         }

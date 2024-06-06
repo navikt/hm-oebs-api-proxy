@@ -8,4 +8,5 @@ data class Personinformasjon(
     val leveringBy: String,
     val primaerAdr: String,
     val bydel: String?,
+    val aktiv: Boolean,
 )
