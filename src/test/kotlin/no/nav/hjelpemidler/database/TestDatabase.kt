@@ -1,7 +1,9 @@
 package no.nav.hjelpemidler.database
 
-val testDatabase by lazy {
-    createDataSource {
+import no.nav.hjelpemidler.database.Database.DaoProvider
+
+suspend fun <T> testTransaction(block: DaoProvider.() -> T): T {
+    val database = createDataSource {
         val parameters = mapOf(
             "MODE" to "Oracle",
             "DEFAULT_NULL_ORDERING" to "HIGH",
@@ -9,4 +11,5 @@ val testDatabase by lazy {
         ).map { (key, value) -> "$key=$value" }.joinToString(";")
         jdbcUrl = "jdbc:h2:mem:oebsl;$parameters"
     }.let(::Database)
+    return database.use { it.transaction(block) }
 }

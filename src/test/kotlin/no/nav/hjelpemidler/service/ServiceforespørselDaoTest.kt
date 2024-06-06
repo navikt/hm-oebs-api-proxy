@@ -2,7 +2,7 @@ package no.nav.hjelpemidler.service
 
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
-import no.nav.hjelpemidler.database.testDatabase
+import no.nav.hjelpemidler.database.testTransaction
 import no.nav.hjelpemidler.models.Artikkel
 import no.nav.hjelpemidler.models.Resultat
 import no.nav.hjelpemidler.models.Serviceforespørsel
@@ -12,7 +12,7 @@ import kotlin.test.Test
 class ServiceforespørselDaoTest {
     @Test
     fun `Skal opprette serviceforespørsel`() = runTest {
-        testDatabase.transaction {
+        testTransaction {
             serviceforespørselDao.opprettServiceforespørsel(
                 Serviceforespørsel(
                     fødselsnummer = "12345678910",
