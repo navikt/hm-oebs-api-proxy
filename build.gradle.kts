@@ -80,6 +80,10 @@ kotlin { jvmToolchain(21) }
 tasks.test {
     useJUnitPlatform()
     testLogging {
+        showCauses = true
+        showExceptions = true
+        showStackTraces = true
+        showStandardStreams = true
         events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
     }
 }
