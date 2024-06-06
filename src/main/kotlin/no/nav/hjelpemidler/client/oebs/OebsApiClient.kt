@@ -23,7 +23,7 @@ import no.nav.hjelpemidler.http.logging
 import no.nav.hjelpemidler.isNotProd
 import no.nav.hjelpemidler.jsonMapper
 import no.nav.hjelpemidler.models.Artikkel
-import no.nav.hjelpemidler.models.BestillingsOrdreRequest
+import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.OebsJsonFormat
 import no.nav.hjelpemidler.models.Ordre
 import no.nav.hjelpemidler.models.OrdreType
@@ -48,7 +48,7 @@ class OebsApiClient(engine: HttpClientEngine) {
     private val apiUrl = Configuration.OEBS_API_URL
     private val apiToken = Configuration.OEBS_API_TOKEN
 
-    suspend fun opprettOrdre(request: BestillingsOrdreRequest): String {
+    suspend fun opprettOrdre(request: BestillingsordreRequest): String {
         val bestilling = Ordre(
             fodselsnummer = request.fodselsnummer,
             formidlernavn = request.formidlernavn,

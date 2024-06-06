@@ -1,11 +1,13 @@
 package no.nav.hjelpemidler.models
 
-data class Fødselsnummer(val value: String) {
-    private val elevenDigits = Regex("\\d{11}")
+import com.fasterxml.jackson.annotation.JsonValue
 
+data class Fødselsnummer(@JsonValue val value: String) {
     init {
-        if (!elevenDigits.matches(value)) {
-            throw IllegalArgumentException("$value er ikke gyldig fødselsnummer")
+        require(elevenDigits.matches(value)) {
+            "$value er ikke et gyldig fødselsnummer"
         }
     }
 }
+
+private val elevenDigits = Regex("\\d{11}")

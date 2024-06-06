@@ -12,7 +12,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.client.oebs.OebsApiClient
 import no.nav.hjelpemidler.database.Database
-import no.nav.hjelpemidler.models.BestillingsOrdreRequest
+import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Utlån
@@ -27,10 +27,10 @@ fun Route.saksbehandling(database: Database) {
     authenticate("aad") {
         post("/opprettOrdre") {
             try {
-                val bestilling = call.receive<BestillingsOrdreRequest>()
-                val bestillingsResponse = oebsApiClient.opprettOrdre(bestilling)
+                val bestilling = call.receive<BestillingsordreRequest>()
+                val response = oebsApiClient.opprettOrdre(bestilling)
                 log.info { "Oppretter ordre, saksnummer: ${bestilling.saksnummer}, hjelpemidler: ${bestilling.artikler}" }
-                call.respond(HttpStatusCode.Created, bestillingsResponse)
+                call.respond(HttpStatusCode.Created, response)
             } catch (e: Exception) {
                 log.error(e) { "Noe gikk feil med opprettelse av ordre" }
                 call.respond(HttpStatusCode.InternalServerError, e)

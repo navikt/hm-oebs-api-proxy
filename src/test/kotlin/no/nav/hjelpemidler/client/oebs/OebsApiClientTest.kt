@@ -5,7 +5,7 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.coroutines.runBlocking
-import no.nav.hjelpemidler.models.BestillingsOrdreRequest
+import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.OrdreArtikkel
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +25,7 @@ class OebsApiClientTest {
 
         val result = runBlocking {
             client.opprettOrdre(
-                BestillingsOrdreRequest(
+                BestillingsordreRequest(
                     fodselsnummer = "15084300133",
                     formidlernavn = "SEDAT KRONJUVEL",
                     saksnummer = "1",

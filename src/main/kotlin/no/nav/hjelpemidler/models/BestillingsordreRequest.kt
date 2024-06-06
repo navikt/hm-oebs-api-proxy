@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.models
 
-data class BestillingsOrdreRequest(
+data class BestillingsordreRequest(
     val fodselsnummer: String,
     val formidlernavn: String,
     val saksnummer: String,
