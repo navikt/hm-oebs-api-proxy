@@ -41,7 +41,15 @@ fun Route.saksbehandling(database: Database) {
         post("/opprettSF") {
             try {
                 val serviceforespørsel = call.receive<Serviceforespørsel>()
-                database.transaction { serviceforespørselDao.opprettServiceforespørsel(serviceforespørsel) }
+                database.transaction {
+                    val personinformasjon = personinformasjonDao.hentPersoninformasjon(serviceforespørsel.fødselsnummer)
+                    serviceforespørselDao.opprettServiceforespørsel(
+                        when {
+                            personinformasjon.isEmpty() -> serviceforespørsel.copy(artikler = null)
+                            else -> serviceforespørsel
+                        },
+                    )
+                }
                 log.info { "Serviceforespørsel for sakId: ${serviceforespørsel.referansenummer} opprettet, hjelpemidler: ${serviceforespørsel.artikler}" }
                 call.respond(HttpStatusCode.Created)
             } catch (e: Exception) {
