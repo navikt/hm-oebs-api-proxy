@@ -3,10 +3,10 @@ package no.nav.hjelpemidler.lagerstatus
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 private const val FILENAME = "lager/regionstabell.csv"
-private val logger = KotlinLogging.logger { }
+private val log = KotlinLogging.logger { }
 
 class KommuneOppslag {
-    private val kommuneLagerTabell: MutableMap<String, String> = mutableMapOf()
+    private val kommunelagerByKommunenummer: MutableMap<String, String> = mutableMapOf()
 
     init {
         val csvSplitBy = ";"
@@ -17,18 +17,18 @@ class KommuneOppslag {
                 val kommunenummer: String = splitLine[1]
 
                 if (lager.isNotBlank() && kommunenummer.isNotBlank()) {
-                    kommuneLagerTabell[kommunenummer] = lager
+                    kommunelagerByKommunenummer[kommunenummer] = lager
                 } else {
                     error("There was an error parsing data from file for kommunenummer: '$kommunenummer' and lagernummer: '$lager'")
                 }
             }
-        logger.info { "Leste ${kommuneLagerTabell.size} lagre fra regionstabell" }
+        log.info { "Leste ${kommunelagerByKommunenummer.size} lagre fra regionstabell" }
     }
 
     fun hentOrgNavn(kommunenummer: String): String? {
-        val lagerkode = kommuneLagerTabell[kommunenummer]
+        val lagerkode = kommunelagerByKommunenummer[kommunenummer]
         val orgNavn = lagerMap[lagerkode]
-        logger.info { "Fant orgNavn: $orgNavn fra lagerkode: $lagerkode, kommunenummer: $kommunenummer" }
+        log.info { "Fant orgNavn: $orgNavn fra lagerkode: $lagerkode, kommunenummer: $kommunenummer" }
         return orgNavn
     }
 }

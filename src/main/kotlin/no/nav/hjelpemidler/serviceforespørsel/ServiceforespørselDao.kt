@@ -1,15 +1,13 @@
 package no.nav.hjelpemidler.serviceforespørsel
 
 import kotliquery.Parameter
-import no.nav.hjelpemidler.database.Configuration
-import no.nav.hjelpemidler.database.update
+import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.jsonMapper
 import no.nav.hjelpemidler.models.Serviceforespørsel
-import javax.sql.DataSource
 
-class ServiceforespørselDao(private val dataSource: DataSource = Configuration.dataSource) {
+class ServiceforespørselDao(private val tx: JdbcOperations) {
     fun opprettServiceforespørsel(sf: Serviceforespørsel): Int {
-        return dataSource.update(
+        return tx.update(
             """
                 INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
                 (ID, FNR, NAVN, STONADSKLASS, SAKSTYPE, RESULTAT, SFDATO, REFERANSENUMMER, KILDE, PROCESSED, LAST_UPDATE_DATE,

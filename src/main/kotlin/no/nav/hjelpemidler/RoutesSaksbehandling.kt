@@ -11,48 +11,40 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.client.oebs.OebsApiClient
+import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.models.BestillingsOrdreRequest
 import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.service.oebsdatabase.Brukernummer
-import no.nav.hjelpemidler.service.oebsdatabase.BrukernummerDao
-import no.nav.hjelpemidler.service.oebsdatabase.HjelpemiddeloversiktDao
-import no.nav.hjelpemidler.service.oebsdatabase.PersoninformasjonDao
-import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselDao
 
-private val logg = KotlinLogging.logger {}
-
-private val personinformasjonDao = PersoninformasjonDao()
-private val opprettServiceforespørselDao = ServiceforespørselDao()
-private val hjelpemiddeloversiktDao = HjelpemiddeloversiktDao()
-private val brukernummerDao = BrukernummerDao()
+private val log = KotlinLogging.logger {}
 
 private val oebsApiClient = OebsApiClient(CIO.create())
 
-fun Route.saksbehandling() {
+fun Route.saksbehandling(database: Database) {
     // Authenticated database proxy requests
     authenticate("aad") {
         post("/opprettOrdre") {
             try {
                 val bestilling = call.receive<BestillingsOrdreRequest>()
                 val bestillingsResponse = oebsApiClient.opprettOrdre(bestilling)
-                logg.info { "Oppretter ordre, saksnummer: ${bestilling.saksnummer}, hjelpemidler: ${bestilling.artikler}" }
+                log.info { "Oppretter ordre, saksnummer: ${bestilling.saksnummer}, hjelpemidler: ${bestilling.artikler}" }
                 call.respond(HttpStatusCode.Created, bestillingsResponse)
             } catch (e: Exception) {
-                logg.error(e) { "Noe gikk feil med opprettelse av ordre" }
+                log.error(e) { "Noe gikk feil med opprettelse av ordre" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }
 
         post("/opprettSF") {
             try {
-                val sf = call.receive<Serviceforespørsel>()
-                opprettServiceforespørselDao.opprettServiceforespørsel(sf)
-                logg.info { "Serviceforespørsel for sakId: ${sf.referansenummer} opprettet, hjelpemidler: ${sf.artikler}" }
+                val serviceforespørsel = call.receive<Serviceforespørsel>()
+                database.transaction { serviceforespørselDao.opprettServiceforespørsel(serviceforespørsel) }
+                log.info { "Serviceforespørsel for sakId: ${serviceforespørsel.referansenummer} opprettet, hjelpemidler: ${serviceforespørsel.artikler}" }
                 call.respond(HttpStatusCode.Created)
             } catch (e: Exception) {
-                logg.error(e) { "Noe gikk feil med opprettelse av SF" }
+                log.error(e) { "Noe gikk feil med opprettelse av SF" }
                 throw e
             }
         }
@@ -61,13 +53,15 @@ fun Route.saksbehandling() {
             val fnr = call.receiveText()
             // Extra sanity check of FNR
             validateFnr(fnr)
-            val personinformasjonListe = personinformasjonDao.hentPersoninformasjon(fnr)
-            call.respond(personinformasjonListe)
+            val personinformasjon = database.transaction { personinformasjonDao.hentPersoninformasjon(fnr) }
+            call.respond(personinformasjon)
         }
 
         post("/getBrukernummer") {
             val fødselsnummer = Fødselsnummer(call.receiveText())
-            val hentBrukernummer: Brukernummer? = brukernummerDao.hentBrukernummer(fødselsnummer)
+            val hentBrukernummer: Brukernummer? = database.transaction {
+                brukernummerDao.hentBrukernummer(fødselsnummer)
+            }
 
             when (hentBrukernummer) {
                 null -> {
@@ -84,7 +78,7 @@ fun Route.saksbehandling() {
             val fnr = call.receiveText()
             // Extra sanity check of FNR
             validateFnr(fnr)
-            val hjelpemiddeloversikt = hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr)
+            val hjelpemiddeloversikt = database.transaction { hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr) }
             call.respond(hjelpemiddeloversikt)
         }
 
@@ -94,10 +88,12 @@ fun Route.saksbehandling() {
                 val fnr = req.fnr
                 val isokode = req.isokode
                 validateFnr(fnr)
-                val harUtlåntIsokode = hjelpemiddeloversiktDao.utlånPåIsokode(fnr, isokode).isNotEmpty()
+                val harUtlåntIsokode = database.transaction {
+                    hjelpemiddeloversiktDao.utlånPåIsokode(fnr, isokode)
+                }.isNotEmpty()
                 call.respond(harUtlåntIsokode)
             } catch (e: Exception) {
-                logg.error(e) { "Noe gikk feil med sjekk av utlån på isokode" }
+                log.error(e) { "Noe gikk feil med sjekk av utlån på isokode" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }
@@ -107,10 +103,10 @@ fun Route.saksbehandling() {
                 val req = call.receive<UtlånPåArtnrOgSerienrRequest>()
                 val artnr = req.artnr
                 val serienr = req.serienr
-                val utlån = hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr)
+                val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
                 call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
             } catch (e: Exception) {
-                logg.error(e) { "Noe gikk feil med sjekk av utlån på artnr og serienr" }
+                log.error(e) { "Noe gikk feil med sjekk av utlån på artnr og serienr" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }
@@ -119,10 +115,10 @@ fun Route.saksbehandling() {
             post("/utlanArtnr") {
                 try {
                     val artnr = call.receiveText()
-                    val utlån = hjelpemiddeloversiktDao.utlånPåArtnr(artnr)
+                    val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnr(artnr) }
                     call.respond(utlån)
                 } catch (e: Exception) {
-                    logg.error(e) { "Noe gikk feil med sjekk av utlån på artnr" }
+                    log.error(e) { "Noe gikk feil med sjekk av utlån på artnr" }
                     call.respond(HttpStatusCode.InternalServerError, e)
                 }
             }

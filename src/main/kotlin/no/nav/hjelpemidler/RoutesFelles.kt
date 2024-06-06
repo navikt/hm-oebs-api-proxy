@@ -9,18 +9,11 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
-import no.nav.hjelpemidler.lagerstatus.KommuneOppslag
-import no.nav.hjelpemidler.service.oebsdatabase.BrukerpassDao
-import no.nav.hjelpemidler.service.oebsdatabase.LagerDao
+import no.nav.hjelpemidler.database.Database
 
-private val logg = KotlinLogging.logger {}
-private val sikkerlogg = KotlinLogging.logger("tjenestekall")
+private val log = KotlinLogging.logger {}
 
-private val kommuneOppslag = KommuneOppslag()
-private val brukerpassDao = BrukerpassDao()
-private val lagerDao = LagerDao(kommuneOppslag)
-
-fun Route.felles() {
+fun Route.felles(database: Database) {
     authenticate("aad") {
         post("/hent-brukerpass") {
             val fnr = call.receive<FnrDto>().fnr
@@ -30,7 +23,9 @@ fun Route.felles() {
                 error("invalid fnr from body, does not match regex")
             }
 
-            call.respond(brukerpassDao.brukerpassForFnr(fnr))
+            val brukerpass = database.transaction { brukerpassDao.brukerpassForFnr(fnr) }
+
+            call.respond(brukerpass)
         }
     }
 
@@ -40,9 +35,9 @@ fun Route.felles() {
             val fnr = call.getTokenInfo()["pid"]?.asText() ?: error("Could not find 'pid' claim in token")
 
             if (isNotProd()) {
-                logg.info { "Processing request for /brukerpass (on-behalf-of: $fnr)" }
+                log.info { "Processing request for /brukerpass (on-behalf-of: $fnr)" }
             } else {
-                logg.info { "Processing request for /brukerpass" }
+                log.info { "Processing request for /brukerpass" }
             }
 
             // Extra sanity check of FNR
@@ -50,11 +45,14 @@ fun Route.felles() {
                 error("invalid fnr in 'pid', does not match regex")
             }
 
-            call.respond(brukerpassDao.brukerpassForFnr(fnr))
+            val brukerpass = database.transaction { brukerpassDao.brukerpassForFnr(fnr) }
+
+            call.respond(brukerpass)
         }
 
         get("/lager/alle-sentraler/{hmsNr}") {
-            call.respond(lagerDao.lagerStatus(call.parameters["hmsNr"]!!))
+            val lagerstatus = database.transaction { lagerDao.hentLagerstatus(call.parameters["hmsNr"]!!) }
+            call.respond(lagerstatus)
         }
 
         get("/lager/sentral/{kommunenummer}/{hmsNr}") {
@@ -62,9 +60,11 @@ fun Route.felles() {
                 val error: String,
             )
 
-            val result = lagerDao.lagerStatusSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)
-            if (result != null) {
-                call.respond(result)
+            val lagerstatus = database.transaction {
+                lagerDao.hentLagerstatusForSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)
+            }
+            if (lagerstatus != null) {
+                call.respond(lagerstatus)
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,

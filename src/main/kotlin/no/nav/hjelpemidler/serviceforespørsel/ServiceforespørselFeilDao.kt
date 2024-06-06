@@ -1,13 +1,11 @@
 package no.nav.hjelpemidler.serviceforespørsel
 
-import no.nav.hjelpemidler.database.Configuration
-import no.nav.hjelpemidler.database.list
+import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.models.SfFeil
-import javax.sql.DataSource
 
-class ServiceforespørselFeilDao(private val dataSource: DataSource = Configuration.dataSource) {
+class ServiceforespørselFeilDao(private val tx: JdbcOperations) {
     fun finnSfMedFeil(): List<SfFeil> {
-        return dataSource.list(
+        return tx.list(
             """
                 SELECT ID,
                        SAKSNUMMER,

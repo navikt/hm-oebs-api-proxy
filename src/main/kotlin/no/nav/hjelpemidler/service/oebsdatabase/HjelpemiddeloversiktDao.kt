@@ -1,20 +1,15 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.client.hmdb.HjelpemiddeldatabaseClient
 import no.nav.hjelpemidler.client.hmdb.enums.MediaType
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Product
-import no.nav.hjelpemidler.database.Configuration
-import no.nav.hjelpemidler.database.list
-import no.nav.hjelpemidler.database.singleOrNull
+import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Utlån
 import org.intellij.lang.annotations.Language
-import org.slf4j.LoggerFactory
-import javax.sql.DataSource
 
-class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration.dataSource) {
+class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
         @Language("Oracle")
         val query = """
@@ -36,7 +31,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
             ORDER BY UTLÅNS_DATO DESC
         """.trimIndent()
 
-        val items = dataSource.list(query, mapOf("fnr" to fnr)) { row ->
+        val items = tx.list(query, mapOf("fnr" to fnr)) { row ->
             HjelpemiddelBruker(
                 antall = row.string("ANTALL"),
                 antallEnhet = row.string("ENHET"),
@@ -58,7 +53,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
     }
 
     fun utlånPåIsokode(fnr: String, isokode: String): List<UtlånPåIsokode> {
-        return dataSource.list(
+        return tx.list(
             """
                 SELECT KATEGORI3_NUMMER, UTLÅNS_DATO
                 FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
@@ -76,7 +71,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
     }
 
     fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? {
-        return dataSource.singleOrNull(
+        return tx.singleOrNull(
             """
                 SELECT FNR, ARTIKKELNUMMER, SERIE_NUMMER, UTLÅNS_DATO
                 FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
@@ -97,7 +92,7 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
     }
 
     fun utlånPåArtnr(artnr: String): List<String> {
-        return dataSource.list(
+        return tx.list(
             """
             SELECT FNR  
             FROM apps.XXRTV_DIGIHOT_HJM_UTLAN_FNR_V
@@ -152,10 +147,5 @@ class HjelpemiddeloversiktDao(private val dataSource: DataSource = Configuration
             item.hmdbKategoriKortnavn = produkt.isoCategoryTitleShort
         }
         return item
-    }
-
-    companion object {
-        private val log = LoggerFactory.getLogger("HjelpemiddeloversiktDao")
-        private val log2 = KotlinLogging.logger {}
     }
 }

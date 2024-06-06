@@ -1,12 +1,10 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
-import no.nav.hjelpemidler.database.Configuration
-import no.nav.hjelpemidler.database.list
+import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.models.TittelForHmsNr
 import org.intellij.lang.annotations.Language
-import javax.sql.DataSource
 
-class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataSource) {
+class TittelForHmsnrDao(private val tx: JdbcOperations) {
     fun hentTittelForHmsnr(hmsnr: String): TittelForHmsNr? {
         return hentTittelForHmsnrs(listOf(hmsnr).toSet()).firstOrNull()
     }
@@ -33,7 +31,7 @@ class TittelForHmsnrDao(private val dataSource: DataSource = Configuration.dataS
         // Put hmsnrs.count() number of comma separated question marks in the query IN-clause
         query = query.replace("(?)", "(" + (0 until hmsnrs.count()).joinToString { "?" } + ")")
 
-        return dataSource.list(query, *hmsnrs.toTypedArray()) { row ->
+        return tx.list(query, *hmsnrs.toTypedArray()) { row ->
             TittelForHmsNr(
                 hmsNr = row.string("ARTIKKEL"),
                 type = row.string("BRUKERARTIKKELTYPE"),

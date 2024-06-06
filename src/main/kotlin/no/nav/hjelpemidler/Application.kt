@@ -22,17 +22,18 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.path
 import io.ktor.server.routing.routing
 import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.database.Database
+import no.nav.hjelpemidler.database.createDataSource
 import no.nav.hjelpemidler.metrics.Prometheus
-import no.nav.hjelpemidler.serviceforespørsel.ServiceforespørselFeilDao
+import no.nav.hjelpemidler.models.SfFeil
 import org.slf4j.event.Level
 
-private val logg = KotlinLogging.logger {}
-private val sikkerlogg = KotlinLogging.logger("tjenestekall")
+private val log = KotlinLogging.logger {}
 
 fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module() {
-    logg.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}}" }
+    log.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}}" }
     environment.monitor.subscribe(ApplicationStarted) {
         // loggFeilendeSf()
     }
@@ -62,11 +63,23 @@ fun Application.module() {
         registry = Prometheus.registry
     }
 
+    val database = createDataSource {
+        jdbcUrl = Configuration.OEBS_DB_JDBC_URL
+        username = Configuration.OEBS_DB_USERNAME
+        password = Configuration.OEBS_DB_PASSWORD
+        driverClassName = "oracle.jdbc.OracleDriver"
+        connectionTimeout = 1000
+        idleTimeout = 10001
+        maxLifetime = 30001
+        maximumPoolSize = 10
+        minimumIdle = 1
+    }.let(::Database)
+
     routing {
-        internal()
-        hjelpemiddelsiden()
-        saksbehandling()
-        felles()
+        internal(database)
+        hjelpemiddelsiden(database)
+        saksbehandling(database)
+        felles(database)
     }
 }
 
@@ -78,10 +91,10 @@ fun ApplicationCall.getTokenInfo(): Map<String, JsonNode> = authentication
     } ?: error("No JWT principal found in request")
 
 private fun loggFeilendeSf() {
-    logg.info { "Henter feilende SF-er" }
-    val listeAvFeilendeSf = ServiceforespørselFeilDao().finnSfMedFeil()
-    logg.info { "Antall feilende SF: ${listeAvFeilendeSf.size}" }
+    log.info { "Henter feilende SF-er" }
+    val listeAvFeilendeSf = emptyList<SfFeil>() // ServiceforespørselFeilDao().finnSfMedFeil()
+    log.info { "Antall feilende SF: ${listeAvFeilendeSf.size}" }
     listeAvFeilendeSf.map {
-        logg.info { "Feilende SF: $it" }
+        log.info { "Feilende SF: $it" }
     }
 }

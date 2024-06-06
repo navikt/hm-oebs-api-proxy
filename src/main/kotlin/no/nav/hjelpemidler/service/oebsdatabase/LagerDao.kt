@@ -1,25 +1,22 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
-import no.nav.hjelpemidler.database.Configuration
-import no.nav.hjelpemidler.database.list
+import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.lagerstatus.KommuneOppslag
 import org.intellij.lang.annotations.Language
-import javax.sql.DataSource
 
-class LagerDao(
-    private val kommuneOppslag: KommuneOppslag,
-    private val dataSource: DataSource = Configuration.dataSource,
-) {
-    fun lagerStatus(hmsnr: String): List<LagerStatus> {
-        return lagerStatusInner(hmsnr)
+class LagerDao(private val tx: JdbcOperations) {
+    private val kommuneOppslag by lazy(::KommuneOppslag)
+
+    fun hentLagerstatus(hmsnr: String): List<Lagerstatus> {
+        return hentLagerstatus(hmsnr, null)
     }
 
-    fun lagerStatusSentral(kommunenummer: String, hmsnr: String): LagerStatus? {
+    fun hentLagerstatusForSentral(kommunenummer: String, hmsnr: String): Lagerstatus? {
         val orgNavn = kommuneOppslag.hentOrgNavn(kommunenummer) ?: return null
-        return lagerStatusInner(hmsnr, orgNavn).firstOrNull()
+        return hentLagerstatus(hmsnr, orgNavn).firstOrNull()
     }
 
-    private fun lagerStatusInner(hmsnr: String, orgNavn: String? = null): List<LagerStatus> {
+    private fun hentLagerstatus(hmsnr: String, orgNavn: String? = null): List<Lagerstatus> {
         @Language("Oracle")
         var sql = """
             SELECT organisasjons_id,
@@ -48,11 +45,11 @@ class LagerDao(
             sql += " AND organisasjons_navn = :orgNavn"
         }
 
-        return dataSource.list(
+        return tx.list(
             sql,
             mapOf("hmsnr" to hmsnr, "orgNavn" to orgNavn),
         ) { row ->
-            LagerStatus(
+            Lagerstatus(
                 erPåLager = (
                     (row.intOrNull("fysisk") ?: 0) +
                         (row.intOrNull("bestillinger") ?: 0) +
@@ -87,7 +84,7 @@ class LagerDao(
     }
 }
 
-data class LagerStatus(
+data class Lagerstatus(
     val erPåLager: Boolean,
 
     val organisasjons_id: Int,

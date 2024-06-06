@@ -2,16 +2,17 @@ package no.nav.hjelpemidler.service.oebsdatabase
 
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import no.nav.hjelpemidler.database.OracleTestHelper
+import kotlinx.coroutines.test.runTest
+import no.nav.hjelpemidler.database.testDatabase
 import no.nav.hjelpemidler.models.Fødselsnummer
 import kotlin.test.Test
 
 class BrukernummerDaoTest {
-    private val brukernummerDao = BrukernummerDao(OracleTestHelper.dataSource)
-
     @Test
-    fun `Skal hente brukernummer for fnr`() {
-        val brukernummer = brukernummerDao.hentBrukernummer(Fødselsnummer(("12345678910"))).shouldNotBeNull()
+    fun `Skal hente brukernummer for fnr`() = runTest {
+        val brukernummer = testDatabase.transaction {
+            brukernummerDao.hentBrukernummer(Fødselsnummer(("12345678910"))).shouldNotBeNull()
+        }
         brukernummer.brukernummer shouldBe "1"
     }
 }

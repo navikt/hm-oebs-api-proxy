@@ -1,4 +1,3 @@
-
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLIntrospectSchemaTask
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -55,6 +54,7 @@ dependencies {
 
     // Testing
     testImplementation(libs.kotlin.test.junit5)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.ktor.client.mock)
     testRuntimeOnly(libs.h2)

@@ -1,13 +1,11 @@
 package no.nav.hjelpemidler.service.oebsdatabase
 
-import no.nav.hjelpemidler.database.Configuration
-import no.nav.hjelpemidler.database.singleOrNull
+import no.nav.hjelpemidler.database.JdbcOperations
 import java.time.LocalDate
-import javax.sql.DataSource
 
-class BrukerpassDao(private val dataSource: DataSource = Configuration.dataSource) {
+class BrukerpassDao(private val tx: JdbcOperations) {
     fun brukerpassForFnr(fnr: String): Brukerpass {
-        return dataSource.singleOrNull(
+        return tx.singleOrNull(
             """
                 SELECT KONTRAKT_NUMMER, SJEKK_NAVN, START_DATE, END_DATE
                 FROM apps.XXRTV_DIGIHOT_OEBS_BRUKERP_V
