@@ -33,19 +33,19 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
         val items = tx.list(query, mapOf("fnr" to fnr)) { row ->
             HjelpemiddelBruker(
-                antall = row.string("ANTALL"),
-                antallEnhet = row.string("ENHET"),
-                kategoriNummer = row.string("KATEGORI3_NUMMER"),
-                kategori = row.string("KATEGORI3_BESKRIVELSE"),
-                artikkelBeskrivelse = row.string("ARTIKKEL_BESKRIVELSE"),
-                artikkelNr = row.string("ARTIKKELNUMMER"),
-                serieNr = row.stringOrNull("SERIE_NUMMER"),
-                datoUtsendelse = row.stringOrNull("UTLÅNS_DATO"),
-                ordrenummer = row.stringOrNull("ORDRE_NUMMER"),
-                artikkelStatus = row.string("ARTIKKELSTATUS"),
-                utlånsType = row.stringOrNull("UTLÅNS_TYPE"),
-                innleveringsdato = row.stringOrNull("INNLEVERINGSDATO"),
-                oppdatertInnleveringsdato = row.stringOrNull("OPPDATERT_INNLEVERINGSDATO"),
+                antall = row.string("antall"),
+                antallEnhet = row.string("enhet"),
+                kategoriNummer = row.string("kategori3_nummer"),
+                kategori = row.string("kategori3_beskrivelse"),
+                artikkelBeskrivelse = row.string("artikkel_beskrivelse"),
+                artikkelNr = row.string("artikkelnummer"),
+                serieNr = row.stringOrNull("serie_nummer"),
+                datoUtsendelse = row.stringOrNull("utlåns_dato"),
+                ordrenummer = row.stringOrNull("ordre_nummer"),
+                artikkelStatus = row.string("artikkelstatus"),
+                utlånsType = row.stringOrNull("utlåns_type"),
+                innleveringsdato = row.stringOrNull("innleveringsdato"),
+                oppdatertInnleveringsdato = row.stringOrNull("oppdatert_innleveringsdato"),
             )
         }
 
@@ -64,8 +64,8 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             mapOf("fnr" to fnr, "isokode" to isokode),
         ) { row ->
             UtlånPåIsokode(
-                kategoriNummer = row.string("KATEGORI3_NUMMER"),
-                datoUtsendelse = row.string("UTLÅNS_DATO"),
+                kategoriNummer = row.string("kategori3_nummer"),
+                datoUtsendelse = row.string("utlåns_dato"),
             )
         }
     }
@@ -83,10 +83,10 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             mapOf("artnr" to artnr, "serienr" to serienr),
         ) { row ->
             Utlån(
-                fnr = row.string("FNR"),
-                artnr = row.string("ARTIKKELNUMMER"),
-                serienr = row.string("SERIE_NUMMER"),
-                utlånsDato = row.string("UTLÅNS_DATO"),
+                fnr = row.string("fnr"),
+                artnr = row.string("artikkelnummer"),
+                serienr = row.string("serie_nummer"),
+                utlånsDato = row.string("utlåns_dato"),
             )
         }
     }
@@ -100,7 +100,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             """.trimIndent(),
             mapOf("artnr" to artnr),
         ) { row ->
-            row.string("FNR")
+            row.string("fnr")
         }
     }
 

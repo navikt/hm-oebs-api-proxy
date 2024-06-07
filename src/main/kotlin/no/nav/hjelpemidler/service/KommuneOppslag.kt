@@ -32,7 +32,7 @@ class KommuneOppslag {
     }
 }
 
-val lagerMap: Map<String, String> = mapOf(
+private val lagerMap: Map<String, String> = mapOf(
     "01" to "*01 Østfold",
     "03" to "*03 Oslo",
     "04" to "*04 Hedmark",

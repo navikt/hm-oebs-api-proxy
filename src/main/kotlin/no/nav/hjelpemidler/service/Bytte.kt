@@ -14,29 +14,28 @@ fun berikBytteinfo(item: HjelpemiddelBruker) {
     item.kanByttesMedBrukerpass = item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer)
 }
 
-private val byttebareIsokoderForBrukerpass = listOf(
+private val byttebareIsokoderForBrukerpass: List<String> = listOf(
     "123903", // Mobilitetsstokk
     "090312", // Hansker og votter (kjørehansker)
 )
 
-private fun erGyldigIsokodeForBrukerpassbytte(iso: String) = iso.take(6) in byttebareIsokoderForBrukerpass
+private fun erGyldigIsokodeForBrukerpassbytte(iso: String): Boolean = iso.take(6) in byttebareIsokoderForBrukerpass
 
-fun erPermanentUtlån(utlånsType: String?) = utlånsType == UtlånsType.PERMANENT.kode
+fun erPermanentUtlån(utlånsType: String?): Boolean = utlånsType == Utlånstype.PERMANENT.kode
 
 fun erGyldigTidsbestemtUtlån(
     oppdatertInnleveringsdato: String?,
     innleveringsdato: String?,
-    utlånsType: String?,
+    utlånstype: String?,
 ): Boolean {
-    val innleveringsdato = (oppdatertInnleveringsdato ?: innleveringsdato)?.toInnleveringsdato()
-        ?: return false
-    return utlånsType == UtlånsType.TIDSBESTEMT_UTLÅN.kode && LocalDate.now() < innleveringsdato
+    val innleveringsdato = (oppdatertInnleveringsdato ?: innleveringsdato)?.toInnleveringsdato() ?: return false
+    return utlånstype == Utlånstype.TIDSBESTEMT_UTLÅN.kode && LocalDate.now() < innleveringsdato
 }
 
-private val oebsDatoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-private fun String.toInnleveringsdato() = LocalDateTime.parse(this, oebsDatoFormatter).toLocalDate()
+private val oebsDatoFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+private fun String.toInnleveringsdato(): LocalDate = LocalDateTime.parse(this, oebsDatoFormatter).toLocalDate()
 
-enum class UtlånsType(val kode: String) {
+enum class Utlånstype(val kode: String) {
     PERMANENT("P"),
     TIDSBESTEMT_UTLÅN("F"),
     KORTTIDSUTLÅN("K"),

@@ -22,7 +22,6 @@ import no.nav.hjelpemidler.http.createHttpClient
 import no.nav.hjelpemidler.http.logging
 import no.nav.hjelpemidler.isNotProd
 import no.nav.hjelpemidler.jsonMapper
-import no.nav.hjelpemidler.models.Artikkel
 import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.OebsJsonFormat
 import no.nav.hjelpemidler.models.Ordre
@@ -54,7 +53,7 @@ class OebsApiClient(engine: HttpClientEngine) {
             formidlernavn = request.formidlernavn,
             ordretype = OrdreType.BESTILLING,
             saksnummer = request.saksnummer,
-            artikler = request.artikler.map { Artikkel(hmsnr = it.hmsnr, antall = it.antall) },
+            artikler = request.artikler.map { Ordre.Artikkel(hmsnr = it.hmsnr, antall = it.antall) },
             shippinginstructions = when {
                 // Tidligere, når vi ikke sendte inn shippinginstructions, så satte OEBS automatisk formidlernavn som info på ordrelinjene
                 request.forsendelsesinfo.isNullOrBlank() -> request.formidlernavn

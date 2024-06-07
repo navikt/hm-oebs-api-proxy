@@ -10,9 +10,9 @@ data class Ordre(
     val saksnummer: String,
     val artikler: List<Artikkel>,
     val shippinginstructions: String,
-)
-
-data class Artikkel(val hmsnr: String, val antall: String)
+) {
+    data class Artikkel(override val hmsnr: String, override val antall: String) : no.nav.hjelpemidler.models.Artikkel
+}
 
 enum class OrdreType {
     BESTILLING,

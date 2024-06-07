@@ -3,7 +3,6 @@ package no.nav.hjelpemidler.service
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import no.nav.hjelpemidler.database.testTransaction
-import no.nav.hjelpemidler.models.Artikkel
 import no.nav.hjelpemidler.models.Resultat
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Stønadsklasse
@@ -22,8 +21,8 @@ class ServiceforespørselDaoTest {
                     referansenummer = "1",
                     problemsammendrag = "1; terskeleliminator",
                     artikler = listOf(
-                        Artikkel(hmsnr = "1", antall = "1"),
-                        Artikkel(hmsnr = "2", antall = "1"),
+                        Serviceforespørsel.Artikkel(hmsnr = "1", antall = "1"),
+                        Serviceforespørsel.Artikkel(hmsnr = "2", antall = "1"),
                     ),
                 ),
             )

@@ -33,9 +33,9 @@ class TittelForHmsnrDao(private val tx: JdbcOperations) {
 
         return tx.list(query, *hmsnrs.toTypedArray()) { row ->
             TittelForHmsNr(
-                hmsNr = row.string("ARTIKKEL"),
-                type = row.string("BRUKERARTIKKELTYPE"),
-                title = row.string("ARTIKKEL_BESKRIVELSE"),
+                hmsNr = row.string("artikkel"),
+                type = row.string("brukerartikkeltype"),
+                title = row.string("artikkel_beskrivelse"),
             )
         }
     }

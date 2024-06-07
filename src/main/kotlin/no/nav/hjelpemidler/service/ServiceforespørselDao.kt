@@ -53,15 +53,15 @@ class ServiceforespørselDao(private val tx: JdbcOperations) {
             """.trimIndent(),
         ) { row ->
             ServiceforespørselFeil(
-                id = row.stringOrNull("ID"),
-                saksnummer = row.stringOrNull("SAKSNUMMER"),
-                referansenummer = row.stringOrNull("REFERANSENUMMER"),
-                processed = row.stringOrNull("PROCESSED"),
-                sfNummer = row.stringOrNull("SF_NUMMER"),
-                feilmelding = row.stringOrNull("FEILMELDING"),
-                kommentar = row.stringOrNull("KOMMENTAR"),
-                creationDate = row.stringOrNull("CREATION_DATE"),
-                lastUpdateDate = row.stringOrNull("LAST_UPDATE_DATE"),
+                id = row.stringOrNull("id"),
+                saksnummer = row.stringOrNull("saksnummer"),
+                referansenummer = row.stringOrNull("referansenummer"),
+                processed = row.stringOrNull("processed"),
+                sfNummer = row.stringOrNull("sf_nummer"),
+                feilmelding = row.stringOrNull("feilmelding"),
+                kommentar = row.stringOrNull("kommentar"),
+                creationDate = row.stringOrNull("creation_date"),
+                lastUpdateDate = row.stringOrNull("last_update_date"),
             )
         }
     }

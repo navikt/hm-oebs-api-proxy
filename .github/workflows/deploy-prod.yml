@@ -1,4 +1,4 @@
-name: Deploy til prod-fss
+name: Deploy til prod-gcp
 
 on:
   release:
@@ -6,43 +6,13 @@ on:
       - published
 
 jobs:
-  deploy-prod:
+  deploy:
     name: Deploy til prod-fss
-    runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       id-token: write
-
-    steps:
-      - name: Sjekk ut koden
-        uses: actions/checkout@v4
-
-      - name: NAIS-login
-        uses: nais/login@v0
-        id: nais-login
-        with:
-          team: teamdigihot
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-
-      - name: Definer release tag
-        env:
-          VERSION_TAG: ${{ github.event.release.tag_name }}
-          REGISTRY: ${{ steps.nais-login.outputs.registry }}
-          APP: ${{ github.event.repository.name }}
-        run: |
-          IMAGE=$REGISTRY/$APP:$VERSION_TAG
-          echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
-          echo $IMAGE
-
-      - name: Deploy til prod-fss
-        uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-fss
-          RESOURCE: .nais/nais-prod.yml
-
-      - name: Etter deploy
-        uses: navikt/digihot-deploy/actions/post-production@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: navikt/hm-workflows/.github/workflows/deploy-prod.yaml@main
+    with:
+      manifest: .nais/nais-prod.yaml
+      cluster: prod-fss
+    secrets: inherit

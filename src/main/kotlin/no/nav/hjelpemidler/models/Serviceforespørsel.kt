@@ -10,9 +10,11 @@ data class Serviceforespørsel(
     val jobId: String = "-1",
     val problemsammendrag: String? = null,
     val artikler: List<Artikkel>? = null,
-)
+) {
+    data class Artikkel(override val hmsnr: String, override val antall: String) : no.nav.hjelpemidler.models.Artikkel
+}
 
-enum class Stønadsklasse(stønadsklasse: String) {
+enum class Stønadsklasse(val stønadsklasse: String) {
     HJARAN("Hjelpemidler arbeidsliv annet"),
     HJARAU("Hjelpemidler arbeidsliv arbeidstaker utlån"),
     HJARSU("Hjelpemidler arbeidsliv selvstendig næringsdrivende' utlån"),
@@ -27,7 +29,7 @@ enum class Stønadsklasse(stønadsklasse: String) {
     HJDAAK("Hjelpemidler dagligliv aktivitet"),
 }
 
-enum class Resultat(resultat: String) {
+enum class Resultat(val resultat: String) {
     I("Innvilget"),
     DI("Delvis innvilget"),
     IM("Innvilget muntlig"),

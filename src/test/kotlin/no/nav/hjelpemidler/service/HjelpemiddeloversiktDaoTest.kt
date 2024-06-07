@@ -12,7 +12,7 @@ import kotlin.test.Test
 class HjelpemiddeloversiktDaoTest {
     @Test
     fun `Skal sette gyldig bytte for permanent utlån`() {
-        val item = item(type = UtlånsType.PERMANENT)
+        val item = item(type = Utlånstype.PERMANENT)
         berikBytteinfo(item)
         assertTrue(item.kanByttes!!)
     }
@@ -20,7 +20,7 @@ class HjelpemiddeloversiktDaoTest {
     @Test
     fun `Skal sette kanByttes false for korttidsutlån`() {
         val item = item(
-            type = UtlånsType.KORTTIDSUTLÅN,
+            type = Utlånstype.KORTTIDSUTLÅN,
             innlevering = LocalDate.now().plusDays(1),
         )
         berikBytteinfo(item)
@@ -29,7 +29,7 @@ class HjelpemiddeloversiktDaoTest {
 
     @Test
     fun `Skal sette kanByttes false ved tidsbestemt utlån som er utgått`() {
-        val item = item(innlevering = LocalDate.now().minusDays(1), type = UtlånsType.TIDSBESTEMT_UTLÅN)
+        val item = item(innlevering = LocalDate.now().minusDays(1), type = Utlånstype.TIDSBESTEMT_UTLÅN)
         berikBytteinfo(item)
         assertFalse(item.kanByttes!!)
     }
@@ -39,7 +39,7 @@ class HjelpemiddeloversiktDaoTest {
         val item = item(
             innlevering = LocalDate.now().minusDays(1),
             oppdatertInnlevering = LocalDate.now().plusDays(1),
-            type = UtlånsType.TIDSBESTEMT_UTLÅN,
+            type = Utlånstype.TIDSBESTEMT_UTLÅN,
         )
         berikBytteinfo(item)
         assertTrue(item.kanByttes!!)
@@ -48,7 +48,7 @@ class HjelpemiddeloversiktDaoTest {
     @Test
     fun `Skal være mulig for brukerpass å bytte hjelpemidler innenfor godtatt isokode`() {
         val item = item(
-            type = UtlånsType.PERMANENT,
+            type = Utlånstype.PERMANENT,
             kategoriNummer = "123903",
 
         )
@@ -60,7 +60,7 @@ class HjelpemiddeloversiktDaoTest {
     @Test
     fun `Skal ikke være mulig for brukerpass å bytte hjelpemidler utenfor godtatt isokode`() {
         val item = item(
-            type = UtlånsType.PERMANENT,
+            type = Utlånstype.PERMANENT,
             kategoriNummer = "111111",
 
         )
@@ -71,7 +71,7 @@ class HjelpemiddeloversiktDaoTest {
 }
 
 private fun item(
-    type: UtlånsType = UtlånsType.PERMANENT,
+    type: Utlånstype = Utlånstype.PERMANENT,
     innlevering: LocalDate? = LocalDate.now(),
     oppdatertInnlevering: LocalDate? = null,
     kategoriNummer: String = "",

@@ -6,7 +6,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.jackson.JacksonConverter
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.install
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
@@ -36,9 +35,13 @@ fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module() {
     log.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}}" }
+
+    /*
     environment.monitor.subscribe(ApplicationStarted) {
-        // loggFeilendeSf()
+        loggFeilendeServiceforespørsler()
     }
+     */
+
     installAuthentication()
 
     install(ContentNegotiation) {

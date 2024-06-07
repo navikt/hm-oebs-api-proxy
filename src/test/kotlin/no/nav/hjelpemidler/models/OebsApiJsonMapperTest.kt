@@ -9,18 +9,18 @@ class OebsApiJsonMapperTest {
         val oebsJsonFormat = OebsJsonFormat(
             Ordre(
                 "04331234565",
-                "Navn navnesen",
-                saksnummer = "1234",
+                "Formidler Navn",
+                saksnummer = "1337",
                 artikler = listOf(
-                    Artikkel("1111", "1"),
-                    Artikkel("2222", "2"),
+                    Ordre.Artikkel("1111", "1"),
+                    Ordre.Artikkel("2222", "2"),
                 ),
                 shippinginstructions = "Skal til XK-lager",
             ),
         )
 
         assertEquals(
-            "{\"fodselsnummer\":\"04331234565\",\"formidlernavn\":\"Navn navnesen\",\"ordretype\":\"BESTILLING\",\"saksnummer\":\"1234\",\"artikler\":[{\"hmsnr\":\"1111\",\"antall\":\"1\"},{\"hmsnr\":\"2222\",\"antall\":\"2\"}],\"shippinginstructions\":\"Skal til XK-lager\"}",
+            "{\"fodselsnummer\":\"04331234565\",\"formidlernavn\":\"Formidler Navn\",\"ordretype\":\"BESTILLING\",\"saksnummer\":\"1337\",\"artikler\":[{\"hmsnr\":\"1111\",\"antall\":\"1\"},{\"hmsnr\":\"2222\",\"antall\":\"2\"}],\"shippinginstructions\":\"Skal til XK-lager\"}",
             oebsJsonFormat.jsonMelding,
         )
     }

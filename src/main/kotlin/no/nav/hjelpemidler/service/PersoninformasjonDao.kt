@@ -27,9 +27,9 @@ class PersoninformasjonDao(private val tx: JdbcOperations) {
                 leveringKommune = row.stringOrNull("leverings_kommune") ?: "",
                 leveringPostnr = row.stringOrNull("leverings_postnummer") ?: "",
                 leveringBy = row.stringOrNull("leverings_by") ?: "",
-                primaerAdr = row.string("primaer_adr"), // Y / N
+                primaerAdr = row.string("primaer_adr"), // Y | N
                 bydel = row.stringOrNull("bydel"),
-                aktiv = row.stringOrNull("status_brukernr") == "A" && row.stringOrNull("status_fnr") == "A",
+                aktiv = row.stringOrNull("status_brukernr") == "A" && row.stringOrNull("status_fnr") == "A", // A | I
             )
         }
     }

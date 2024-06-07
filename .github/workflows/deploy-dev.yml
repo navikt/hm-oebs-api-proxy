@@ -1,4 +1,4 @@
-name: Bygg og deploy til dev-fss
+name: Bygg, deploy til dev-fss og lag release
 
 on:
   push:
@@ -12,112 +12,13 @@ on:
 
 jobs:
   build:
-    name: Bygg og deploy til dev-fss
-    runs-on: ubuntu-latest
+    name: Bygg, deploy til dev-fss og lag release
     permissions:
+      packages: write
       contents: write
       id-token: write
-
-    steps:
-      - name: Sjekk ut koden
-        uses: actions/checkout@v4
-
-      - name: Valider Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v3
-
-      - name: Sett opp Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: 21
-          distribution: temurin
-
-      - name: Sett opp Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Bygg applikasjon
-        run: ./gradlew build --no-daemon
-
-      - name: Last opp testrapport
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: testrapport
-          path: |
-            **/build/reports/
-            **/build/test-results/
-
-      - name: Før deploy
-        uses: navikt/digihot-deploy/actions/pre-deploy@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Bygg og push Docker image
-        uses: nais/docker-build-push@v0
-        id: docker-build-push
-        with:
-          team: teamdigihot
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-          tag: ${{ env.VERSION_TAG }}
-
-      - name: Deploy til dev-fss
-        uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-fss
-          RESOURCE: .nais/nais-dev.yml
-          IMAGE: ${{steps.docker-build-push.outputs.image}}
-
-      - name: Etter deploy
-        if: github.ref == 'refs/heads/main'
-        uses: navikt/digihot-deploy/actions/post-deploy@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Lag release
-        if: github.ref == 'refs/heads/main'
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.VERSION_TAG }}
-          release_name: ${{ env.APPLICATION }} ${{ env.VERSION_TAG }}
-          body: ${{ env.CHANGE_LOG }}
-          draft: true
-          prerelease: false
-
-    outputs:
-      image: ${{ steps.docker-build-push.outputs.image }}
-
-  trivy-imagescan:
-    name: Scan Docker image med Trivy
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-      actions: read
-      id-token: write
-
-    steps:
-      - name: NAIS-login
-        uses: nais/login@v0
-        with:
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          team: teamdigihot
-
-      - name: Kjør Trivy vulnerability scanner på Docker image
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ needs.build.outputs.image }}
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-
-      - name: Last opp Trivy-resultat
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
+    uses: navikt/hm-workflows/.github/workflows/deploy-dev.yaml@main
+    with:
+      manifest: .nais/nais-dev.yaml
+      cluster: dev-fss
+    secrets: inherit

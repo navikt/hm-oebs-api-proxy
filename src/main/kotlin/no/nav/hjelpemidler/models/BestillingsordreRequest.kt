@@ -4,8 +4,8 @@ data class BestillingsordreRequest(
     val fodselsnummer: String,
     val formidlernavn: String,
     val saksnummer: String,
-    val artikler: List<OrdreArtikkel>,
+    val artikler: List<Artikkel>,
     val forsendelsesinfo: String? = null,
-)
-
-data class OrdreArtikkel(val hmsnr: String, val antall: String)
+) {
+    data class Artikkel(override val hmsnr: String, override val antall: String) : no.nav.hjelpemidler.models.Artikkel
+}

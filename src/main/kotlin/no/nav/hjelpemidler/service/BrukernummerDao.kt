@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler.service
 
 import no.nav.hjelpemidler.database.JdbcOperations
+import no.nav.hjelpemidler.models.Brukernummer
 import no.nav.hjelpemidler.models.Fødselsnummer
 
 class BrukernummerDao(private val tx: JdbcOperations) {
@@ -14,11 +15,7 @@ class BrukernummerDao(private val tx: JdbcOperations) {
             """.trimIndent(),
             mapOf("fnr" to fnr.value),
         ) { row ->
-            Brukernummer(
-                brukernummer = row.string("BRUKER_NUMMER"),
-            )
+            Brukernummer(row.string("bruker_nummer"))
         }
     }
 }
-
-data class Brukernummer(val brukernummer: String)

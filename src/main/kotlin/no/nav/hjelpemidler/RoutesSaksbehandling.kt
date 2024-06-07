@@ -13,12 +13,12 @@ import io.ktor.server.routing.post
 import no.nav.hjelpemidler.client.OebsApiClient
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.models.BestillingsordreRequest
+import no.nav.hjelpemidler.models.Brukernummer
 import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.models.receiveFødselsnummer
-import no.nav.hjelpemidler.service.Brukernummer
 
 private val log = KotlinLogging.logger {}
 
@@ -92,6 +92,11 @@ fun Route.saksbehandling(database: Database) {
 
         post("/harUtlantIsokode") {
             try {
+                data class HarUtlåntIsokodeRequest(
+                    val fnr: Fødselsnummer,
+                    val isokode: String,
+                )
+
                 val request = call.receive<HarUtlåntIsokodeRequest>()
                 val harUtlåntIsokode = database.transaction {
                     hjelpemiddeloversiktDao.utlånPåIsokode(request.fnr.value, request.isokode)
@@ -105,10 +110,20 @@ fun Route.saksbehandling(database: Database) {
 
         post("/utlanSerienrArtnr") {
             try {
+                data class UtlånPåArtnrOgSerienrRequest(
+                    val artnr: String,
+                    val serienr: String,
+                )
+
                 val req = call.receive<UtlånPåArtnrOgSerienrRequest>()
                 val artnr = req.artnr
                 val serienr = req.serienr
                 val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
+
+                data class UtlånPåArtnrOgSerienrResponse(
+                    val utlån: Utlån?,
+                )
+
                 call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
             } catch (e: Exception) {
                 log.error(e) { "Noe gikk feil med sjekk av utlån på artnr og serienr" }
@@ -130,17 +145,3 @@ fun Route.saksbehandling(database: Database) {
         }
     }
 }
-
-private data class HarUtlåntIsokodeRequest(
-    val fnr: Fødselsnummer,
-    val isokode: String,
-)
-
-private data class UtlånPåArtnrOgSerienrRequest(
-    val artnr: String,
-    val serienr: String,
-)
-
-private data class UtlånPåArtnrOgSerienrResponse(
-    val utlån: Utlån?,
-)

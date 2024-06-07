@@ -6,13 +6,12 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.models.BestillingsordreRequest
-import no.nav.hjelpemidler.models.OrdreArtikkel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class OebsApiClientTest {
     @Test
-    fun `Oppretter ordre i oebs`() {
+    fun `Oppretter ordre i OEBS`() {
         val engine = MockEngine {
             respond(
                 """{ "OutputParameters": { "P_RETUR_MELDING": "foobar" } }""",
@@ -29,7 +28,7 @@ class OebsApiClientTest {
                     fodselsnummer = "15084300133",
                     formidlernavn = "SEDAT KRONJUVEL",
                     saksnummer = "1",
-                    artikler = listOf(OrdreArtikkel(hmsnr = "1", antall = "1")),
+                    artikler = listOf(BestillingsordreRequest.Artikkel(hmsnr = "1", antall = "1")),
                 ),
             )
         }
