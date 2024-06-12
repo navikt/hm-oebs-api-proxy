@@ -65,9 +65,6 @@ spec:
         - application: hm-forslagsmotor-tilbehoer
           namespace: teamdigihot
           cluster: dev-gcp
-        - application: hm-saksberiker
-          namespace: teamdigihot
-          cluster: dev-gcp
         - application: hm-saksfordeling
           namespace: teamdigihot
           cluster: dev-gcp
