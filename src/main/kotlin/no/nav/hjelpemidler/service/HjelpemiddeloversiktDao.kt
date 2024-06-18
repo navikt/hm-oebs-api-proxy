@@ -5,31 +5,32 @@ import no.nav.hjelpemidler.client.GrunndataClient
 import no.nav.hjelpemidler.client.hmdb.enums.MediaType
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Product
 import no.nav.hjelpemidler.database.JdbcOperations
+import no.nav.hjelpemidler.database.sql.Sql
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Utlån
-import org.intellij.lang.annotations.Language
 
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
-        @Language("Oracle")
-        val query = """
-            SELECT antall,
-                   enhet,
-                   kategori3_nummer,
-                   kategori3_beskrivelse,
-                   artikkel_beskrivelse,
-                   artikkelnummer,
-                   serie_nummer,
-                   utlåns_dato,
-                   ordre_nummer,
-                   artikkelstatus,
-                   utlåns_type,
-                   innleveringsdato,
-                   oppdatert_innleveringsdato
-            FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
-            WHERE fnr = :fnr
-            ORDER BY utlåns_dato DESC
-        """.trimIndent()
+        val query = Sql(
+            """
+                SELECT antall,
+                       enhet,
+                       kategori3_nummer,
+                       kategori3_beskrivelse,
+                       artikkel_beskrivelse,
+                       artikkelnummer,
+                       serie_nummer,
+                       utlåns_dato,
+                       ordre_nummer,
+                       artikkelstatus,
+                       utlåns_type,
+                       innleveringsdato,
+                       oppdatert_innleveringsdato
+                FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+                WHERE fnr = :fnr
+                ORDER BY utlåns_dato DESC
+            """.trimIndent(),
+        )
 
         val items = tx.list(query, mapOf("fnr" to fnr)) { row ->
             HjelpemiddelBruker(
@@ -94,9 +95,9 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
     fun utlånPåArtnr(artnr: String): List<String> {
         return tx.list(
             """
-            SELECT fnr  
-            FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
-            WHERE artikkelnummer = :artnr
+                SELECT fnr  
+                FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+                WHERE artikkelnummer = :artnr
             """.trimIndent(),
             mapOf("artnr" to artnr),
         ) { row ->

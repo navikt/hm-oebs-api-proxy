@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
+import no.nav.hjelpemidler.database.Oracle
 import no.nav.hjelpemidler.database.createDataSource
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.Fødselsnummer
@@ -51,10 +52,11 @@ fun Application.module() {
     install(CallLogging) {
         level = Level.TRACE
         filter { call ->
-            !call.request.path().startsWith("/internal") &&
-                !call.request.path().startsWith("/isalive") &&
-                !call.request.path().startsWith("/isready") &&
-                !call.request.path().startsWith("/metrics")
+            val path = call.request.path()
+            !path.startsWith("/internal") &&
+                !path.startsWith("/isalive") &&
+                !path.startsWith("/isready") &&
+                !path.startsWith("/metrics")
         }
         callIdMdc("correlationId")
     }
@@ -68,16 +70,10 @@ fun Application.module() {
         registry = Prometheus.registry
     }
 
-    val database = createDataSource {
+    val database = createDataSource(Oracle) {
         jdbcUrl = Configuration.OEBS_DB_JDBC_URL
         username = Configuration.OEBS_DB_USERNAME
         password = Configuration.OEBS_DB_PASSWORD
-        driverClassName = "oracle.jdbc.OracleDriver"
-        connectionTimeout = 1000
-        idleTimeout = 10001
-        maxLifetime = 30001
-        maximumPoolSize = 10
-        minimumIdle = 1
     }.let(::Database)
 
     routing {

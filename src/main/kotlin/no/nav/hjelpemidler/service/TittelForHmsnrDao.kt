@@ -1,8 +1,8 @@
 package no.nav.hjelpemidler.service
 
 import no.nav.hjelpemidler.database.JdbcOperations
+import no.nav.hjelpemidler.database.sql.Sql
 import no.nav.hjelpemidler.models.TittelForHmsNr
-import org.intellij.lang.annotations.Language
 
 class TittelForHmsnrDao(private val tx: JdbcOperations) {
     fun hentTittelForHmsnr(hmsnr: String): TittelForHmsNr? {
@@ -20,18 +20,25 @@ class TittelForHmsnrDao(private val tx: JdbcOperations) {
     }
 
     private fun helper(hmsnrs: Set<String>): List<TittelForHmsNr> {
-        @Language("Oracle")
-        var query =
+        var query = Sql(
             """
                 SELECT artikkel, brukerartikkeltype, artikkel_beskrivelse
                 FROM apps.xxrtv_digihot_oebs_art_beskr_v
                 WHERE artikkel IN (?)
-            """.trimIndent()
+            """.trimIndent(),
+        )
 
-        // Put hmsnrs.count() number of comma separated question marks in the query IN-clause
-        query = query.replace("(?)", "(" + (0 until hmsnrs.count()).joinToString { "?" } + ")")
+        val queryParameters = hmsnrs
+            .mapIndexed { index, hmsnr -> "a$index" to hmsnr }
+            .toMap()
 
-        return tx.list(query, *hmsnrs.toTypedArray()) { row ->
+        // Put hmsnrs.size number of comma separated named parameters in the query IN-clause
+        query = query.replace(
+            "(?)",
+            queryParameters.keys.joinToString(separator = ", ", prefix = "(", postfix = ")") { ":$it" },
+        )
+
+        return tx.list(query, queryParameters) { row ->
             TittelForHmsNr(
                 hmsNr = row.string("artikkel"),
                 type = row.string("brukerartikkeltype"),

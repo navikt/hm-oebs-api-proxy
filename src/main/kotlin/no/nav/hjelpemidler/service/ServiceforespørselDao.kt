@@ -33,7 +33,7 @@ class ServiceforespørselDao(private val tx: JdbcOperations) {
                     else -> jsonMapper.writeValueAsString(sf.artikler)
                 },
             ),
-        )
+        ).actualRowCount
     }
 
     fun finnFeilendeServiceforespørsler(): List<ServiceforespørselFeil> {

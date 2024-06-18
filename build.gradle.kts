@@ -36,9 +36,12 @@ dependencies {
     implementation(libs.graphql.client.jackson)
 
     // Database
-    implementation(libs.kotliquery)
-    implementation(libs.hikaricp)
-    runtimeOnly(libs.ojdbc11)
+    implementation(libs.hm.database)
+    implementation(libs.hm.database) {
+        capabilities {
+            requireCapability("no.nav.hjelpemidler:hm-database-oracle")
+        }
+    }
 
     // Ktor
     implementation(libs.ktor.serialization.jackson)
@@ -53,11 +56,15 @@ dependencies {
     implementation(libs.ktor.server.netty)
 
     // Testing
+    testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotlin.test.junit5)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.kotest.assertions.core)
-    testImplementation(libs.ktor.client.mock)
-    testRuntimeOnly(libs.h2)
+    testImplementation(libs.mockk)
+    testImplementation(libs.hm.database) {
+        capabilities {
+            requireCapability("no.nav.hjelpemidler:hm-database-h2")
+        }
+    }
 }
 
 spotless {

@@ -1,9 +1,6 @@
 package no.nav.hjelpemidler.database
 
 import com.zaxxer.hikari.HikariDataSource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotliquery.sessionOf
 import no.nav.hjelpemidler.service.BrukernummerDao
 import no.nav.hjelpemidler.service.BrukerpassDao
 import no.nav.hjelpemidler.service.HjelpemiddeloversiktDao
@@ -15,13 +12,11 @@ import java.io.Closeable
 import javax.sql.DataSource
 
 class Database(private val dataSource: DataSource) : Closeable {
-    suspend fun <T> transaction(block: DaoProvider.() -> T): T = withContext(Dispatchers.IO) {
-        sessionOf(dataSource, strict = true).use { session ->
-            session.transaction { block(DaoProvider(SessionJdbcOperations(it))) }
-        }
+    suspend fun <T> transaction(block: DaoProvider.() -> T): T = transactionAsync(dataSource) {
+        DaoProvider(it).block()
     }
 
-    suspend fun isValid(): Boolean = withContext(Dispatchers.IO) {
+    suspend fun isValid(): Boolean = withDatabaseContext {
         dataSource.connection.use { it.isValid(10) }
     }
 

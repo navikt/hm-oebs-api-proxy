@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler.service
 
 import no.nav.hjelpemidler.database.JdbcOperations
-import org.intellij.lang.annotations.Language
+import no.nav.hjelpemidler.database.sql.Sql
 
 class LagerDao(private val tx: JdbcOperations) {
     private val kommuneOppslag by lazy(::KommuneOppslag)
@@ -16,32 +16,33 @@ class LagerDao(private val tx: JdbcOperations) {
     }
 
     private fun hentLagerstatus(hmsnr: String, orgNavn: String? = null): List<Lagerstatus> {
-        @Language("Oracle")
-        var sql = """
-            SELECT organisasjons_id,
-                   organisasjons_navn,
-                   artikkelnummer,
-                   artikkelid,
-                   fysisk,
-                   tilgjengeligatt,
-                   tilgjengeligroo,
-                   tilgjengelig,
-                   behovsmeldt,
-                   reservert,
-                   restordre,
-                   bestillinger,
-                   anmodning,
-                   intanmodning,
-                   forsyning,
-                   sortiment,
-                   lagervare,
-                   minmax
-            FROM apps.xxrtv_digihot_utvid_art_v
-            WHERE artikkelnummer = :hmsnr
-        """.trimIndent()
+        var sql = Sql(
+            """
+                SELECT organisasjons_id,
+                       organisasjons_navn,
+                       artikkelnummer,
+                       artikkelid,
+                       fysisk,
+                       tilgjengeligatt,
+                       tilgjengeligroo,
+                       tilgjengelig,
+                       behovsmeldt,
+                       reservert,
+                       restordre,
+                       bestillinger,
+                       anmodning,
+                       intanmodning,
+                       forsyning,
+                       sortiment,
+                       lagervare,
+                       minmax
+                FROM apps.xxrtv_digihot_utvid_art_v
+                WHERE artikkelnummer = :hmsnr
+            """.trimIndent(),
+        )
 
         if (orgNavn != null) {
-            sql += " AND organisasjons_navn = :orgNavn"
+            sql = Sql("$sql AND organisasjons_navn = :orgNavn")
         }
 
         return tx.list(
