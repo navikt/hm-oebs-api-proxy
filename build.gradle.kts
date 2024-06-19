@@ -20,20 +20,13 @@ dependencies {
 
     // Logging
     implementation(libs.kotlin.logging)
-    runtimeOnly(libs.logback.classic)
-    runtimeOnly(libs.logstash.logback.encoder) {
-        exclude("com.fasterxml.jackson.core")
-    }
+    runtimeOnly(libs.bundles.logging.runtime)
 
     // Jackson
-    implementation(libs.jackson.datatype.jsr310)
+    implementation(libs.bundles.jackson)
 
-    // GraphQL
-    implementation(libs.graphql.ktor.client) {
-        exclude("com.expediagroup", "graphql-kotlin-client-serialization") // prefer jackson
-        exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
-    }
-    implementation(libs.graphql.client.jackson)
+    // Ktor Server
+    implementation(libs.bundles.ktor.server)
 
     // Database
     implementation(libs.hm.database)
@@ -43,23 +36,15 @@ dependencies {
         }
     }
 
-    // Ktor
-    implementation(libs.ktor.serialization.jackson)
-
-    // Ktor Server
-    implementation(libs.ktor.server.auth.jwt)
-    implementation(libs.ktor.server.call.id)
-    implementation(libs.ktor.server.call.logging)
-    implementation(libs.ktor.server.content.negotiation)
-    implementation(libs.ktor.server.core)
-    implementation(libs.ktor.server.metrics.micrometer)
-    implementation(libs.ktor.server.netty)
+    // GraphQL
+    implementation(libs.graphql.ktor.client) {
+        exclude("com.expediagroup", "graphql-kotlin-client-serialization") // prefer jackson
+        exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
+    }
+    implementation(libs.graphql.client.jackson)
 
     // Testing
-    testImplementation(libs.kotest.assertions.core)
-    testImplementation(libs.kotlin.test.junit5)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockk)
+    testImplementation(libs.bundles.test)
     testImplementation(libs.hm.database) {
         capabilities {
             requireCapability("no.nav.hjelpemidler:hm-database-h2")

@@ -6,6 +6,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.jackson.JacksonConverter
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.ApplicationStopping
 import io.ktor.server.application.install
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
@@ -75,6 +76,9 @@ fun Application.module() {
         username = Configuration.OEBS_DB_USERNAME
         password = Configuration.OEBS_DB_PASSWORD
     }.let(::Database)
+    environment.monitor.subscribe(ApplicationStopping) {
+        database.close()
+    }
 
     routing {
         internal(database)
