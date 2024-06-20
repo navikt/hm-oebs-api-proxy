@@ -7,14 +7,14 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
-import no.nav.hjelpemidler.http.openid.AzureADEnvironmentVariable
-import no.nav.hjelpemidler.http.openid.TokenXEnvironmentVariable
+import no.nav.hjelpemidler.configuration.EntraIDEnvironmentVariable
+import no.nav.hjelpemidler.configuration.TokenXEnvironmentVariable
 import java.net.URI
 import java.util.concurrent.TimeUnit
 
 fun Application.installAuthentication() {
     val jwkProviderTokenX = jwkProvider(TokenXEnvironmentVariable.TOKEN_X_JWKS_URI)
-    val jwkProviderAad = jwkProvider(AzureADEnvironmentVariable.AZURE_OPENID_CONFIG_JWKS_URI)
+    val jwkProviderAad = jwkProvider(EntraIDEnvironmentVariable.AZURE_OPENID_CONFIG_JWKS_URI)
 
     install(Authentication) {
         jwt("tokenX") {
@@ -24,8 +24,8 @@ fun Application.installAuthentication() {
             validate { credentials -> JWTPrincipal(credentials.payload) }
         }
         jwt("aad") {
-            verifier(jwkProviderAad, AzureADEnvironmentVariable.AZURE_OPENID_CONFIG_ISSUER) {
-                withAudience(AzureADEnvironmentVariable.AZURE_APP_CLIENT_ID)
+            verifier(jwkProviderAad, EntraIDEnvironmentVariable.AZURE_OPENID_CONFIG_ISSUER) {
+                withAudience(EntraIDEnvironmentVariable.AZURE_APP_CLIENT_ID)
             }
             validate { credentials -> JWTPrincipal(credentials.payload) }
         }
