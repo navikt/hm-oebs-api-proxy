@@ -5,7 +5,7 @@ import kotlin.test.assertEquals
 
 class OebsApiJsonMapperTest {
     @Test
-    fun `Mapper ordre til Oebs sitt nøsta Json format`() {
+    fun `Mapper ordre til OEBS sitt nøstede JSON-format`() {
         val oebsJsonFormat = OebsJsonFormat(
             Ordre(
                 "04331234565",

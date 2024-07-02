@@ -45,6 +45,7 @@ fun Route.saksbehandling(database: Database) {
                 database.transaction {
                     val personinformasjon = personinformasjonDao.hentPersoninformasjon(serviceforespørsel.fødselsnummer)
                         .filter(Personinformasjon::aktiv)
+                        .filterNot { it.bostedsadresse.adresse.isBlank() || it.bostedsadresse.adresse == "." }
                     serviceforespørselDao.opprettServiceforespørsel(
                         when {
                             personinformasjon.isEmpty() -> {

@@ -30,6 +30,7 @@ import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.ServiceforespørselFeil
 import org.slf4j.event.Level
+import javax.sql.DataSource
 
 private val log = KotlinLogging.logger {}
 
@@ -45,7 +46,16 @@ fun Application.module() {
      */
 
     installAuthentication()
+    installRouting(
+        createDataSource(Oracle) {
+            jdbcUrl = Configuration.OEBS_DB_JDBC_URL
+            username = Configuration.OEBS_DB_USERNAME
+            password = Configuration.OEBS_DB_PASSWORD
+        },
+    )
+}
 
+fun Application.installRouting(dataSource: DataSource) {
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(jsonMapper))
     }
@@ -71,11 +81,7 @@ fun Application.module() {
         registry = Prometheus.registry
     }
 
-    val database = createDataSource(Oracle) {
-        jdbcUrl = Configuration.OEBS_DB_JDBC_URL
-        username = Configuration.OEBS_DB_USERNAME
-        password = Configuration.OEBS_DB_PASSWORD
-    }.let(::Database)
+    val database = Database(dataSource)
     environment.monitor.subscribe(ApplicationStopping) {
         database.close()
     }

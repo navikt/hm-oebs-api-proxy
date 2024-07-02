@@ -71,8 +71,11 @@ INSERT INTO apps.xxrtv_digihot_oebs_adr_fnr_v (bruker_nummer, fnr, egen_ansatt, 
                                                leverings_kommune, leverings_postnummer, leverings_by, primaer_adr,
                                                status_brukernr, status_fnr, status_adr_p_sted, status_adr_c_sted,
                                                status_adr_bru)
-VALUES ('1', '12345678910', '', '', '', '', '0000', '', '', 'test', '', '0000', '', '0', '', '', '', '', ''),
-       ('1', '12345678910', '', '', '', '', '0000', '', '', 'test', '', '0000', '', '0', '', '', '', '', '');
+VALUES ('1', '12345678910', '', '', 'test', 'test', '0000', 'test', 'test', 'test', 'test', '0000', 'test', '0', 'A',
+        'A', '', '', ''),
+       ('1', '01987654321', '', '', '.', '', '', '', '', '', '', '', '', '0', 'A', 'A', '', '', ''),
+       ('1', '01011121314', '', '', 'test', 'test', '0000', 'test', 'test', 'test', 'test', '0000', 'test', '0', 'I',
+        'I', '', '', '');
 
 -- Bruker tabell for å simulere view i OEBS
 CREATE TABLE IF NOT EXISTS apps.xxrtv_digihot_oebs_art_beskr_v
@@ -158,7 +161,7 @@ CREATE TABLE IF NOT EXISTS apps.xxrtv_cs_digihot_sf_opprett
     job_id               VARCHAR2(255),
     saksblokk            VARCHAR2(255),
     beskrivelse          VARCHAR2(255),
-    json_artikkelinfo_in CLOB,
+    json_artikkelinfo_in TEXT,
 
     PRIMARY KEY (id)
 );

@@ -44,7 +44,7 @@ dependencies {
     implementation(libs.graphql.client.jackson)
 
     // Testing
-    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.ktor.server.test)
     testImplementation(libs.hm.database) {
         capabilities {
             requireCapability("no.nav.hjelpemidler:hm-database-h2")
