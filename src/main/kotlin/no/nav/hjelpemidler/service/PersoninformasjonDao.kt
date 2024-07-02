@@ -9,15 +9,15 @@ class PersoninformasjonDao(private val tx: JdbcOperations) {
         return tx.list(
             """
                 SELECT bruker_nummer,
-                       bosteds_addresse   AS bosteds_adresse,
-                       bosteds_kommune,
+                       TRIM(bosteds_addresse)   AS bosteds_adresse,
                        bosteds_postnummer,
-                       bosteds_by         AS bosteds_poststed,
-                       leverings_addresse AS leverings_adresse,
-                       leverings_kommune,
+                       TRIM(bosteds_by)         AS bosteds_poststed,
+                       TRIM(bosteds_kommune)    AS bosteds_kommune,
+                       TRIM(leverings_addresse) AS leverings_adresse,
                        leverings_postnummer,
-                       leverings_by       AS leverings_poststed,
-                       bydel,
+                       TRIM(leverings_by)       AS leverings_poststed,
+                       TRIM(leverings_kommune)  AS leverings_kommune,
+                       TRIM(bydel)              AS bydel,
                        primaer_adr,
                        status_brukernr,
                        status_fnr
