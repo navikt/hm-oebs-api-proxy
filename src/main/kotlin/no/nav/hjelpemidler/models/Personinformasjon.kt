@@ -18,5 +18,5 @@ data class Personinformasjon(
     val leveringBy: String get() = leveringsadresse.poststed
 
     @Deprecated("Bruk leveringsadresse")
-    val leveringKommune: String get() = leveringsadresse.kommune
+    val leveringKommune: String get() = leveringsadresse.kommunenummer
 }
