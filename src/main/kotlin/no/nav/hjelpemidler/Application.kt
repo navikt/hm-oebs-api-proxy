@@ -38,6 +38,7 @@ fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module() {
     log.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}}" }
+    log.info { "Kobler til database ${Configuration.OEBS_DB} med url ${Configuration.OEBS_DB_JDBC_URL}" }
 
     /*
     environment.monitor.subscribe(ApplicationStarted) {
@@ -81,7 +82,7 @@ fun Application.installRouting(dataSource: DataSource) {
         registry = Prometheus.registry
     }
 
-    log.info { "Kobler til database ${Configuration.OEBS_DB} med url ${Configuration.OEBS_DB_JDBC_URL}" }
+
     val database = Database(dataSource)
 
     environment.monitor.subscribe(ApplicationStopping) {
