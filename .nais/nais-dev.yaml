@@ -40,6 +40,10 @@ spec:
         mountPath: /secrets/oebsq1/credentials
       - kvPath: oracle/data/dev/config/oebsq1
         mountPath: /secrets/oebsq1/config
+      - kvPath: oracle/data/dev/creds/oebsq2-dhotuser
+        mountPath: /secrets/oebsq2/credentials
+      - kvPath: oracle/data/dev/config/oebsq2
+        mountPath: /secrets/oebsq2/config
   ingresses:
     - https://hm-oebs-api-proxy.dev-fss-pub.nais.io
   azure:

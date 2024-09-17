@@ -82,6 +82,8 @@ fun Application.installRouting(dataSource: DataSource) {
     }
 
     val database = Database(dataSource)
+
+    log.info { "Kobler til database ${Configuration.OEBS_DB} med url ${Configuration.OEBS_DB_JDBC_URL}" }
     environment.monitor.subscribe(ApplicationStopping) {
         database.close()
     }
