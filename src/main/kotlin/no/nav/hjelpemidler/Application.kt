@@ -81,9 +81,9 @@ fun Application.installRouting(dataSource: DataSource) {
         registry = Prometheus.registry
     }
 
+    log.info { "Kobler til database ${Configuration.OEBS_DB} med url ${Configuration.OEBS_DB_JDBC_URL}" }
     val database = Database(dataSource)
 
-    log.info { "Kobler til database ${Configuration.OEBS_DB} med url ${Configuration.OEBS_DB_JDBC_URL}" }
     environment.monitor.subscribe(ApplicationStopping) {
         database.close()
     }
