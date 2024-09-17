@@ -114,9 +114,11 @@ spec:
       value: "$(OEBS_API_URL_Q1)"
     - name: OEBS_DB_Q1
       value: oebsq1
+    - name: OEBS_DB_Q2
+      value: oebsq2
     - name: OEBS_DB_T1
       value: oebst1
     - name: OEBS_DB
-      value: "$(OEBS_DB_Q1)"
+      value: "$(OEBS_DB_Q2)"
     - name: GRUNNDATA_API_URL
       value: https://hm-grunndata-search.intern.dev.nav.no

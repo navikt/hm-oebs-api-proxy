@@ -17,7 +17,7 @@ object Configuration {
     val GRUNNDATA_API_URL by EnvironmentVariable
 
     /**
-     * Mulige verdier: 'oebsq1' | 'oebst1' | 'oebsp'
+     * Mulige verdier: 'oebsq1' | 'oebsq2' | 'oebst1' | 'oebsp'
      */
     val OEBS_DB by EnvironmentVariable
 
