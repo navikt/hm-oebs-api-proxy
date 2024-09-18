@@ -82,7 +82,6 @@ fun Application.installRouting(dataSource: DataSource) {
         registry = Prometheus.registry
     }
 
-
     val database = Database(dataSource)
 
     environment.monitor.subscribe(ApplicationStopping) {
