@@ -58,6 +58,7 @@ fun Application.module() {
             username = Configuration.OEBS_DB_USERNAME
             password = Configuration.OEBS_DB_PASSWORD
             connectionTimeout = 1.minutes.inWholeMilliseconds
+            addDataSourceProperty("oracle.jdbc.loginTimeout", 1.minutes.inWholeMilliseconds)
         },
     )
 }
