@@ -57,7 +57,7 @@ fun Application.module() {
             jdbcUrl = Configuration.OEBS_DB_JDBC_URL
             username = Configuration.OEBS_DB_USERNAME
             password = Configuration.OEBS_DB_PASSWORD
-            connectionTimeout =  1.minutes.inWholeMilliseconds
+            connectionTimeout = 1.minutes.inWholeMilliseconds
         },
     )
 }
