@@ -32,6 +32,7 @@ import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.ServiceforespørselFeil
 import org.slf4j.event.Level
 import javax.sql.DataSource
+import kotlin.time.Duration.Companion.minutes
 
 private val log = KotlinLogging.logger {}
 
@@ -56,6 +57,7 @@ fun Application.module() {
             jdbcUrl = Configuration.OEBS_DB_JDBC_URL
             username = Configuration.OEBS_DB_USERNAME
             password = Configuration.OEBS_DB_PASSWORD
+            connectionTimeout =  1.minutes.inWholeMilliseconds
         },
     )
 }
