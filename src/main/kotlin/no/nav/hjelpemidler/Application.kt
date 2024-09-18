@@ -26,6 +26,7 @@ import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.database.Oracle
 import no.nav.hjelpemidler.database.createDataSource
+import no.nav.hjelpemidler.domain.person.TILLAT_SYNTETISKE_FØDSELSNUMRE
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.ServiceforespørselFeil
@@ -37,8 +38,11 @@ private val log = KotlinLogging.logger {}
 fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module() {
+    TILLAT_SYNTETISKE_FØDSELSNUMRE = !Environment.current.tier.isProd
+
     log.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}}" }
     log.info { "Kobler til database ${Configuration.OEBS_DB} med url ${Configuration.OEBS_DB_JDBC_URL}" }
+    log.info { "Tilllater syntetiske fødelsnumre $TILLAT_SYNTETISKE_FØDSELSNUMRE" }
 
     /*
     environment.monitor.subscribe(ApplicationStarted) {

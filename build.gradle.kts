@@ -16,7 +16,7 @@ application {
 dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.micrometer.registry.prometheus)
-    implementation(libs.hm.http)
+    implementation(libs.hotlibs.http)
 
     // Logging
     implementation(libs.kotlin.logging)
@@ -29,10 +29,10 @@ dependencies {
     implementation(libs.bundles.ktor.server)
 
     // Database
-    implementation(libs.hm.database)
-    implementation(libs.hm.database) {
+    implementation(libs.hotlibs.database)
+    implementation(libs.hotlibs.database) {
         capabilities {
-            requireCapability("no.nav.hjelpemidler:hm-database-oracle")
+            requireCapability("no.nav.hjelpemidler:database-oracle")
         }
     }
 
@@ -45,9 +45,9 @@ dependencies {
 
     // Testing
     testImplementation(libs.bundles.ktor.server.test)
-    testImplementation(libs.hm.database) {
+    testImplementation(libs.hotlibs.database) {
         capabilities {
-            requireCapability("no.nav.hjelpemidler:hm-database-h2")
+            requireCapability("no.nav.hjelpemidler:database-h2")
         }
     }
 }
