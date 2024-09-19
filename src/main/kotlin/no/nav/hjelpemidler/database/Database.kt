@@ -17,8 +17,7 @@ class Database(private val dataSource: DataSource) : Closeable {
     }
 
     suspend fun isValid(): Boolean = withDatabaseContext {
-        true
-        // dataSource.connection.use { it.isValid(10) }
+        dataSource.connection.use { it.isValid(10) }
     }
 
     val isClosed: Boolean get() = dataSource is HikariDataSource && dataSource.isClosed
