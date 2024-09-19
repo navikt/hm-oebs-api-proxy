@@ -6,4 +6,5 @@
     <root level="INFO">
         <appender-ref ref="STDOUT_JSON" />
     </root>
+    <logger name="com.zaxxer.hikari" level="TRACE" />
 </configuration>
