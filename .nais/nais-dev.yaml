@@ -110,12 +110,14 @@ spec:
       value: "81400"
     - name: OEBS_API_URL_Q1
       value: http://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/
+    - name: OEBS_API_URL_Q2
+      value: http://oebsq2.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/
     - name: OEBS_API_URL_T1
       value: http://d26apbl007.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/
     - name: OEBS_API_URL_T2
       value: http://b27apfl025.preprod.local:8070/webservices/rest/opprettordre/digihotordreontinfo/
     - name: OEBS_API_URL
-      value: "$(OEBS_API_URL_Q1)"
+      value: "$(OEBS_API_URL_Q2)"
     - name: OEBS_DB_Q1
       value: oebsq1
     - name: OEBS_DB_Q2
