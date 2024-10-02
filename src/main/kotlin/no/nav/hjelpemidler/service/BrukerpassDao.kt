@@ -23,7 +23,7 @@ class BrukerpassDao(private val tx: JdbcOperations) {
                 row.localDateOrNull("end_date"),
             )
         } ?: run {
-            if (!Environment.current.tier.isDev && fnr == "13820599335") {
+            if (Environment.current.tier.isDev && fnr == "13820599335") {
                 // Mock brukerpass for testbruker i dev
                 Brukerpass(
                     brukerpass = true,
