@@ -9,6 +9,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
+      - mock-brukerpass-testbruker-dev
 
 jobs:
   build:
