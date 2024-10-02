@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.service
 
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,7 +18,13 @@ fun berikBytteinfo(item: HjelpemiddelBruker) {
 private val byttebareIsokoderForBrukerpass: List<String> = listOf(
     "123903", // Mobilitetsstokk
     "090312", // Hansker og votter (kjørehansker)
-)
+).let {
+    if (Environment.current.tier.isDev) {
+        it.plus("183015") // Test med data vi har i dev
+    } else {
+        it
+    }
+}
 
 private fun erGyldigIsokodeForBrukerpassbytte(iso: String): Boolean = iso.take(6) in byttebareIsokoderForBrukerpass
 
