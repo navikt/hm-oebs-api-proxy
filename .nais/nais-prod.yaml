@@ -56,6 +56,9 @@ spec:
   accessPolicy:
     inbound:
       rules:
+        - application: hm-oversikt-frontend
+          namespace: teamdigihot
+          cluster: prod-gcp
         - application: hm-dinehjelpemidler
           namespace: teamdigihot
           cluster: prod-gcp
