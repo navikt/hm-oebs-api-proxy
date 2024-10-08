@@ -63,7 +63,7 @@ class OebsApiClient(engine: HttpClientEngine) {
             ferdigstill = when {
                 isNotProd() -> false
                 else -> true
-            }
+            },
 
         )
 
