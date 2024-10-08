@@ -10,7 +10,7 @@ data class Ordre(
     val saksnummer: String,
     val artikler: List<Artikkel>,
     val shippinginstructions: String,
-    val ferdigstill: Boolean,
+    val ferdigstill: String,
 ) {
     data class Artikkel(override val hmsnr: String, override val antall: String) : no.nav.hjelpemidler.models.Artikkel
 }

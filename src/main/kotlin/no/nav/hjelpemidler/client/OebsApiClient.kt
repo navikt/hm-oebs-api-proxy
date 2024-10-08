@@ -59,7 +59,7 @@ class OebsApiClient(engine: HttpClientEngine) {
                 request.forsendelsesinfo.isNullOrBlank() -> request.formidlernavn
                 else -> request.forsendelsesinfo
             },
-            ferdigstill = request.ferdistillOrdre,
+            ferdigstill = request.ferdistillOrdre.toString(),
 
         )
 
