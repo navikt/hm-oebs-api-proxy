@@ -16,12 +16,12 @@ class OebsApiJsonMapperTest {
                     Ordre.Artikkel("2222", "2"),
                 ),
                 shippinginstructions = "Skal til XK-lager",
-                ferdigstill = true,
+                ferdigstill = "true",
             ),
         )
 
         assertEquals(
-            "{\"fodselsnummer\":\"04331234565\",\"formidlernavn\":\"Formidler Navn\",\"ordretype\":\"BESTILLING\",\"saksnummer\":\"1337\",\"artikler\":[{\"hmsnr\":\"1111\",\"antall\":\"1\"},{\"hmsnr\":\"2222\",\"antall\":\"2\"}],\"shippinginstructions\":\"Skal til XK-lager\",\"ferdigstill\":true}",
+            "{\"fodselsnummer\":\"04331234565\",\"formidlernavn\":\"Formidler Navn\",\"ordretype\":\"BESTILLING\",\"saksnummer\":\"1337\",\"artikler\":[{\"hmsnr\":\"1111\",\"antall\":\"1\"},{\"hmsnr\":\"2222\",\"antall\":\"2\"}],\"shippinginstructions\":\"Skal til XK-lager\",\"ferdigstill\":\"true\"}",
             oebsJsonFormat.jsonMelding,
         )
     }
