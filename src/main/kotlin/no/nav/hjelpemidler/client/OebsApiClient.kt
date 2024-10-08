@@ -59,7 +59,9 @@ class OebsApiClient(engine: HttpClientEngine) {
                 request.forsendelsesinfo.isNullOrBlank() -> request.formidlernavn
                 else -> request.forsendelsesinfo
             },
-            ferdigstill = request.ferdistillOrdre.toString(),
+
+            // TODO: Vet ikke om oebs vil ha "json" som string eller boolean enda
+            ferdigstill = request.ferdigstillOrdre.toString(),
 
         )
 
