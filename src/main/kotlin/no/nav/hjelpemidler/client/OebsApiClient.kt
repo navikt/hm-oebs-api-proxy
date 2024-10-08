@@ -59,11 +59,7 @@ class OebsApiClient(engine: HttpClientEngine) {
                 request.forsendelsesinfo.isNullOrBlank() -> request.formidlernavn
                 else -> request.forsendelsesinfo
             },
-            // TODO Midlertidig hardkoding i dev for å kunne teste OEBS-integrasjonen som oppretter ordre som ikke ferdigstilles automatisk
-            ferdigstill = when {
-                isNotProd() -> false
-                else -> true
-            },
+            ferdigstill = request.ferdistillOrdre,
 
         )
 
