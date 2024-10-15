@@ -1,8 +1,10 @@
 package no.nav.hjelpemidler.models
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import no.nav.hjelpemidler.jsonMapper
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Ordre(
     val fodselsnummer: String,
     val formidlernavn: String,
@@ -10,7 +12,7 @@ data class Ordre(
     val saksnummer: String,
     val artikler: List<Artikkel>,
     val shippinginstructions: String,
-    val ferdigstill: String,
+    val ferdigstill: String? = null,
 ) {
     data class Artikkel(override val hmsnr: String, override val antall: String) : no.nav.hjelpemidler.models.Artikkel
 }
