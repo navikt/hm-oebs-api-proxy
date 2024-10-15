@@ -50,7 +50,7 @@ class OebsApiClient(engine: HttpClientEngine) {
 
     suspend fun opprettOrdre(request: BestillingsordreRequest): String {
         val bestilling = when {
-            !Environment.current.tier.isProd -> Ordre(
+            Environment.current.tier.isProd -> Ordre(
                 fodselsnummer = request.fodselsnummer,
                 formidlernavn = request.formidlernavn,
                 ordretype = OrdreType.BESTILLING,
@@ -61,7 +61,6 @@ class OebsApiClient(engine: HttpClientEngine) {
                     else -> request.forsendelsesinfo
                 },
             )
-
             else -> Ordre(
                 fodselsnummer = request.fodselsnummer,
                 formidlernavn = request.formidlernavn,
