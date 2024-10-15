@@ -46,5 +46,4 @@ class OebsApiJsonMapperTest {
             oebsJsonFormat.jsonMelding,
         )
     }
-
 }
