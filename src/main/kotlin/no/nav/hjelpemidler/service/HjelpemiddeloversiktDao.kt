@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.client.GrunndataClient
 import no.nav.hjelpemidler.client.hmdb.enums.MediaType
@@ -9,7 +10,23 @@ import no.nav.hjelpemidler.database.sql.Sql
 import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Utlån
 
+private val log = KotlinLogging.logger {}
+
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
+
+    init {
+        val artnr = "021788"
+        val serienr = "070040"
+        log.info {"DEBUG: Henter utlånsoversikt for låntager av artnr=$artnr serienr=$serienr"}
+        val utlån = utlånPåArtnrOgSerienr(artnr = artnr, serienr = serienr)
+        if (utlån == null) {
+            log.info { "Fant ikke utlånet for artnr=$artnr serienr=$serienr" }
+        } else {
+            val hjelpemiddeloversikt = hentHjelpemiddeloversikt(utlån.fnr)
+            log.info { "Fant utlånsoversikt=$hjelpemiddeloversikt" }
+        }
+    }
+
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
         val query = Sql(
             """
@@ -49,6 +66,8 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
                 oppdatertInnleveringsdato = row.stringOrNull("oppdatert_innleveringsdato"),
             )
         }
+
+        log.info { "Innbyggers hjelpemiddeloversikt før beriking: $items" }
 
         return berikOrdrelinjer(items)
     }
