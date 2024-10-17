@@ -17,7 +17,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
     init {
         val artnr = "021788"
         val serienr = "070040"
-        log.info {"DEBUG: Henter utlånsoversikt for låntager av artnr=$artnr serienr=$serienr"}
+        log.info { "DEBUG: Henter utlånsoversikt for låntager av artnr=$artnr serienr=$serienr" }
         val utlån = utlånPåArtnrOgSerienr(artnr = artnr, serienr = serienr)
         if (utlån == null) {
             log.info { "Fant ikke utlånet for artnr=$artnr serienr=$serienr" }
