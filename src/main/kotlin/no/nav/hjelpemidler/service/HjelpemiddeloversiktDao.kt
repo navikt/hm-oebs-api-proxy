@@ -14,19 +14,6 @@ private val log = KotlinLogging.logger {}
 
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
-    init {
-        val artnr = "021788"
-        val serienr = "070040"
-        log.info { "DEBUG: Henter utlånsoversikt for låntager av artnr=$artnr serienr=$serienr" }
-        val utlån = utlånPåArtnrOgSerienr(artnr = artnr, serienr = serienr)
-        if (utlån == null) {
-            log.info { "Fant ikke utlånet for artnr=$artnr serienr=$serienr" }
-        } else {
-            val hjelpemiddeloversikt = hentHjelpemiddeloversikt(utlån.fnr)
-            log.info { "Fant utlånsoversikt=$hjelpemiddeloversikt" }
-        }
-    }
-
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
         val query = Sql(
             """
