@@ -1,6 +1,9 @@
 package no.nav.hjelpemidler.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.client.GrunndataClient
 import no.nav.hjelpemidler.client.hmdb.enums.MediaType
@@ -13,6 +16,67 @@ import no.nav.hjelpemidler.models.Utlån
 private val log = KotlinLogging.logger {}
 
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
+
+    init {
+        log.info { "init fyrer i gang coroutine for sjekk av serienr" }
+        runBlocking {
+            launch(Dispatchers.IO) {
+                data class Utlån(
+                    val artikkelNr: String,
+                    val serieNr: String?,
+                    val utsendt: String?,
+                    val utlånstype: String?,
+                    val innlevering: String?,
+                    val oppdatertInn: String?,
+                )
+
+                fun sjekkSerienr(serienr: String) {
+                    try {
+                        val query = Sql(
+                            """
+                SELECT *
+                FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+                WHERE serie_nummer = :serienr
+                            """.trimIndent(),
+                        )
+                        tx.list(query, mapOf("serienr" to serienr)) { row ->
+                            Utlån(
+                                row.string("artikkelnummer"),
+                                row.stringOrNull("serie_nummer"),
+                                row.stringOrNull("utlåns_dato"),
+                                row.stringOrNull("utlåns_type"),
+                                row.stringOrNull("innleveringsdato"),
+                                row.stringOrNull("oppdatert_innleveringsdato"),
+                            )
+                        }.forEach {
+                            log.info { "Utlån for $serienr: $it" }
+                        }
+                    } catch (e: Exception) {
+                        log.info(e) { "init fant ikke korttidsutlån}" }
+                    }
+                }
+
+                for (serienr in listOf(
+                    "030310",
+                    "110020",
+                    "020121",
+                    "021478",
+                    "020127",
+                    "020151",
+                    "020204",
+                    "020008",
+                    "020003",
+                    "021517",
+                    "021501",
+                )) {
+                    log.info { "init sjekker $serienr" }
+                    sjekkSerienr(serienr)
+                    delay(50)
+                }
+                log.info { "init leting ferdig" }
+            }
+        }
+    }
 
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
         val query = Sql(
