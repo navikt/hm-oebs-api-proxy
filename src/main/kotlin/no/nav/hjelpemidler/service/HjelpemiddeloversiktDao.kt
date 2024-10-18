@@ -1,6 +1,9 @@
 package no.nav.hjelpemidler.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.client.GrunndataClient
 import no.nav.hjelpemidler.client.hmdb.enums.MediaType
@@ -13,6 +16,62 @@ import no.nav.hjelpemidler.models.Utlån
 private val log = KotlinLogging.logger {}
 
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
+
+    init {
+        runBlocking {
+            launch(Dispatchers.IO) {
+                log.info { "init leter etter korttidsutlån" }
+
+                data class Utlån(
+                    val artikkelNr: String,
+                    val serieNr: String?,
+                    val utsendt: String?,
+                    val utlånstype: String?,
+                    val innlevering: String?,
+                    val oppdatertInn: String?,
+                )
+
+                fun sjekkSerienr(serienr: String) {
+                    try {
+                        val query = Sql(
+                            """
+                SELECT *
+                FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+                WHERE serie_nummer = :serienr
+                            """.trimIndent(),
+                        )
+                        tx.list(query, mapOf("serienr" to serienr)) { row ->
+                            Utlån(
+                                row.string("artikkelnummer"),
+                                row.stringOrNull("serie_nummer"),
+                                row.stringOrNull("utlåns_dato"),
+                                row.stringOrNull("utlåns_type"),
+                                row.stringOrNull("innleveringsdato"),
+                                row.stringOrNull("oppdatert_innleveringsdato"),
+                            )
+                        }.forEach {
+                            if (it.utlånstype != "P") {
+                                log.info { "init fant ikke-permanent utlån: $it}" }
+                            } else {
+                                log.info { "init utlånstype: ${it.utlånstype}" }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        log.info(e) { "init fant ikke korttidsutlån}" }
+                    }
+                }
+
+                for (serienr in 70140..100000) {
+                    if (serienr % 500 == 0) {
+                        log.info { "init sjekker $serienr" }
+                    }
+                    sjekkSerienr(serienr.toString().padStart(6, '0'))
+                    delay(50)
+                }
+                log.info { "init leting ferdig" }
+            }
+        }
+    }
 
     fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
         val query = Sql(
