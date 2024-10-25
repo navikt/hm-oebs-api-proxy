@@ -71,7 +71,7 @@ class OebsApiClient(engine: HttpClientEngine) {
                     request.forsendelsesinfo.isNullOrBlank() -> request.formidlernavn
                     else -> request.forsendelsesinfo
                 },
-                ferdigstill = request.ferdigstillOrdre.toString(),
+                //ferdigstill = request.ferdigstillOrdre.toString(),
             )
         }
         log.info { "Kaller OEBS-API, url: $apiUrl" }
