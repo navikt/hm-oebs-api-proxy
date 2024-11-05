@@ -18,7 +18,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.hjelpemidler.Configuration
-import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.http.createHttpClient
 import no.nav.hjelpemidler.http.logging
 import no.nav.hjelpemidler.isNotProd
@@ -49,19 +48,8 @@ class OebsApiClient(engine: HttpClientEngine) {
     private val apiToken = Configuration.OEBS_API_TOKEN
 
     suspend fun opprettOrdre(request: BestillingsordreRequest): String {
-        val bestilling = when {
-            Environment.current.tier.isProd -> Ordre(
-                fodselsnummer = request.fodselsnummer,
-                formidlernavn = request.formidlernavn,
-                ordretype = OrdreType.BESTILLING,
-                saksnummer = request.saksnummer,
-                artikler = request.artikler.map { Ordre.Artikkel(hmsnr = it.hmsnr, antall = it.antall) },
-                shippinginstructions = when {
-                    request.forsendelsesinfo.isNullOrBlank() -> request.formidlernavn
-                    else -> request.forsendelsesinfo
-                },
-            )
-            else -> Ordre(
+        val bestilling =
+            Ordre(
                 fodselsnummer = request.fodselsnummer,
                 formidlernavn = request.formidlernavn,
                 ordretype = OrdreType.BESTILLING,
@@ -73,7 +61,6 @@ class OebsApiClient(engine: HttpClientEngine) {
                 },
                 ferdigstill = request.ferdigstillOrdre.toString(),
             )
-        }
         log.info { "Kaller OEBS-API, url: $apiUrl" }
         val response = httpPostRequest(bestilling)
         if (response.status == HttpStatusCode.OK) {
