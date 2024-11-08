@@ -41,9 +41,9 @@ fun main(args: Array<String>) = EngineMain.main(args)
 fun Application.module() {
     TILLAT_SYNTETISKE_FØDSELSNUMRE = !Environment.current.tier.isProd
 
-    log.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}}" }
-    log.info { "Kobler til database ${Configuration.OEBS_DB} med url ${Configuration.OEBS_DB_JDBC_URL}" }
-    log.info { "Tilllater syntetiske fødelsnumre $TILLAT_SYNTETISKE_FØDSELSNUMRE" }
+    log.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}" }
+    log.info { "Kobler til database: ${Configuration.OEBS_DB} med url: '${Configuration.OEBS_DB_JDBC_URL}'" }
+    log.info { "Tillater syntetiske fødelsnumre: $TILLAT_SYNTETISKE_FØDSELSNUMRE" }
 
     /*
     environment.monitor.subscribe(ApplicationStarted) {
