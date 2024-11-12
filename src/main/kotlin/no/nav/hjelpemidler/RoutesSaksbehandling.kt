@@ -89,7 +89,6 @@ fun Route.saksbehandling(database: Database) {
             val hjelpemiddeloversikt = database.transaction {
                 hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr.value)
             }
-            log.info { "[/getHjelpemiddelOversikt] Resultat: $hjelpemiddeloversikt" }
             call.respond(hjelpemiddeloversikt)
         }
 
