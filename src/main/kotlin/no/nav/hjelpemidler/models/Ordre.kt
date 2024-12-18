@@ -2,7 +2,7 @@ package no.nav.hjelpemidler.models
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import no.nav.hjelpemidler.jsonMapper
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Ordre(

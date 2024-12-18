@@ -15,6 +15,7 @@ import no.nav.hjelpemidler.database.transactionAsync
 import no.nav.hjelpemidler.models.Resultat
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Stønadsklasse
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 import kotlin.test.Test
 
 class RoutesSaksbehandlingTest {

@@ -21,11 +21,11 @@ import no.nav.hjelpemidler.Configuration
 import no.nav.hjelpemidler.http.createHttpClient
 import no.nav.hjelpemidler.http.logging
 import no.nav.hjelpemidler.isNotProd
-import no.nav.hjelpemidler.jsonMapper
 import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.OebsJsonFormat
 import no.nav.hjelpemidler.models.Ordre
 import no.nav.hjelpemidler.models.OrdreType
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 
 private val log = KotlinLogging.logger {}
 

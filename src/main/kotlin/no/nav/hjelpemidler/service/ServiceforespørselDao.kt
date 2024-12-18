@@ -2,9 +2,9 @@ package no.nav.hjelpemidler.service
 
 import kotliquery.Parameter
 import no.nav.hjelpemidler.database.JdbcOperations
-import no.nav.hjelpemidler.jsonMapper
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.ServiceforespørselFeil
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 
 class ServiceforespørselDao(private val tx: JdbcOperations) {
     fun opprettServiceforespørsel(sf: Serviceforespørsel): Int {
@@ -13,8 +13,8 @@ class ServiceforespørselDao(private val tx: JdbcOperations) {
                 INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
                 (id, fnr, navn, stonadsklass, sakstype, resultat, sfdato, referansenummer, kilde, processed, last_update_date,
                  last_updated_by, creation_date, created_by, job_id, saksblokk, beskrivelse, json_artikkelinfo_in)
-                VALUES (apps.xxrtv_cs_digihot_sf_opprett_s.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, SYSDATE,
-                        :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X', :beskrivelse, :artikler)
+                VALUES (apps.xxrtv_cs_digihot_sf_opprett_s.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, sysdate,
+                        :referansenummer, :kilde, :processed, sysdate, :oppdatertav, sysdate, :oppdatertav, :jobid, 'X', :beskrivelse, :artikler)
             """.trimIndent(),
             mapOf(
                 "fnr" to sf.fødselsnummer,

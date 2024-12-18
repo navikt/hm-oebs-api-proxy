@@ -29,7 +29,6 @@ dependencies {
     implementation(libs.bundles.ktor.server)
 
     // Database
-    implementation(libs.hotlibs.database)
     implementation(libs.hotlibs.database) {
         capabilities {
             requireCapability("no.nav.hjelpemidler:database-oracle")
@@ -42,14 +41,6 @@ dependencies {
         exclude("io.ktor", "ktor-client-serialization") // prefer ktor-client-jackson
     }
     implementation(libs.graphql.client.jackson)
-
-    // Testing
-    testImplementation(libs.bundles.ktor.server.test)
-    testImplementation(libs.hotlibs.database) {
-        capabilities {
-            requireCapability("no.nav.hjelpemidler:database-h2")
-        }
-    }
 }
 
 spotless {
@@ -67,12 +58,31 @@ spotless {
     }
 }
 
-kotlin { jvmToolchain(21) }
+java { toolchain { languageVersion.set(JavaLanguageVersion.of(21)) } }
 
-tasks.test {
-    useJUnitPlatform()
-    testLogging {
-        events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
+@Suppress("UnstableApiUsage")
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useKotlinTest(libs.versions.kotlin.asProvider())
+            dependencies {
+                implementation(libs.ktor.server.test.host)
+                implementation(libs.kotest.assertions.core)
+                implementation(libs.kotest.assertions.ktor)
+                implementation(libs.hotlibs.database) {
+                    capabilities {
+                        requireCapability("no.nav.hjelpemidler:database-h2")
+                    }
+                }
+            }
+            targets.configureEach {
+                testTask {
+                    testLogging {
+                        events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.callid.CALL_ID_DEFAULT_DICTIONARY
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.jackson.JacksonConverter
@@ -10,13 +11,13 @@ import io.ktor.server.application.ApplicationStopping
 import io.ktor.server.application.install
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.engine.embeddedServer
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
-import io.ktor.server.netty.EngineMain
-import io.ktor.server.plugins.callid.CALL_ID_DEFAULT_DICTIONARY
+import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.callid.CallId
 import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.callid.generate
-import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.path
 import io.ktor.server.routing.routing
@@ -30,23 +31,26 @@ import no.nav.hjelpemidler.domain.person.TILLAT_SYNTETISKE_FØDSELSNUMRE
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.ServiceforespørselFeil
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 import org.slf4j.event.Level
 import javax.sql.DataSource
 import kotlin.time.Duration.Companion.minutes
 
 private val log = KotlinLogging.logger {}
 
-fun main(args: Array<String>) = EngineMain.main(args)
+fun main() {
+    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
+}
 
 fun Application.module() {
-    TILLAT_SYNTETISKE_FØDSELSNUMRE = !Environment.current.tier.isProd
+    TILLAT_SYNTETISKE_FØDSELSNUMRE = !Environment.current.isProd
 
     log.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}" }
     log.info { "Kobler til database: ${Configuration.OEBS_DB} med url: '${Configuration.OEBS_DB_JDBC_URL}'" }
     log.info { "Tillater syntetiske fødelsnumre: $TILLAT_SYNTETISKE_FØDSELSNUMRE" }
 
     /*
-    environment.monitor.subscribe(ApplicationStarted) {
+    monitor.subscribe(ApplicationStarted) {
         loggFeilendeServiceforespørsler()
     }
      */
@@ -70,11 +74,12 @@ fun Application.installRouting(dataSource: DataSource) {
     install(CallLogging) {
         level = Level.TRACE
         filter { call ->
-            val path = call.request.path()
-            !path.startsWith("/internal") &&
-                !path.startsWith("/isalive") &&
-                !path.startsWith("/isready") &&
-                !path.startsWith("/metrics")
+            call.request.path() !in setOf(
+                "/internal",
+                "/isalive",
+                "/isready",
+                "/metrics",
+            )
         }
         callIdMdc("correlationId")
     }
@@ -90,8 +95,9 @@ fun Application.installRouting(dataSource: DataSource) {
 
     val database = Database(dataSource)
 
-    environment.monitor.subscribe(ApplicationStopping) {
+    monitor.subscribe(ApplicationStopping) {
         database.close()
+        monitor.unsubscribe(ApplicationStopping) {}
     }
 
     routing {
