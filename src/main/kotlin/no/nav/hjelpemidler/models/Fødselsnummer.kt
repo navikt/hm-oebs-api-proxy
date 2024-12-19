@@ -14,4 +14,8 @@ data class Fødselsnummer(@JsonValue val value: String) {
 
 private val elevenDigits = Regex("\\d{11}")
 
-suspend fun ApplicationCall.receiveFødselsnummer(): Fødselsnummer = receiveText().let(::Fødselsnummer)
+/**
+ * Vi fjerner evt. " i tilfelle [Fødselsnummer] sendes som JSON.
+ */
+suspend fun ApplicationCall.receiveFødselsnummer(): Fødselsnummer =
+    receiveText().removeSurrounding("\"").let(::Fødselsnummer)
