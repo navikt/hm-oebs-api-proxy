@@ -3,7 +3,6 @@ package no.nav.hjelpemidler
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.engine.cio.CIO
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
 import io.ktor.server.request.receiveText
@@ -12,13 +11,13 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.client.OebsApiClient
 import no.nav.hjelpemidler.database.Database
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
+import no.nav.hjelpemidler.ktor.receiveFødselsnummer
 import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.Brukernummer
-import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Utlån
-import no.nav.hjelpemidler.models.receiveFødselsnummer
 
 private val log = KotlinLogging.logger {}
 

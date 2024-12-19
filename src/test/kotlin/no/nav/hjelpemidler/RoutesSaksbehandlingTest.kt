@@ -21,7 +21,7 @@ import kotlin.test.Test
 class RoutesSaksbehandlingTest {
     @Test
     fun `Adresse finnes, tar med artikler`() = testApplication {
-        val fnr = "12345678910"
+        val fnr = "19127428657"
         val artikkel = Serviceforespørsel.Artikkel("1", "1")
 
         opprettSF(fnr, artikkel)

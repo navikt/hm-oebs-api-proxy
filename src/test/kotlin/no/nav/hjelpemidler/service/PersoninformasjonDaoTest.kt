@@ -10,7 +10,7 @@ class PersoninformasjonDaoTest {
     @Test
     fun `Skal kunne hente personinformasjon`() = runTest {
         val personinformasjon = testTransaction {
-            personinformasjonDao.hentPersoninformasjon("12345678910")
+            personinformasjonDao.hentPersoninformasjon("19127428657")
         }
 
         personinformasjon.shouldBeSingleton {

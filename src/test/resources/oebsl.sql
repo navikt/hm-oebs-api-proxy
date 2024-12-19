@@ -40,7 +40,7 @@ INSERT INTO apps.xxrtv_digihot_hjm_utlan_fnr_v(forekomst_nummer, ordre_nummer, a
                                                installasjons_postnummer, installasjons_by, bosteds_addresse,
                                                bosteds_kommune, bosteds_postnummer, bosteds_by)
 VALUES ('', 1, 1, '', '', '', '', '2020-02-01', '2020-01-01', '2020-10-01', '2020-11-01', '', '', '', '', '',
-        '12345678910', '', '', '', '', '0000', '', '', '', '0000', '');
+        '19127428657', '', '', '', '', '0000', '', '', '', '0000', '');
 
 -- Bruker tabell for å simulere view i OEBS
 CREATE TABLE IF NOT EXISTS apps.xxrtv_digihot_oebs_adr_fnr_v
@@ -71,7 +71,7 @@ INSERT INTO apps.xxrtv_digihot_oebs_adr_fnr_v (bruker_nummer, fnr, egen_ansatt, 
                                                leverings_kommune, leverings_postnummer, leverings_by, primaer_adr,
                                                status_brukernr, status_fnr, status_adr_p_sted, status_adr_c_sted,
                                                status_adr_bru)
-VALUES ('1', '12345678910', '', '', 'test', 'test', '0000', 'test', 'test', 'test', 'test', '0000', 'test', '0', 'A',
+VALUES ('1', '19127428657', '', '', 'test', 'test', '0000', 'test', 'test', 'test', 'test', '0000', 'test', '0', 'A',
         'A', '', '', ''),
        ('1', '01987654321', '', '', '.', '', '', '', '', '', '', '', '', '0', 'A', 'A', '', '', ''),
        ('1', '01011121314', '', '', 'test', 'test', '0000', 'test', 'test', 'test', 'test', '0000', 'test', '0', 'I',
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS apps.xxrtv_digihot_oebs_brukerp_v
 );
 
 INSERT INTO apps.xxrtv_digihot_oebs_brukerp_v(fnr, kontrakt_nummer, sjekk_navn, start_date, end_date)
-VALUES ('12345678910', 'test', 'test', '2020-01-01', NULL);
+VALUES ('19127428657', 'test', 'test', '2020-01-01', NULL);
 
 -- Bruker tabell for å simulere view i OEBS
 CREATE TABLE IF NOT EXISTS apps.xxrtv_digihot_utvid_art_v

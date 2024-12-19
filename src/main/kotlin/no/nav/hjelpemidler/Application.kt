@@ -27,9 +27,9 @@ import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.database.Oracle
 import no.nav.hjelpemidler.database.createDataSource
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.domain.person.TILLAT_SYNTETISKE_FØDSELSNUMRE
 import no.nav.hjelpemidler.metrics.Prometheus
-import no.nav.hjelpemidler.models.Fødselsnummer
 import no.nav.hjelpemidler.models.ServiceforespørselFeil
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 import org.slf4j.event.Level
