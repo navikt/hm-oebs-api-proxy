@@ -99,3 +99,5 @@ val graphqlIntrospectSchema by tasks.getting(GraphQLIntrospectSchemaTask::class)
     // endpoint.set("http://localhost:8880/graphql")
     outputFile.set(file("src/main/resources/hmdb/schema.graphqls"))
 }
+
+tasks.shadowJar { mergeServiceFiles() }
