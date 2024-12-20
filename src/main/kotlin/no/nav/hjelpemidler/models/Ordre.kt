@@ -14,7 +14,9 @@ data class Ordre(
     val shippinginstructions: String,
     val ferdigstill: String? = null,
 ) {
-    data class Artikkel(override val hmsnr: String, override val antall: String) : no.nav.hjelpemidler.models.Artikkel
+    data class Artikkel(override val hmsnr: String, override val antall: String) : no.nav.hjelpemidler.models.Artikkel {
+        constructor(artikkel: BestillingsordreRequest.Artikkel) : this(artikkel.hmsnr, artikkel.antall)
+    }
 }
 
 enum class OrdreType {
