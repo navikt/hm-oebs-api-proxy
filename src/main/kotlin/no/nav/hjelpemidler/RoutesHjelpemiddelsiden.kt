@@ -8,6 +8,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
 
 private val log = KotlinLogging.logger {}
@@ -17,7 +18,7 @@ fun Route.hjelpemiddelsiden(database: Database) {
     authenticate("tokenX") {
         get("/hjelpemidler-bruker") {
             val fnr = call.pid
-            if (isNotProd()) {
+            if (!Environment.current.isProd) {
                 log.info { "Processing request for /hjelpemidler-bruker (on-behalf-of: $fnr)" }
             } else {
                 log.info { "Processing request for /hjelpemidler-bruker" }

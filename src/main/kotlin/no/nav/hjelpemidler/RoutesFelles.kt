@@ -8,6 +8,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
 
@@ -30,7 +31,7 @@ fun Route.felles(database: Database) {
         get("/brukerpass") {
             val fnr = call.pid
 
-            if (isNotProd()) {
+            if (!Environment.current.isProd) {
                 log.info { "Processing request for /brukerpass (on-behalf-of: $fnr)" }
             } else {
                 log.info { "Processing request for /brukerpass" }

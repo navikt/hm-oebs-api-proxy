@@ -18,20 +18,19 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.hjelpemidler.Configuration
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.http.createHttpClient
 import no.nav.hjelpemidler.http.logging
-import no.nav.hjelpemidler.isNotProd
 import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.OebsJsonFormat
 import no.nav.hjelpemidler.models.Ordre
 import no.nav.hjelpemidler.models.OrdreType
-import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 
 private val log = KotlinLogging.logger {}
 
 class OebsApiClient(engine: HttpClientEngine) {
-    private val client = createHttpClient(engine, jsonMapper) {
-        if (isNotProd()) {
+    private val client = createHttpClient(engine) {
+        if (!Environment.current.isProd) {
             logging {
                 logger = Logger.DEFAULT
                 level = LogLevel.BODY
@@ -57,7 +56,7 @@ class OebsApiClient(engine: HttpClientEngine) {
                 artikler = request.artikler.map { Ordre.Artikkel(hmsnr = it.hmsnr, antall = it.antall) },
                 shippinginstructions = when {
                     request.forsendelsesinfo.isNullOrBlank() -> request.formidlernavn
-                    else -> request.forsendelsesinfo
+                    else -> request.forsendelsesinfo.trim()
                 },
                 ferdigstill = request.ferdigstillOrdre.toString(),
             )

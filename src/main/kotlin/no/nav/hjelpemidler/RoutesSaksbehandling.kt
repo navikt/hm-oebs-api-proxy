@@ -10,6 +10,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.client.OebsApiClient
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.ktor.receiveFødselsnummer
@@ -30,7 +31,7 @@ fun Route.saksbehandling(database: Database) {
             try {
                 val bestilling = call.receive<BestillingsordreRequest>()
                 val response = oebsApiClient.opprettOrdre(bestilling)
-                log.info { "Oppretter ordre, saksnummer: ${bestilling.saksnummer}, hjelpemidler: ${bestilling.artikler}. Skal ferdigstilles automatisk ${bestilling.ferdigstillOrdre}" }
+                log.info { "Oppretter ordre, saksnummer: ${bestilling.saksnummer}, hjelpemidler: ${bestilling.artikler}, ferdigstillOrdre: ${bestilling.ferdigstillOrdre}" }
                 call.respond(HttpStatusCode.Created, response)
             } catch (e: Exception) {
                 log.error(e) { "Noe gikk feil med opprettelse av ordre" }
@@ -84,7 +85,6 @@ fun Route.saksbehandling(database: Database) {
 
         post("/getHjelpemiddelOversikt") {
             val fnr = call.receiveFødselsnummer()
-            log.info { "[/getHjelpemiddelOversikt] Henter innbyggers hjelpemiddeloversikt" }
             val hjelpemiddeloversikt = database.transaction {
                 hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr.value)
             }
@@ -132,7 +132,7 @@ fun Route.saksbehandling(database: Database) {
             }
         }
 
-        if (isNotProd()) {
+        if (!Environment.current.isProd) {
             post("/utlanArtnr") {
                 try {
                     val artnr = call.receiveText()

@@ -1,10 +1,8 @@
 package no.nav.hjelpemidler
 
-import io.github.oshai.kotlinlogging.KotlinLogging
-import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.configuration.EnvironmentVariable
 import no.nav.hjelpemidler.configuration.External
-import java.io.File
+import no.nav.hjelpemidler.configuration.vaultSecret
 
 object Configuration {
     val OEBS_BRUKER_ID by EnvironmentVariable
@@ -32,16 +30,4 @@ object Configuration {
 
     @External
     val OEBS_DB_PASSWORD by vaultSecret("/secrets/$OEBS_DB/credentials/password")
-
-    private fun vaultSecret(filename: String): Lazy<String> = lazy {
-        runCatching { File(filename).readText(Charsets.UTF_8) }.getOrElse {
-            log.warn(it) { "Kunne ikke lese filename: $filename" }
-            ""
-        }
-    }
-
-    private val log = KotlinLogging.logger {}
 }
-
-fun isProd(): Boolean = Environment.current.tier.isProd
-fun isNotProd(): Boolean = !isProd()
