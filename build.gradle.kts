@@ -14,16 +14,16 @@ application {
 }
 
 dependencies {
-    implementation(libs.kotlin.stdlib)
-    implementation(libs.micrometer.registry.prometheus)
+    implementation(platform(libs.hotlibs.platform))
+
+    // Hotlibs
+    implementation(libs.hotlibs.core)
     implementation(libs.hotlibs.http)
+    implementation(libs.hotlibs.logging)
+    implementation(libs.hotlibs.serialization)
 
-    // Logging
-    implementation(libs.kotlin.logging)
-    runtimeOnly(libs.bundles.logging.runtime)
-
-    // Jackson
-    implementation(libs.bundles.jackson)
+    // Metrics
+    implementation(libs.micrometer.registry.prometheus)
 
     // Ktor Server
     implementation(libs.bundles.ktor.server)
@@ -66,9 +66,9 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useKotlinTest(libs.versions.kotlin.asProvider())
             dependencies {
-                implementation(libs.ktor.server.test.host)
-                implementation(libs.kotest.assertions.core)
+                implementation(libs.hotlibs.test)
                 implementation(libs.kotest.assertions.ktor)
+                implementation(libs.ktor.server.test.host)
                 implementation(libs.hotlibs.database) {
                     capabilities {
                         requireCapability("no.nav.hjelpemidler:database-h2")
