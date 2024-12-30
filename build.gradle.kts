@@ -16,7 +16,7 @@ application {
 dependencies {
     implementation(platform(libs.hotlibs.platform))
 
-    // Hotlibs
+    // hotlibs
     implementation(libs.hotlibs.core)
     implementation(libs.hotlibs.http)
     implementation(libs.hotlibs.logging)
