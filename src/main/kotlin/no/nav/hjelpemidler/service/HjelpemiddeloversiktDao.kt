@@ -56,11 +56,11 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
     fun utlånPåIsokode(fnr: String, isokode: String): List<UtlånPåIsokode> = tx.list(
         """
-                SELECT kategori3_nummer, utlåns_dato
-                FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
-                WHERE fnr = :fnr
-                  AND kategori3_nummer = :isokode
-                ORDER BY utlåns_dato DESC
+            SELECT kategori3_nummer, utlåns_dato
+            FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+            WHERE fnr = :fnr
+              AND kategori3_nummer = :isokode
+            ORDER BY utlåns_dato DESC
         """.trimIndent(),
         mapOf("fnr" to fnr, "isokode" to isokode),
     ) { row ->
@@ -72,12 +72,12 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
     fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? = tx.singleOrNull(
         """
-                SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato
-                FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
-                WHERE artikkelnummer = :artnr
-                  AND serie_nummer = :serienr
-                ORDER BY utlåns_dato DESC
-                FETCH NEXT 1 ROW ONLY
+            SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato
+            FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+            WHERE artikkelnummer = :artnr
+              AND serie_nummer = :serienr
+            ORDER BY utlåns_dato DESC
+            FETCH NEXT 1 ROW ONLY
         """.trimIndent(),
         mapOf("artnr" to artnr, "serienr" to serienr),
     ) { row ->
@@ -91,9 +91,9 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
     fun utlånPåArtnr(artnr: String): List<String> = tx.list(
         """
-                SELECT fnr  
-                FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
-                WHERE artikkelnummer = :artnr
+            SELECT fnr  
+            FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+            WHERE artikkelnummer = :artnr
         """.trimIndent(),
         mapOf("artnr" to artnr),
     ) { row ->

@@ -9,11 +9,11 @@ import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 class ServiceforespørselDao(private val tx: JdbcOperations) {
     fun opprettServiceforespørsel(sf: Serviceforespørsel): Int = tx.update(
         """
-                INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
-                (id, fnr, navn, stonadsklass, sakstype, resultat, sfdato, referansenummer, kilde, processed, last_update_date,
-                 last_updated_by, creation_date, created_by, job_id, saksblokk, beskrivelse, json_artikkelinfo_in)
-                VALUES (apps.xxrtv_cs_digihot_sf_opprett_s.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, SYSDATE,
-                        :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X', :beskrivelse, :artikler)
+            INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
+            (id, fnr, navn, stonadsklass, sakstype, resultat, sfdato, referansenummer, kilde, processed, last_update_date,
+             last_updated_by, creation_date, created_by, job_id, saksblokk, beskrivelse, json_artikkelinfo_in)
+            VALUES (apps.xxrtv_cs_digihot_sf_opprett_s.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, SYSDATE,
+                    :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X', :beskrivelse, :artikler)
         """.trimIndent(),
         mapOf(
             "fnr" to sf.fødselsnummer,
@@ -36,17 +36,17 @@ class ServiceforespørselDao(private val tx: JdbcOperations) {
 
     fun finnFeilendeServiceforespørsler(): List<ServiceforespørselFeil> = tx.list(
         """
-                SELECT id,
-                       saksnummer,
-                       referansenummer,
-                       processed,
-                       sf_nummer,
-                       feilmelding,
-                       kommentar,
-                       creation_date,
-                       last_update_date
-                FROM apps.xxrtv_cs_digihot_sf_opprett
-                WHERE feilmelding IS NOT NULL
+            SELECT id,
+                   saksnummer,
+                   referansenummer,
+                   processed,
+                   sf_nummer,
+                   feilmelding,
+                   kommentar,
+                   creation_date,
+                   last_update_date
+            FROM apps.xxrtv_cs_digihot_sf_opprett
+            WHERE feilmelding IS NOT NULL
         """.trimIndent(),
     ) { row ->
         ServiceforespørselFeil(

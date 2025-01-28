@@ -7,21 +7,21 @@ import no.nav.hjelpemidler.models.adresse
 class PersoninformasjonDao(private val tx: JdbcOperations) {
     fun hentPersoninformasjon(fnr: String): List<Personinformasjon> = tx.list(
         """
-                SELECT bruker_nummer,
-                       TRIM(bosteds_addresse)   AS bosteds_adresse,
-                       bosteds_postnummer,
-                       TRIM(bosteds_by)         AS bosteds_poststed,
-                       bosteds_kommune,
-                       TRIM(leverings_addresse) AS leverings_adresse,
-                       leverings_postnummer,
-                       TRIM(leverings_by)       AS leverings_poststed,
-                       leverings_kommune,
-                       TRIM(bydel)              AS bydel,
-                       primaer_adr,
-                       status_brukernr,
-                       status_fnr
-                FROM apps.xxrtv_digihot_oebs_adr_fnr_v
-                WHERE fnr = :fnr
+            SELECT bruker_nummer,
+                   TRIM(bosteds_addresse)   AS bosteds_adresse,
+                   bosteds_postnummer,
+                   TRIM(bosteds_by)         AS bosteds_poststed,
+                   bosteds_kommune,
+                   TRIM(leverings_addresse) AS leverings_adresse,
+                   leverings_postnummer,
+                   TRIM(leverings_by)       AS leverings_poststed,
+                   leverings_kommune,
+                   TRIM(bydel)              AS bydel,
+                   primaer_adr,
+                   status_brukernr,
+                   status_fnr
+            FROM apps.xxrtv_digihot_oebs_adr_fnr_v
+            WHERE fnr = :fnr
         """.trimIndent(),
         mapOf("fnr" to fnr),
     ) { row ->
