@@ -1,6 +1,8 @@
 package no.nav.hjelpemidler.database
 
 import com.zaxxer.hikari.HikariDataSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.nav.hjelpemidler.service.BrukernummerDao
 import no.nav.hjelpemidler.service.BrukerpassDao
 import no.nav.hjelpemidler.service.HjelpemiddeloversiktDao
@@ -16,7 +18,7 @@ class Database(private val dataSource: DataSource) : Closeable {
         DaoProvider(it).block()
     }
 
-    suspend fun isValid(): Boolean = withDatabaseContext {
+    suspend fun isValid(): Boolean = withContext(Dispatchers.IO) {
         dataSource.connection.use { it.isValid(10) }
     }
 
