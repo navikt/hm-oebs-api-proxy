@@ -8,5 +8,4 @@ fun createTestDataSource(): DataSource = createDataSource(H2) {
     initScript = "/oebsl.sql"
 }
 
-suspend fun <T> testTransaction(block: DaoProvider.() -> T): T =
-    Database(createTestDataSource()).use { it.transaction(block) }
+suspend fun <T> testTransaction(block: DaoProvider.() -> T): T = Database(createTestDataSource()).use { it.transaction(block) }

@@ -5,9 +5,7 @@ import no.nav.hjelpemidler.database.sql.Sql
 import no.nav.hjelpemidler.models.TittelForHmsNr
 
 class TittelForHmsnrDao(private val tx: JdbcOperations) {
-    fun hentTittelForHmsnr(hmsnr: String): TittelForHmsNr? {
-        return hentTittelForHmsnrs(listOf(hmsnr).toSet()).firstOrNull()
-    }
+    fun hentTittelForHmsnr(hmsnr: String): TittelForHmsNr? = hentTittelForHmsnrs(listOf(hmsnr).toSet()).firstOrNull()
 
     fun hentTittelForHmsnrs(hmsnrs: Set<String>): List<TittelForHmsNr> {
         // Chunking solves: java.sql.SQLSyntaxErrorException: ORA-01795: maks. antall uttrykk i en liste er 1000

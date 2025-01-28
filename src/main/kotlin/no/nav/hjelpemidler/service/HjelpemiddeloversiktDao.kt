@@ -54,56 +54,50 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         return berikOrdrelinjer(items)
     }
 
-    fun utlånPåIsokode(fnr: String, isokode: String): List<UtlånPåIsokode> {
-        return tx.list(
-            """
+    fun utlånPåIsokode(fnr: String, isokode: String): List<UtlånPåIsokode> = tx.list(
+        """
                 SELECT kategori3_nummer, utlåns_dato
                 FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
                 WHERE fnr = :fnr
                   AND kategori3_nummer = :isokode
                 ORDER BY utlåns_dato DESC
-            """.trimIndent(),
-            mapOf("fnr" to fnr, "isokode" to isokode),
-        ) { row ->
-            UtlånPåIsokode(
-                kategoriNummer = row.string("kategori3_nummer"),
-                datoUtsendelse = row.string("utlåns_dato"),
-            )
-        }
+        """.trimIndent(),
+        mapOf("fnr" to fnr, "isokode" to isokode),
+    ) { row ->
+        UtlånPåIsokode(
+            kategoriNummer = row.string("kategori3_nummer"),
+            datoUtsendelse = row.string("utlåns_dato"),
+        )
     }
 
-    fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? {
-        return tx.singleOrNull(
-            """
+    fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? = tx.singleOrNull(
+        """
                 SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato
                 FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
                 WHERE artikkelnummer = :artnr
                   AND serie_nummer = :serienr
                 ORDER BY utlåns_dato DESC
                 FETCH NEXT 1 ROW ONLY
-            """.trimIndent(),
-            mapOf("artnr" to artnr, "serienr" to serienr),
-        ) { row ->
-            Utlån(
-                fnr = row.string("fnr"),
-                artnr = row.string("artikkelnummer"),
-                serienr = row.string("serie_nummer"),
-                utlånsDato = row.string("utlåns_dato"),
-            )
-        }
+        """.trimIndent(),
+        mapOf("artnr" to artnr, "serienr" to serienr),
+    ) { row ->
+        Utlån(
+            fnr = row.string("fnr"),
+            artnr = row.string("artikkelnummer"),
+            serienr = row.string("serie_nummer"),
+            utlånsDato = row.string("utlåns_dato"),
+        )
     }
 
-    fun utlånPåArtnr(artnr: String): List<String> {
-        return tx.list(
-            """
+    fun utlånPåArtnr(artnr: String): List<String> = tx.list(
+        """
                 SELECT fnr  
                 FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
                 WHERE artikkelnummer = :artnr
-            """.trimIndent(),
-            mapOf("artnr" to artnr),
-        ) { row ->
-            row.string("fnr")
-        }
+        """.trimIndent(),
+        mapOf("artnr" to artnr),
+    ) { row ->
+        row.string("fnr")
     }
 
     data class UtlånPåIsokode(

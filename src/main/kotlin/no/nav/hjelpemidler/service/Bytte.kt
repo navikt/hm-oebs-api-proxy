@@ -6,11 +6,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 fun berikBytteinfo(item: HjelpemiddelBruker) {
-    item.kanByttes = erPermanentUtlån(item.utlånsType) || erGyldigTidsbestemtUtlån(
-        item.oppdatertInnleveringsdato,
-        item.innleveringsdato,
-        item.utlånsType,
-    )
+    item.kanByttes = erPermanentUtlån(item.utlånsType) ||
+        erGyldigTidsbestemtUtlån(
+            item.oppdatertInnleveringsdato,
+            item.innleveringsdato,
+            item.utlånsType,
+        )
     item.kanByttesMedBrukerpass = item.kanByttes!! && erGyldigIsokodeForBrukerpassbytte(item.kategoriNummer)
 }
 

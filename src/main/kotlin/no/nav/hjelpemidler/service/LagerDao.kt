@@ -6,9 +6,7 @@ import no.nav.hjelpemidler.database.sql.Sql
 class LagerDao(private val tx: JdbcOperations) {
     private val kommuneOppslag by lazy(::KommuneOppslag)
 
-    fun hentLagerstatus(hmsnr: String): List<Lagerstatus> {
-        return hentLagerstatus(hmsnr, null)
-    }
+    fun hentLagerstatus(hmsnr: String): List<Lagerstatus> = hentLagerstatus(hmsnr, null)
 
     fun hentLagerstatusForSentral(kommunenummer: String, hmsnr: String): Lagerstatus? {
         val orgNavn = kommuneOppslag.hentOrgNavn(kommunenummer) ?: return null

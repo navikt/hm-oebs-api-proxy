@@ -72,14 +72,13 @@ private suspend fun TestContext.opprettSF(fnr: String, artikkel: Serviceforespø
     } shouldHaveStatus HttpStatusCode.Created
 }
 
-private suspend fun TestContext.hentServiceforespørsler(fnr: String): List<Map<String, Any?>> =
-    transactionAsync(dataSource) {
-        it.list(
-            """
+private suspend fun TestContext.hentServiceforespørsler(fnr: String): List<Map<String, Any?>> = transactionAsync(dataSource) {
+    it.list(
+        """
             SELECT * FROM apps.xxrtv_cs_digihot_sf_opprett
             WHERE fnr = :fnr
-            """.trimIndent(),
-            fnr.toQueryParameters("fnr"),
-            Row::toMap,
-        )
-    }
+        """.trimIndent(),
+        fnr.toQueryParameters("fnr"),
+        Row::toMap,
+    )
+}

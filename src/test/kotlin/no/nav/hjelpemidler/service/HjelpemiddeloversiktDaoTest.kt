@@ -92,5 +92,4 @@ private fun item(
 )
 
 private val oebsDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-fun toInnleveringsdato(dato: LocalDate = LocalDate.now().plusYears(1)): String =
-    LocalDateTime.of(dato, LocalTime.of(0, 0)).format(oebsDateTimeFormat)
+fun toInnleveringsdato(dato: LocalDate = LocalDate.now().plusYears(1)): String = LocalDateTime.of(dato, LocalTime.of(0, 0)).format(oebsDateTimeFormat)

@@ -5,9 +5,8 @@ import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.adresse
 
 class PersoninformasjonDao(private val tx: JdbcOperations) {
-    fun hentPersoninformasjon(fnr: String): List<Personinformasjon> {
-        return tx.list(
-            """
+    fun hentPersoninformasjon(fnr: String): List<Personinformasjon> = tx.list(
+        """
                 SELECT bruker_nummer,
                        TRIM(bosteds_addresse)   AS bosteds_adresse,
                        bosteds_postnummer,
@@ -23,17 +22,16 @@ class PersoninformasjonDao(private val tx: JdbcOperations) {
                        status_fnr
                 FROM apps.xxrtv_digihot_oebs_adr_fnr_v
                 WHERE fnr = :fnr
-            """.trimIndent(),
-            mapOf("fnr" to fnr),
-        ) { row ->
-            Personinformasjon(
-                brukerNr = row.string("bruker_nummer"),
-                bostedsadresse = row.adresse("bosteds"),
-                leveringsadresse = row.adresse("leverings"),
-                bydel = row.stringOrNull("bydel"),
-                primaerAdr = row.string("primaer_adr"), // Y | N
-                aktiv = row.stringOrNull("status_brukernr") == "A" && row.stringOrNull("status_fnr") == "A", // A | I
-            )
-        }
+        """.trimIndent(),
+        mapOf("fnr" to fnr),
+    ) { row ->
+        Personinformasjon(
+            brukerNr = row.string("bruker_nummer"),
+            bostedsadresse = row.adresse("bosteds"),
+            leveringsadresse = row.adresse("leverings"),
+            bydel = row.stringOrNull("bydel"),
+            primaerAdr = row.string("primaer_adr"), // Y | N
+            aktiv = row.stringOrNull("status_brukernr") == "A" && row.stringOrNull("status_fnr") == "A", // A | I
+        )
     }
 }
