@@ -19,5 +19,8 @@ data class BestillingsordreRequest(
             else -> forsendelsesinfo.trim().removeSuffix(".")
         }
 
-    data class Artikkel(override val hmsnr: String, override val antall: String) : no.nav.hjelpemidler.models.Artikkel
+    data class Artikkel(
+        override val hmsnr: String,
+        override val antall: String,
+    ) : no.nav.hjelpemidler.models.Artikkel
 }
