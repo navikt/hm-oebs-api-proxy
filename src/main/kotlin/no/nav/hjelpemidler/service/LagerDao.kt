@@ -51,7 +51,7 @@ class LagerDao(private val tx: JdbcOperations) {
 
         return tx.list(
             sql,
-            mapOf("orgNavn" to orgNavn) + indexedHmsnrs.map {(index, hmsnr) -> ":hmsnr-$index" to hmsnr},
+            mapOf("orgNavn" to orgNavn) + indexedHmsnrs.map { (index, hmsnr) -> ":hmsnr-$index" to hmsnr },
         ) { row ->
             Lagerstatus(
                 erPåLager = (

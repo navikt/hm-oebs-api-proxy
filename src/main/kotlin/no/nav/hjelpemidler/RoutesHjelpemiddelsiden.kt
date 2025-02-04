@@ -37,7 +37,7 @@ fun Route.hjelpemiddelsiden(database: Database) {
                         artikkelNr = "014123",
                         serieNr = null,
                         datoUtsendelse = "",
-                    )
+                    ),
                 )
             } else {
                 database.transaction {

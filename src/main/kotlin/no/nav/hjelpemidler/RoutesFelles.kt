@@ -66,17 +66,17 @@ fun Route.felles(database: Database) {
         }
 
         post("/lager/sentral/{kommunenummer}") {
-            data class HmsnrsDTO (
-                val hmsnrs: List<String>
+            data class HmsnrsDTO(
+                val hmsnrs: List<String>,
             )
-            val hmsnrs = call.receive<HmsnrsDTO>()
+            val hmsnrs = call.receive<HmsnrsDTO>().hmsnrs
 
             data class NoResult(
                 val error: String,
             )
 
             val lagerstatus = database.transaction {
-                lagerDao.hentLagerstatusForSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)
+                lagerDao.hentLagerstatusForSentral(call.parameters["kommunenummer"]!!, hmsnrs)
             }
             if (lagerstatus != null) {
                 call.respond(lagerstatus)
