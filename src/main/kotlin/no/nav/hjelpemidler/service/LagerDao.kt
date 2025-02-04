@@ -52,11 +52,11 @@ class LagerDao(private val tx: JdbcOperations) {
             sql = Sql("$sql AND organisasjons_navn = :orgNavn")
         }
 
-        log.info {"DEBUG sql: $sql" }
+        log.info { "DEBUG sql: $sql" }
 
         val queryParameters = mapOf("orgNavn" to orgNavn) + indexedHmsnrs.map { (index, hmsnr) -> ":hmsnr-$index" to hmsnr }
 
-        log.info{"DEBUG queryParameters: $queryParameters"}
+        log.info { "DEBUG queryParameters: $queryParameters" }
 
         return tx.list(
             sql,
