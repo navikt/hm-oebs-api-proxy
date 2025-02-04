@@ -54,7 +54,7 @@ class LagerDao(private val tx: JdbcOperations) {
 
         log.info { "DEBUG sql: $sql" }
 
-        val queryParameters = mapOf("orgNavn" to orgNavn) + indexedHmsnrs.map { (index, hmsnr) -> ":hmsnr_$index" to "'$hmsnr'" }
+        val queryParameters = mapOf("orgNavn" to orgNavn) + indexedHmsnrs.map { (index, hmsnr) -> "hmsnr_$index" to hmsnr }
 
         log.info { "DEBUG queryParameters: $queryParameters" }
 
