@@ -11,7 +11,7 @@ data class Serviceforespørsel(
     val problemsammendrag: String? = null,
     val artikler: List<Artikkel>? = null,
 ) {
-    data class Artikkel(override val hmsnr: String, override val antall: String, val shippinginstructions: String = "Tester notat til 5.17\nMed linjeskift") : no.nav.hjelpemidler.models.Artikkel
+    data class Artikkel(override val hmsnr: String, override val antall: String, val shippinginstructions: String = "") : no.nav.hjelpemidler.models.Artikkel
 }
 
 enum class Stønadsklasse(val stønadsklasse: String) {
