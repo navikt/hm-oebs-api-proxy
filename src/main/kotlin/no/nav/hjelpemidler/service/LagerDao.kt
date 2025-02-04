@@ -44,7 +44,7 @@ class LagerDao(private val tx: JdbcOperations) {
                        lagervare,
                        minmax
                 FROM apps.xxrtv_digihot_utvid_art_v
-                WHERE artikkelnummer IN (:hmsnrs)
+                WHERE artikkelnummer IN ('014123', '267912')
             """.trimIndent(),
         )
 
@@ -54,7 +54,7 @@ class LagerDao(private val tx: JdbcOperations) {
 
         log.info { "DEBUG sql: $sql" }
 
-        val queryParameters = mapOf("orgNavn" to orgNavn, "hmsnrs" to hmsnrs) // + indexedHmsnrs.map { (index, hmsnr) -> ":hmsnr_$index" to hmsnr }
+        val queryParameters = mapOf("orgNavn" to orgNavn) // "hmsnrs" to hmsnrs) // + indexedHmsnrs.map { (index, hmsnr) -> ":hmsnr_$index" to hmsnr }
 
         log.info { "DEBUG queryParameters: $queryParameters" }
 
