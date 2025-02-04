@@ -64,5 +64,28 @@ fun Route.felles(database: Database) {
                 )
             }
         }
+
+        post("/lager/sentral/{kommunenummer}") {
+            data class HmsnrsDTO (
+                val hmsnrs: List<String>
+            )
+            val hmsnrs = call.receive<HmsnrsDTO>()
+
+            data class NoResult(
+                val error: String,
+            )
+
+            val lagerstatus = database.transaction {
+                lagerDao.hentLagerstatusForSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)
+            }
+            if (lagerstatus != null) {
+                call.respond(lagerstatus)
+            } else {
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    NoResult("no results found for kommunenummer=\"${call.parameters["kommunenummer"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\""),
+                )
+            }
+        }
     }
 }
