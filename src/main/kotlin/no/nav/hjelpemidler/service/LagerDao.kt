@@ -1,7 +1,10 @@
 package no.nav.hjelpemidler.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.database.sql.Sql
+
+private val log = KotlinLogging.logger { }
 
 class LagerDao(private val tx: JdbcOperations) {
     private val kommuneOppslag by lazy(::KommuneOppslag)
@@ -49,9 +52,15 @@ class LagerDao(private val tx: JdbcOperations) {
             sql = Sql("$sql AND organisasjons_navn = :orgNavn")
         }
 
+        log.info {"DEBUG sql: $sql" }
+
+        val queryParameters = mapOf("orgNavn" to orgNavn) + indexedHmsnrs.map { (index, hmsnr) -> ":hmsnr-$index" to hmsnr }
+
+        log.info{"DEBUG queryParameters: $queryParameters"}
+
         return tx.list(
             sql,
-            mapOf("orgNavn" to orgNavn) + indexedHmsnrs.map { (index, hmsnr) -> ":hmsnr-$index" to hmsnr },
+            queryParameters,
         ) { row ->
             Lagerstatus(
                 erPåLager = (
