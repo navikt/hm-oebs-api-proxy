@@ -27,7 +27,7 @@ spec:
     requests:
       cpu: 50m
       memory: 600Mi
-  envFrom:
+  x:
     - secret: hm-oebs-api-proxy-secret
   vault:
     enabled: true
@@ -108,11 +108,12 @@ spec:
     outbound:
       external:
         - host: hm-grunndata-search.intern.dev.nav.no
+        - host: b27apfl027.preprod.local
   env:
     - name: OEBS_BRUKER_ID
       value: "81400"
     - name: OEBS_API_URL_Q1
-      value: http://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/
+      value: http://b27apfl027.preprod.local:8088/webservices/rest/opprettordre/digihotordreontinfo/
     - name: OEBS_API_URL_Q2
       value: http://b27apfl026.preprod.local:8085/webservices/rest/opprettordre/digihotordreontinfo/
     - name: OEBS_API_URL_T1
