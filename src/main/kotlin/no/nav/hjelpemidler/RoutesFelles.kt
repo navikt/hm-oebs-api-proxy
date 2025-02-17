@@ -53,6 +53,10 @@ fun Route.felles(database: Database, norgService: NorgService) {
                 val error: String,
             )
 
+            if (!Environment.current.isProd) {
+                log.info { "/lager/sentral/{kommunenummer}/{hmsNr} request headers: ${call.request.headers}" }
+            }
+
             val kommunenummer = call.parameters["kommunenummer"]!!
             val enhetNavn = norgService.hentEnhetNavn(kommunenummer) ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
 
