@@ -70,20 +70,21 @@ fun Route.felles(database: Database) {
                 val hmsnrs: List<String>,
             )
             val hmsnrs = call.receive<HmsnrsDTO>().hmsnrs
+            val kommunenummer = call.parameters["kommunenummer"]!!
 
             data class NoResult(
                 val error: String,
             )
 
             val lagerstatus = database.transaction {
-                lagerDao.hentLagerstatusForSentral(call.parameters["kommunenummer"]!!, hmsnrs)
+                lagerDao.hentLagerstatusForSentral(kommunenummer, hmsnrs)
             }
             if (lagerstatus != null) {
                 call.respond(lagerstatus)
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    NoResult("no results found for kommunenummer=\"${call.parameters["kommunenummer"]!!}\" and hmsnr=\"${call.parameters["hmsNr"]!!}\""),
+                    NoResult("no results found for kommunenummer=\"${kommunenummer}\" and hmsnrs=\"${hmsnrs}\""),
                 )
             }
         }
