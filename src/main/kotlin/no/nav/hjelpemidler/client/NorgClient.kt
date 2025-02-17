@@ -40,7 +40,7 @@ class NorgClient(engine: HttpClientEngine = CIO.create()) {
 
     internal suspend fun hentArbeidsfordelingenheter(kommunenummer: String): List<ArbeidsfordelingEnhet> {
         val url = "$apiUrl/arbeidsfordeling/enheter/bestmatch"
-        log.info { "Henter arbeidsfordelingenhet med url: '$url'" }
+        log.info { "Henter arbeidsfordelingenhet med url: '$url' for kommunenummer $kommunenummer" }
 
         return withContext(Dispatchers.IO) {
             client.post(url) {

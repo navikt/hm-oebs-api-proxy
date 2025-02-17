@@ -133,4 +133,4 @@ spec:
     - name: GRUNNDATA_API_URL
       value: https://hm-grunndata-search.intern.dev.nav.no
     - name: NORG_API_URL
-      value: https://norg2.dev-fss-pub.nais.io/norg2/api/v1
+      value: https://norg2.dev.intern.nav.no/norg2/api/v1
