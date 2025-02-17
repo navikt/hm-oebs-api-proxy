@@ -53,10 +53,6 @@ fun Route.felles(database: Database, norgService: NorgService) {
                 val error: String,
             )
 
-            if (!Environment.current.isProd) {
-                log.info { "/lager/sentral/{kommunenummer}/{hmsNr} request headers: ${call.request.headers}" }
-            }
-
             val kommunenummer = call.parameters["kommunenummer"]!!
             val enhetNavn = norgService.hentEnhetNavn(kommunenummer) ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
 
@@ -83,6 +79,8 @@ fun Route.felles(database: Database, norgService: NorgService) {
             data class NoResult(
                 val error: String,
             )
+
+            log.info { "/lager/sentral/{kommunenummer} request headers: ${call.request.headers}" }
 
             val enhetNavn = norgService.hentEnhetNavn(kommunenummer) ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
 
