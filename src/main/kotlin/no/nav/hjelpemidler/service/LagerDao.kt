@@ -9,9 +9,7 @@ private val log = KotlinLogging.logger { }
 class LagerDao(private val tx: JdbcOperations) {
     fun hentLagerstatus(hmsnr: String): List<Lagerstatus> = hentLagerstatus(listOf(hmsnr), null)
 
-    fun hentLagerstatusForSentral(enhetNavn: String, hmsnr: String): Lagerstatus? {
-        return hentLagerstatus(listOf(hmsnr), enhetNavn).firstOrNull()
-    }
+    fun hentLagerstatusForSentral(enhetNavn: String, hmsnr: String): Lagerstatus? = hentLagerstatus(listOf(hmsnr), enhetNavn).firstOrNull()
 
     fun hentLagerstatusForSentral(enhetNavn: String, hmsnrs: List<String>): List<Lagerstatus>? {
         log.info { "enhetNavn: $enhetNavn" }
