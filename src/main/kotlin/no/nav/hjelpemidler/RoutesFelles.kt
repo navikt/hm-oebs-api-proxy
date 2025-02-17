@@ -11,10 +11,11 @@ import io.ktor.server.routing.post
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
+import no.nav.hjelpemidler.service.NorgService
 
 private val log = KotlinLogging.logger {}
 
-fun Route.felles(database: Database) {
+fun Route.felles(database: Database, norgService: NorgService) {
     authenticate("aad") {
         post("/hent-brukerpass") {
             data class FnrDto(
@@ -52,8 +53,11 @@ fun Route.felles(database: Database) {
                 val error: String,
             )
 
+            val kommunenummer = call.parameters["kommunenummer"]!!
+            val enhetNavn = norgService.hentEnhetNavn(kommunenummer) ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
+
             val lagerstatus = database.transaction {
-                lagerDao.hentLagerstatusForSentral(call.parameters["kommunenummer"]!!, call.parameters["hmsNr"]!!)
+                lagerDao.hentLagerstatusForSentral(enhetNavn, call.parameters["hmsNr"]!!)
             }
             if (lagerstatus != null) {
                 call.respond(lagerstatus)
@@ -76,8 +80,10 @@ fun Route.felles(database: Database) {
                 val error: String,
             )
 
+            val enhetNavn = norgService.hentEnhetNavn(kommunenummer) ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
+
             val lagerstatus = database.transaction {
-                lagerDao.hentLagerstatusForSentral(kommunenummer, hmsnrs)
+                lagerDao.hentLagerstatusForSentral(enhetNavn, hmsnrs)
             }
             if (lagerstatus != null) {
                 call.respond(lagerstatus)

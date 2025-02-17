@@ -30,4 +30,7 @@ object Configuration {
 
     @External
     val OEBS_DB_PASSWORD by vaultSecret("/secrets/$OEBS_DB/credentials/password")
+
+    @External
+    val NORG_API_URL by EnvironmentVariable
 }

@@ -7,18 +7,15 @@ import no.nav.hjelpemidler.database.sql.Sql
 private val log = KotlinLogging.logger { }
 
 class LagerDao(private val tx: JdbcOperations) {
-    private val kommuneOppslag by lazy(::KommuneOppslag)
-
     fun hentLagerstatus(hmsnr: String): List<Lagerstatus> = hentLagerstatus(listOf(hmsnr), null)
 
-    fun hentLagerstatusForSentral(kommunenummer: String, hmsnr: String): Lagerstatus? {
-        val orgNavn = kommuneOppslag.hentOrgNavn(kommunenummer) ?: return null
-        return hentLagerstatus(listOf(hmsnr), orgNavn).firstOrNull()
+    fun hentLagerstatusForSentral(enhetNavn: String, hmsnr: String): Lagerstatus? {
+        return hentLagerstatus(listOf(hmsnr), enhetNavn).firstOrNull()
     }
 
-    fun hentLagerstatusForSentral(kommunenummer: String, hmsnrs: List<String>): List<Lagerstatus>? {
-        val orgNavn = kommuneOppslag.hentOrgNavn(kommunenummer) ?: return null
-        return hentLagerstatus(hmsnrs, orgNavn)
+    fun hentLagerstatusForSentral(enhetNavn: String, hmsnrs: List<String>): List<Lagerstatus>? {
+        log.info { "enhetNavn: $enhetNavn" }
+        return hentLagerstatus(hmsnrs, enhetNavn)
     }
 
     private fun hentLagerstatus(hmsnrs: List<String>, orgNavn: String? = null): List<Lagerstatus> {
