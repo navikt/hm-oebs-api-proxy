@@ -54,7 +54,8 @@ fun Route.felles(database: Database, norgService: NorgService) {
             )
 
             val kommunenummer = call.parameters["kommunenummer"]!!
-            val enhetNavn = norgService.hentEnhetNavn(kommunenummer) ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
+            val enhetNavn = norgService.hentEnhetNavn(kommunenummer)
+                ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
 
             val lagerstatus = database.transaction {
                 lagerDao.hentLagerstatusForSentral(enhetNavn, call.parameters["hmsNr"]!!)
@@ -73,6 +74,7 @@ fun Route.felles(database: Database, norgService: NorgService) {
             data class HmsnrsDTO(
                 val hmsnrs: List<String>,
             )
+
             val hmsnrs = call.receive<HmsnrsDTO>().hmsnrs
             val kommunenummer = call.parameters["kommunenummer"]!!
 
@@ -80,9 +82,15 @@ fun Route.felles(database: Database, norgService: NorgService) {
                 val error: String,
             )
 
-            log.info { "/lager/sentral/{kommunenummer} request headers: ${call.request.headers}" }
+            call.request.headers.forEach { name, values ->
+                values.forEach { value ->
+                    log.info { "Lagerstatus header: $name = $value" }
+                }
+            }
 
-            val enhetNavn = norgService.hentEnhetNavn(kommunenummer) ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
+
+            val enhetNavn = norgService.hentEnhetNavn(kommunenummer)
+                ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
 
             val lagerstatus = database.transaction {
                 lagerDao.hentLagerstatusForSentral(enhetNavn, hmsnrs)
