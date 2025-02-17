@@ -88,7 +88,6 @@ fun Route.felles(database: Database, norgService: NorgService) {
                 }
             }
 
-
             val enhetNavn = norgService.hentEnhetNavn(kommunenummer)
                 ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
 
