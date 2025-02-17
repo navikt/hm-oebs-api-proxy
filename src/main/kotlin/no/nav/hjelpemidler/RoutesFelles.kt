@@ -82,12 +82,6 @@ fun Route.felles(database: Database, norgService: NorgService) {
                 val error: String,
             )
 
-            call.request.headers.forEach { name, values ->
-                values.forEach { value ->
-                    log.info { "Lagerstatus header: $name = $value" }
-                }
-            }
-
             val enhetNavn = norgService.hentEnhetNavn(kommunenummer)
                 ?: error("Fant ikke enhetNavn for kommunenummer $kommunenummer")
 
