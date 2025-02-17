@@ -9,9 +9,10 @@ data class Serviceforespørsel(
     val kilde: String = "DIGIHOT",
     val jobId: String = "-1",
     val problemsammendrag: String? = null,
+    val forsendelsesinfo: String? = null,
     val artikler: List<Artikkel>? = null,
 ) {
-    data class Artikkel(override val hmsnr: String, override val antall: String, val shippinginstructions: String = "") : no.nav.hjelpemidler.models.Artikkel
+    data class Artikkel(override val hmsnr: String, override val antall: String) : no.nav.hjelpemidler.models.Artikkel
 }
 
 enum class Stønadsklasse(val stønadsklasse: String) {
