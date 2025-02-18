@@ -19,7 +19,9 @@ import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.callid.generate
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
+import io.ktor.server.request.uri
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -72,7 +74,7 @@ fun Application.installRouting(dataSource: DataSource) {
     }
 
     install(CallLogging) {
-        level = Level.TRACE
+        level = Level.INFO
         filter { call ->
             call.request.path() !in setOf(
                 "/internal",
@@ -81,6 +83,11 @@ fun Application.installRouting(dataSource: DataSource) {
                 "/metrics",
             )
         }
+
+        format { call ->
+            "[${call.request.httpMethod.value}] ${call.request.uri}"
+        }
+
         callIdMdc("correlationId")
     }
 
