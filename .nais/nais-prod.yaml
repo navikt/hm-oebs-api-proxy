@@ -108,3 +108,5 @@ spec:
       value: oebsp
     - name: GRUNNDATA_API_URL
       value: https://hm-grunndata-search.intern.nav.no
+    - name: NORG_API_URL
+      value: https://norg2.intern.nav.no/norg2/api/v1

@@ -132,3 +132,5 @@ spec:
       value: "$(OEBS_DB_Q1)"
     - name: GRUNNDATA_API_URL
       value: https://hm-grunndata-search.intern.dev.nav.no
+    - name: NORG_API_URL
+      value: https://norg2.dev.intern.nav.no/norg2/api/v1

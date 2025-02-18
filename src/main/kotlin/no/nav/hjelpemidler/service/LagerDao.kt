@@ -4,16 +4,14 @@ import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.database.sql.Sql
 
 class LagerDao(private val tx: JdbcOperations) {
-    private val kommuneOppslag by lazy(::KommuneOppslag)
+    fun hentLagerstatus(hmsnr: String): List<Lagerstatus> = hentLagerstatus(listOf(hmsnr), null)
 
-    fun hentLagerstatus(hmsnr: String): List<Lagerstatus> = hentLagerstatus(hmsnr, null)
+    fun hentLagerstatusForSentral(enhetNavn: String, hmsnr: String): Lagerstatus? = hentLagerstatus(listOf(hmsnr), enhetNavn).firstOrNull()
 
-    fun hentLagerstatusForSentral(kommunenummer: String, hmsnr: String): Lagerstatus? {
-        val orgNavn = kommuneOppslag.hentOrgNavn(kommunenummer) ?: return null
-        return hentLagerstatus(hmsnr, orgNavn).firstOrNull()
-    }
+    fun hentLagerstatusForSentral(enhetNavn: String, hmsnrs: List<String>): List<Lagerstatus>? = hentLagerstatus(hmsnrs, enhetNavn)
 
-    private fun hentLagerstatus(hmsnr: String, orgNavn: String? = null): List<Lagerstatus> {
+    private fun hentLagerstatus(hmsnrs: List<String>, orgNavn: String? = null): List<Lagerstatus> {
+        var indexedHmsnrs = hmsnrs.withIndex()
         var sql = Sql(
             """
                 SELECT organisasjons_id,
@@ -35,7 +33,7 @@ class LagerDao(private val tx: JdbcOperations) {
                        lagervare,
                        minmax
                 FROM apps.xxrtv_digihot_utvid_art_v
-                WHERE artikkelnummer = :hmsnr
+                WHERE artikkelnummer IN (${indexedHmsnrs.joinToString(",") { (index, _) -> ":hmsnr_$index" }})
             """.trimIndent(),
         )
 
@@ -45,7 +43,7 @@ class LagerDao(private val tx: JdbcOperations) {
 
         return tx.list(
             sql,
-            mapOf("hmsnr" to hmsnr, "orgNavn" to orgNavn),
+            mapOf("orgNavn" to orgNavn) + indexedHmsnrs.map { (index, hmsnr) -> "hmsnr_$index" to hmsnr },
         ) { row ->
             Lagerstatus(
                 erPåLager = (

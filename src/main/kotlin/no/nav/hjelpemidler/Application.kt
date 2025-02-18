@@ -25,6 +25,7 @@ import io.ktor.server.request.uri
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import no.nav.hjelpemidler.client.NorgClient
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.database.Oracle
@@ -34,6 +35,7 @@ import no.nav.hjelpemidler.domain.person.TILLAT_SYNTETISKE_FØDSELSNUMRE
 import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.ServiceforespørselFeil
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
+import no.nav.hjelpemidler.service.NorgService
 import org.slf4j.event.Level
 import javax.sql.DataSource
 import kotlin.time.Duration.Companion.minutes
@@ -107,11 +109,14 @@ fun Application.installRouting(dataSource: DataSource) {
         monitor.unsubscribe(ApplicationStopping) {}
     }
 
+    val norgClient = NorgClient()
+    val norgService = NorgService(norgClient)
+
     routing {
         internal(database)
         hjelpemiddelsiden(database)
         saksbehandling(database)
-        felles(database)
+        felles(database, norgService)
     }
 }
 
