@@ -1,20 +1,14 @@
 package no.nav.hjelpemidler.service
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.database.sql.Sql
-
-private val log = KotlinLogging.logger { }
 
 class LagerDao(private val tx: JdbcOperations) {
     fun hentLagerstatus(hmsnr: String): List<Lagerstatus> = hentLagerstatus(listOf(hmsnr), null)
 
     fun hentLagerstatusForSentral(enhetNavn: String, hmsnr: String): Lagerstatus? = hentLagerstatus(listOf(hmsnr), enhetNavn).firstOrNull()
 
-    fun hentLagerstatusForSentral(enhetNavn: String, hmsnrs: List<String>): List<Lagerstatus>? {
-        log.info { "enhetNavn: $enhetNavn" }
-        return hentLagerstatus(hmsnrs, enhetNavn)
-    }
+    fun hentLagerstatusForSentral(enhetNavn: String, hmsnrs: List<String>): List<Lagerstatus>? = hentLagerstatus(hmsnrs, enhetNavn)
 
     private fun hentLagerstatus(hmsnrs: List<String>, orgNavn: String? = null): List<Lagerstatus> {
         var indexedHmsnrs = hmsnrs.withIndex()
@@ -47,11 +41,9 @@ class LagerDao(private val tx: JdbcOperations) {
             sql = Sql("$sql AND organisasjons_navn = :orgNavn")
         }
 
-        val queryParameters = mapOf("orgNavn" to orgNavn) + indexedHmsnrs.map { (index, hmsnr) -> "hmsnr_$index" to hmsnr }
-
         return tx.list(
             sql,
-            queryParameters,
+            mapOf("orgNavn" to orgNavn) + indexedHmsnrs.map { (index, hmsnr) -> "hmsnr_$index" to hmsnr },
         ) { row ->
             Lagerstatus(
                 erPåLager = (
