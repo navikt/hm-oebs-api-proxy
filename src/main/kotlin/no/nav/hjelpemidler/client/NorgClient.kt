@@ -39,21 +39,26 @@ class NorgClient(engine: HttpClientEngine = CIO.create()) {
     private val apiUrl = Configuration.NORG_API_URL
 
     internal suspend fun hentArbeidsfordelingenheter(kommunenummer: String): List<ArbeidsfordelingEnhet> {
-        val url = "$apiUrl/arbeidsfordeling/enheter/bestmatch"
-        log.info { "Henter arbeidsfordelingenhet med url: '$url' for kommunenummer $kommunenummer" }
+        try {
+            val url = "$apiUrl/arbeidsfordeling/enheter/bestmatch"
+            log.info { "Henter arbeidsfordelingenhet med url: '$url' for kommunenummer $kommunenummer" }
 
-        return withContext(Dispatchers.IO) {
-            client.post(url) {
-                accept(ContentType.Application.Json)
-                contentType(ContentType.Application.Json)
-                setBody(
-                    mapOf(
-                        "geografiskOmraade" to kommunenummer,
-                        "tema" to "HJE",
-                        "temagruppe" to "HJLPM",
-                    ),
-                )
-            }.body()
+            return withContext(Dispatchers.IO) {
+                client.post(url) {
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        mapOf(
+                            "geografiskOmraade" to kommunenummer,
+                            "tema" to "HJE",
+                            "temagruppe" to "HJLPM",
+                        ),
+                    )
+                }.body()
+            }
+        } catch(e: Exception) {
+            log.error(e) { "Klarte ikke hente arbeidsfordelingenheter for kommunenummer $kommunenummer" }
+            throw e
         }
     }
 }
