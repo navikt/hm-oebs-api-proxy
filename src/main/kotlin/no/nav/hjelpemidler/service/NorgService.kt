@@ -11,6 +11,7 @@ class NorgService(private val norgClient: NorgClient) {
 
 val lagerMap: Map<String, String> = mapOf(
     "01" to "*01 Østfold",
+    "02" to "*03 Oslo",
     "03" to "*03 Oslo",
     "04" to "*04 Hedmark",
     "05" to "*05 Oppland",
