@@ -56,7 +56,7 @@ class NorgClient(engine: HttpClientEngine = CIO.create()) {
                     )
                 }.body()
             }
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             log.error(e) { "Klarte ikke hente arbeidsfordelingenheter for kommunenummer $kommunenummer" }
             throw e
         }
