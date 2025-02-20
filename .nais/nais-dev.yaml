@@ -105,6 +105,9 @@ spec:
         - application: azure-token-generator
           namespace: aura
           cluster: dev-gcp
+        - application: tokenx-token-generator
+          namespace: aura
+          cluster: dev-gcp
     outbound:
       external:
         - host: hm-grunndata-search.intern.dev.nav.no
