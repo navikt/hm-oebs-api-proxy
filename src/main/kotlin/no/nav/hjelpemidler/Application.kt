@@ -76,7 +76,7 @@ fun Application.installRouting(dataSource: DataSource) {
     }
 
     install(CallLogging) {
-        level = Level.INFO
+        level = Level.TRACE
         filter { call ->
             call.request.path() !in setOf(
                 "/internal",
