@@ -23,7 +23,10 @@ import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.request.uri
 import io.ktor.server.routing.routing
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.client.NorgClient
 import no.nav.hjelpemidler.configuration.Environment
@@ -118,7 +121,20 @@ fun Application.installRouting(dataSource: DataSource) {
         saksbehandling(database)
         felles(database, norgService)
     }
+
+    log.info { "Fyrer i gang utlånssjekken" }
+    CoroutineScope(Dispatchers.IO).launch {
+        log.info { "Fyrer i gang utlånssjekken. GlobalScope" }
+        try {
+            val database = Database(dataSource)
+            processArtnrList(hjelpemidler, database)
+        } catch (e: Exception) {
+            log.error(e) { "sjekk av utlån på delbestilling-hjelpemiddel feilet." }
+        }
+    }
 }
+
+data class Hjelpemiddel(val hmsnr: String, var antallUtlån: Int = 0, val navn: String)
 
 /**
  * pid-claim fra pålogging med ID-porten
@@ -134,5 +150,25 @@ private fun loggFeilendeServiceforespørsler() = runBlocking(Dispatchers.IO) {
     log.info { "Antall feilende serviceforespørsler: ${serviceforespørselFeil.size}" }
     serviceforespørselFeil.forEach {
         log.info { "Feilende serviceforespørsel: $it" }
+    }
+}
+
+suspend fun processArtnrList(hjelpemidler: List<Hjelpemiddel>, database: Database) {
+    delay(60000)
+
+    for (hjm in hjelpemidler) {
+        database.transaction {
+            log.info { "Henter utlån for ${hjm.hmsnr}" }
+            val count = hjelpemiddeloversiktDao.utlånPåArtnr(hjm.hmsnr)
+            hjm.antallUtlån = count
+            log.info { "resultat: $hjm" }
+        }
+        delay(500)
+    }
+
+    val chunks = hjelpemidler.chunked(100)
+
+    chunks.forEachIndexed { i, chunk ->
+        log.info { "Oppsummering utlån delbestilling (${i + 1}/${chunks.size}):\n${chunk.joinToString(separator = "\n")}" }
     }
 }
