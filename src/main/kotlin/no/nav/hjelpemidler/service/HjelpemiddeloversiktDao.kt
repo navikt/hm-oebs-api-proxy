@@ -89,15 +89,15 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         )
     }
 
-    fun utlånPåArtnr(artnr: String): Int = tx.single(
+    fun utlånPåArtnr(artnr: String): List<String> = tx.list(
         """
-            SELECT COUNT(*) AS count  
+            SELECT fnr  
             FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
             WHERE artikkelnummer = :artnr
         """.trimIndent(),
         mapOf("artnr" to artnr),
     ) { row ->
-        row.int("count")
+        row.string("fnr")
     }
 
     data class UtlånPåIsokode(
