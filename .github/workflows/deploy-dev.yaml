@@ -9,7 +9,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
-      - lagerstatus-refactor
+      - bestille-alle-deler
 
 jobs:
   build:
