@@ -8,9 +8,7 @@ class NorgService(private val norgClient: NorgClient) {
         return hentEnhetNavnForEnhetnr(enhetNr)
     }
 
-    fun hentEnhetNavnForEnhetnr(enhetNr: String): String? {
-        return lagerMap[enhetNr.takeLast(2)]
-    }
+    fun hentEnhetNavnForEnhetnr(enhetNr: String): String? = lagerMap[enhetNr.takeLast(2)]
 }
 
 val lagerMap: Map<String, String> = mapOf(
