@@ -5,6 +5,10 @@ import no.nav.hjelpemidler.client.NorgClient
 class NorgService(private val norgClient: NorgClient) {
     suspend fun hentEnhetNavn(kommunenummer: String): String? {
         val enhetNr = norgClient.hentArbeidsfordelingenheter(kommunenummer).first().enhetNr
+        return hentEnhetNavnForEnhetnr(enhetNr)
+    }
+
+    fun hentEnhetNavnForEnhetnr(enhetNr: String): String? {
         return lagerMap[enhetNr.takeLast(2)]
     }
 }
