@@ -89,15 +89,20 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         )
     }
 
-    fun utlånPåArtnr(artnr: String): List<String> = tx.list(
+    fun utlånPåArtnr(artnr: String): List<Utlån> = tx.list(
         """
-            SELECT fnr  
+            SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato  
             FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
             WHERE artikkelnummer = :artnr
         """.trimIndent(),
         mapOf("artnr" to artnr),
     ) { row ->
-        row.string("fnr")
+        Utlån(
+            fnr = row.string("fnr"),
+            artnr = row.string("artikkelnummer"),
+            serienr = row.string("serie_nummer"),
+            utlånsDato = row.string("utlåns_dato"),
+        )
     }
 
     data class UtlånPåIsokode(
