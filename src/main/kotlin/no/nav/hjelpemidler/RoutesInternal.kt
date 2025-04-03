@@ -48,7 +48,7 @@ fun Route.internal(database: Database) {
         if (success) {
             call.respond(HttpStatusCode.OK, "OEBS ok.")
         } else {
-            call.respond(HttpStatusCode.OK, "OEBS did not return expected result.")
+            call.respond(HttpStatusCode.InternalServerError, "OEBS did not return expected result.")
         }
     }
 }
