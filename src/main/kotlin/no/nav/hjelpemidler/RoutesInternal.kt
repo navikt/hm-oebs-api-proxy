@@ -38,11 +38,12 @@ fun Route.internal(database: Database) {
         call.respond(Prometheus.registry.scrape())
     }
 
-    post("/ping-oebs-rest-api") {
+    post("/internal/ping-oebs-rest-api") {
         val oebsApiClient = OebsApiClient(CIO.create())
         val log = KotlinLogging.logger {}
         log.info { "Kaller OEBS rest-api ping" }
         oebsApiClient.ping()
         log.info { "Etter kall mot OEBS rest-api ping" }
+        call.respond(HttpStatusCode.OK, "Done.")
     }
 }
