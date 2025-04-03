@@ -42,8 +42,13 @@ fun Route.internal(database: Database) {
         val oebsApiClient = OebsApiClient(CIO.create())
         val log = KotlinLogging.logger {}
         log.info { "Kaller OEBS rest-api ping" }
-        oebsApiClient.ping()
+        val success = oebsApiClient.ping()
         log.info { "Etter kall mot OEBS rest-api ping" }
-        call.respond(HttpStatusCode.OK, "Done.")
+
+        if (success) {
+            call.respond(HttpStatusCode.OK, "OEBS ok.")
+        } else {
+            call.respond(HttpStatusCode.OK, "OEBS did not return expected result.")
+        }
     }
 }
