@@ -71,6 +71,20 @@ class OebsApiClient(engine: HttpClientEngine) {
         )
     }
 
+    suspend fun ping() {
+        if (!apiUrl.contains("digihotordreontinfo")) throw Exception("Denne pingfunksjonen skriver om til ugyldig url for å gjøre en readonly test av api mot oebs, hvis denne exception treffer betyr det at appen har vært endret på uten at denne funksjonen er fikset!")
+        val apiUrl404 = apiUrl.replace("digihotordreontinfo", "digihotordreontinf")
+        runCatching {
+            val response = client.post(apiUrl404) {
+                setBody(OebsJsonFormat("Test/ping melding!"))
+            }
+            val responseBody = runCatching { response.bodyAsText() }.getOrNull()
+            log.info { "Ping mot OEBS rest-apiet (kall mot ugyldig uri) resultat: status: ${response.status}, body: $responseBody" }
+        }.onFailure { e ->
+            log.error(e) { "Exception oppstod mens vi kjørte ping mot OEBS rest-apiet" }
+        }
+    }
+
     private suspend fun httpPostRequest(
         bestilling: Ordre,
     ): HttpResponse = client.post(apiUrl) {

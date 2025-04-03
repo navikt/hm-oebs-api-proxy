@@ -1,11 +1,15 @@
 package no.nav.hjelpemidler
 
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.client.engine.cio.CIO
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import no.nav.hjelpemidler.client.OebsApiClient
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.metrics.Prometheus
 
@@ -32,5 +36,13 @@ fun Route.internal(database: Database) {
 
     get("/metrics") {
         call.respond(Prometheus.registry.scrape())
+    }
+
+    post("/ping-oebs-rest-api") {
+        val oebsApiClient = OebsApiClient(CIO.create())
+        val log = KotlinLogging.logger {}
+        log.info { "Kaller OEBS rest-api ping" }
+        oebsApiClient.ping()
+        log.info { "Etter kall mot OEBS rest-api ping" }
     }
 }
