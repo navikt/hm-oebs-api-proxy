@@ -33,24 +33,24 @@ fun Route.hjelpemiddelsiden(database: Database) {
     }
 
     // Authenticated database proxy requests
-    //authenticate("aad") { TODO re-enable auth
-        get("/get-title-for-hmsnr/{hmsnr}") {
-            val result = database.transaction {
-                tittelForHmsnrDao.hentTittelForHmsnr(call.parameters["hmsnr"]!!)
-            }
-            if (result == null) {
-                call.respond(HttpStatusCode.NotFound, mapOf("error" to "product or accessory not found"))
-                return@get
-            }
-            call.respond(result)
+    // authenticate("aad") { TODO re-enable auth
+    get("/get-title-for-hmsnr/{hmsnr}") {
+        val result = database.transaction {
+            tittelForHmsnrDao.hentTittelForHmsnr(call.parameters["hmsnr"]!!)
         }
+        if (result == null) {
+            call.respond(HttpStatusCode.NotFound, mapOf("error" to "product or accessory not found"))
+            return@get
+        }
+        call.respond(result)
+    }
 
-        post("/get-title-for-hmsnrs") {
-            val hmsnrs = call.receive<Set<String>>()
-            val tittelForHmsnrs = database.transaction {
-                tittelForHmsnrDao.hentTittelForHmsnrs(hmsnrs)
-            }
-            call.respond(tittelForHmsnrs)
+    post("/get-title-for-hmsnrs") {
+        val hmsnrs = call.receive<Set<String>>()
+        val tittelForHmsnrs = database.transaction {
+            tittelForHmsnrDao.hentTittelForHmsnrs(hmsnrs)
         }
-    //}
+        call.respond(tittelForHmsnrs)
+    }
+    // }
 }
