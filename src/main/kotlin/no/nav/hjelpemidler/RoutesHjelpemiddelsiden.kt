@@ -33,7 +33,7 @@ fun Route.hjelpemiddelsiden(database: Database) {
     }
 
     // Authenticated database proxy requests
-    //authenticate("aad") { TODO re-enable auth
+    authenticate("aad") {
         get("/get-title-for-hmsnr/{hmsnr}") {
             val result = database.transaction {
                 tittelForHmsnrDao.hentTittelForHmsnr(call.parameters["hmsnr"]!!)
@@ -52,5 +52,5 @@ fun Route.hjelpemiddelsiden(database: Database) {
             }
             call.respond(tittelForHmsnrs)
         }
-    //}
+    }
 }
