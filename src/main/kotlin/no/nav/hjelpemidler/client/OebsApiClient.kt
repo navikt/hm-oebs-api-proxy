@@ -1,5 +1,7 @@
 package no.nav.hjelpemidler.client
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
@@ -25,6 +27,7 @@ import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.OebsJsonFormat
 import no.nav.hjelpemidler.models.Ordre
 import no.nav.hjelpemidler.models.OrdreType
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 
 private val log = KotlinLogging.logger {}
 
@@ -69,6 +72,44 @@ class OebsApiClient(engine: HttpClientEngine) {
         error(
             "Feil under kall til OEBS-API, status: ${response.status}, body: $responseBody",
         )
+    }
+
+    suspend fun ping(): Boolean {
+        if (!apiUrl.contains("digihotordreontinfo")) throw Exception("Denne pingfunksjonen skriver om til ugyldig url for å gjøre en readonly test av api mot oebs, hvis denne exception treffer betyr det at appen har vært endret på uten at denne funksjonen er fikset!")
+        val apiUrl404 = apiUrl.replace("digihotordreontinfo", "digihotordreontinf")
+
+        data class ISGServiceFault(
+            @JsonProperty("Code")
+            val code: String,
+            @JsonProperty("Message")
+            val message: String,
+            @JsonProperty("Resolution")
+            val resolution: String,
+        )
+
+        data class Response(
+            @JsonProperty("ISGServiceFault")
+            val isgServiceFault: ISGServiceFault,
+        )
+
+        runCatching {
+            val response = client.post(apiUrl404) {
+                setBody(OebsJsonFormat("Test/ping melding!"))
+            }
+
+            val responseBody = runCatching { response.bodyAsText() }.getOrNull() ?: "{}"
+            val success = runCatching {
+                jsonMapper.readValue<Response>(responseBody)
+            }.getOrNull()?.isgServiceFault?.code == "ISG_INVALID_FUNCTION"
+
+            log.info { "Ping mot OEBS rest-apiet (kall mot ugyldig uri) resultat: status: ${response.status}, success=$success, body: $responseBody" }
+
+            return success
+        }.onFailure { e ->
+            log.error(e) { "Exception oppstod mens vi kjørte ping mot OEBS rest-apiet" }
+        }
+
+        return false
     }
 
     private suspend fun httpPostRequest(
