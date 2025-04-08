@@ -115,10 +115,6 @@ class OebsApiClient(engine: HttpClientEngine) {
     private suspend fun httpPostRequest(
         bestilling: Ordre,
     ): HttpResponse = client.post(apiUrl) {
-        setBody(InputParameters(OebsJsonFormat(bestilling)))
+        setBody(OebsJsonFormat(bestilling))
     }
-
-    data class InputParameters(
-        val InputParameters: OebsJsonFormat
-    )
 }
