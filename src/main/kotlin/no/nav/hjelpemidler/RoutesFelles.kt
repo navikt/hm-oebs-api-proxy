@@ -97,5 +97,33 @@ fun Route.felles(database: Database, norgService: NorgService) {
                 )
             }
         }
+
+        post("/lager/sentral/enhet/{enhetnr}") {
+            data class HmsnrsDTO(
+                val hmsnrs: List<String>,
+            )
+
+            val hmsnrs = call.receive<HmsnrsDTO>().hmsnrs
+            val enhetnr = call.parameters["enhetnr"]!!
+
+            data class NoResult(
+                val error: String,
+            )
+
+            val enhetNavn = norgService.hentEnhetNavnForEnhetnr(enhetnr)
+                ?: error("Fant ikke enhetNavn for enhetnr $enhetnr")
+
+            val lagerstatus = database.transaction {
+                lagerDao.hentLagerstatusForSentral(enhetNavn, hmsnrs)
+            }
+            if (lagerstatus != null) {
+                call.respond(lagerstatus)
+            } else {
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    NoResult("no results found for enhetnr=\"${enhetnr}\" and hmsnrs=\"${hmsnrs}\""),
+                )
+            }
+        }
     }
 }

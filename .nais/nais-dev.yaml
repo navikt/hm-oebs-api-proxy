@@ -112,13 +112,14 @@ spec:
       external:
         - host: hm-grunndata-search.intern.dev.nav.no
         - host: b27apfl027.preprod.local
+        - host: b27apfl028.preprod.local
   env:
     - name: OEBS_BRUKER_ID
       value: "81400"
     - name: OEBS_API_URL_Q1
       value: http://b27apfl027.preprod.local:8088/webservices/rest/opprettordre/digihotordreontinfo/
     - name: OEBS_API_URL_Q2
-      value: http://b27apfl026.preprod.local:8085/webservices/rest/opprettordre/digihotordreontinfo/
+      value: https://b27apfl028.preprod.local:4528/webservices/rest/opprettordre/digihotordreontinfo/
     - name: OEBS_API_URL_T1
       value: http://d26apfl001.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/
     - name: OEBS_API_URL_T2
