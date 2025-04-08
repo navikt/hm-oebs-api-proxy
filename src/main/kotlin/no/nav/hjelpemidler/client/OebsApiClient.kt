@@ -119,7 +119,6 @@ class OebsApiClient(engine: HttpClientEngine) {
     }
 
     data class InputParameters(
-        @JsonProperty("InputParameters")
-        val inputParameters: OebsJsonFormat,
+        val InputParameters: OebsJsonFormat,
     )
 }
