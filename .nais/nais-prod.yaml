@@ -11,8 +11,6 @@ spec:
     min: 2
     max: 4
   port: 8080
-  secureLogs:
-    enabled: true
   liveness:
     path: /isalive
   readiness:
@@ -96,6 +94,9 @@ spec:
           namespace: teamdigihot
           cluster: prod-gcp
     outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
       external:
         - host: hm-grunndata-search.intern.nav.no
         - host: hm-oebs-api-proxy.prod-fss-pub.nais.io
