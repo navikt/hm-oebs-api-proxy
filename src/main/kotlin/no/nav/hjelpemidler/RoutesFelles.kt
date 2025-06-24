@@ -48,6 +48,17 @@ fun Route.felles(database: Database, norgService: NorgService) {
             call.respond(lagerstatus)
         }
 
+        post("/lager/alle-sentraler") {
+            data class HmsnrsDTO(
+                val hmsnrs: List<String>,
+            )
+            val hmsnrs = call.receive<HmsnrsDTO>().hmsnrs
+            val lagerstatus = database.transaction {
+                lagerDao.hentLagerStatus(hmsnrs)
+            }
+            call.respond(lagerstatus)
+        }
+
         get("/lager/sentral/{kommunenummer}/{hmsNr}") {
             data class NoResult(
                 val error: String,
