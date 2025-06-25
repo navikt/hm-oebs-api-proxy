@@ -7,6 +7,8 @@ import no.nav.hjelpemidler.database.sql.Sql
 class LagerDao(private val tx: JdbcOperations) {
     fun hentLagerstatus(hmsnr: String): List<Lagerstatus> = hentLagerstatus(listOf(hmsnr), null)
 
+    fun hentLagerStatus(hmsnrs: List<String>): List<Lagerstatus> = hentLagerstatus(hmsnrs, null)
+
     fun hentLagerstatusForSentral(enhetNavn: String, hmsnr: String): Lagerstatus? = hentLagerstatus(listOf(hmsnr), enhetNavn).firstOrNull()
 
     fun hentLagerstatusForSentral(enhetNavn: String, hmsnrs: List<String>): List<Lagerstatus>? = hentLagerstatus(hmsnrs, enhetNavn)
