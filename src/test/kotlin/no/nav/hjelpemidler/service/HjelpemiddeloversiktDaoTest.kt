@@ -1,6 +1,8 @@
 package no.nav.hjelpemidler.service
 
-import no.nav.hjelpemidler.models.HjelpemiddelBruker
+import no.nav.hjelpemidler.models.KanIkkeByttesGrunn
+import no.nav.hjelpemidler.models.UtlånMedProduktinfo
+import no.nav.hjelpemidler.models.Utlånstype
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.time.LocalDate
@@ -12,70 +14,83 @@ import kotlin.test.Test
 class HjelpemiddeloversiktDaoTest {
     @Test
     fun `Skal sette gyldig bytte for permanent utlån`() {
-        val item = item(type = Utlånstype.PERMANENT)
-        berikBytteinfo(item)
-        assertTrue(item.kanByttes!!)
+        val utlån = utlån(type = Utlånstype.PERMANENT)
+        utlån.berikBytteinfo()
+        assertTrue(utlån.kanByttes!!)
     }
 
     @Test
     fun `Skal sette kanByttes false for korttidsutlån`() {
-        val item = item(
+        val utlån = utlån(
             type = Utlånstype.KORTTIDSUTLÅN,
             innlevering = LocalDate.now().plusDays(1),
         )
-        berikBytteinfo(item)
-        assertFalse(item.kanByttes!!)
+        utlån.berikBytteinfo()
+        assertFalse(utlån.kanByttes!!)
     }
 
     @Test
     fun `Skal sette kanByttes false ved tidsbestemt utlån som er utgått`() {
-        val item = item(innlevering = LocalDate.now().minusDays(1), type = Utlånstype.TIDSBESTEMT_UTLÅN)
-        berikBytteinfo(item)
-        assertFalse(item.kanByttes!!)
+        val utlån = utlån(innlevering = LocalDate.now().minusDays(1), type = Utlånstype.TIDSBESTEMT_UTLÅN)
+        utlån.berikBytteinfo()
+        assertFalse(utlån.kanByttes!!)
+        assertTrue(utlån.kanIkkeByttesGrunner!!.contains(KanIkkeByttesGrunn.IKKE_RIKTIG_UTLÅNSTYPE))
     }
 
     @Test
     fun `Skal bruke oppdaterInnleveringsdato for sjekk av gyldig bytte, dersom den er satt`() {
-        val item = item(
+        val utlån = utlån(
             innlevering = LocalDate.now().minusDays(1),
             oppdatertInnlevering = LocalDate.now().plusDays(1),
             type = Utlånstype.TIDSBESTEMT_UTLÅN,
         )
-        berikBytteinfo(item)
-        assertTrue(item.kanByttes!!)
+        utlån.berikBytteinfo()
+        assertTrue(utlån.kanByttes!!)
     }
 
     @Test
     fun `Skal være mulig for brukerpass å bytte hjelpemidler innenfor godtatt isokode`() {
-        val item = item(
+        val utlån = utlån(
             type = Utlånstype.PERMANENT,
             kategoriNummer = "123903",
 
         )
-        berikBytteinfo(item)
-        assertTrue(item.kanByttes!!)
-        assertTrue(item.kanByttesMedBrukerpass!!)
+        utlån.berikBytteinfo()
+        assertTrue(utlån.kanByttes!!)
+        assertTrue(utlån.kanByttesMedBrukerpass!!)
     }
 
     @Test
     fun `Skal ikke være mulig for brukerpass å bytte hjelpemidler utenfor godtatt isokode`() {
-        val item = item(
+        val utlån = utlån(
             type = Utlånstype.PERMANENT,
             kategoriNummer = "111111",
 
         )
-        berikBytteinfo(item)
-        assertTrue(item.kanByttes!!)
-        assertFalse(item.kanByttesMedBrukerpass!!)
+        utlån.berikBytteinfo()
+        assertTrue(utlån.kanByttes!!)
+        assertFalse(utlån.kanByttesMedBrukerpass!!)
+    }
+
+    @Test
+    fun `Skal ikke kunne bytte førstegangsutlevert madrass`() {
+        val utlån = utlån(
+            kategoriNummer = "18121801",
+            navn = "Madrass Hypnos I TDI",
+        )
+        utlån.berikBytteinfo()
+        assertFalse(utlån.kanByttes!!)
+        assertTrue(utlån.kanIkkeByttesGrunner!!.contains(KanIkkeByttesGrunn.ER_FØRSTEGANGSUTLEVERT_MADRASS))
     }
 }
 
-private fun item(
+private fun utlån(
     type: Utlånstype = Utlånstype.PERMANENT,
     innlevering: LocalDate? = LocalDate.now(),
     oppdatertInnlevering: LocalDate? = null,
     kategoriNummer: String = "",
-) = HjelpemiddelBruker(
+    navn: String? = null,
+) = UtlånMedProduktinfo(
     antall = "",
     antallEnhet = "",
     kategoriNummer = kategoriNummer,
@@ -89,6 +104,7 @@ private fun item(
     utlånsType = type.kode,
     innleveringsdato = innlevering?.let(::toInnleveringsdato),
     oppdatertInnleveringsdato = oppdatertInnlevering?.let(::toInnleveringsdato),
+    hmdbProduktNavn = navn,
 )
 
 private val oebsDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")

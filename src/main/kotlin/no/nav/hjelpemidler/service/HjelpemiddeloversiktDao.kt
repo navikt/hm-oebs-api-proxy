@@ -6,12 +6,12 @@ import no.nav.hjelpemidler.client.hmdb.enums.MediaType
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Product
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.database.sql.Sql
-import no.nav.hjelpemidler.models.HjelpemiddelBruker
 import no.nav.hjelpemidler.models.Utlån
+import no.nav.hjelpemidler.models.UtlånMedProduktinfo
 
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
-    fun hentHjelpemiddeloversikt(fnr: String): List<HjelpemiddelBruker> {
+    fun hentHjelpemiddeloversikt(fnr: String): List<UtlånMedProduktinfo> {
         val query = Sql(
             """
                 SELECT antall,
@@ -34,7 +34,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         )
 
         val items = tx.list(query, mapOf("fnr" to fnr)) { row ->
-            HjelpemiddelBruker(
+            UtlånMedProduktinfo(
                 antall = row.string("antall"),
                 antallEnhet = row.string("enhet"),
                 kategoriNummer = row.string("kategori3_nummer"),
@@ -110,43 +110,42 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         val datoUtsendelse: String,
     )
 
-    private fun berikOrdrelinjer(items: List<HjelpemiddelBruker>): List<HjelpemiddelBruker> = runBlocking {
+    private fun berikOrdrelinjer(utlånListe: List<UtlånMedProduktinfo>): List<UtlånMedProduktinfo> = runBlocking {
         // Unique set of hmsnr to fetch data for
-        val hmsnr = items.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet()
+        val hmsnr = utlånListe.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet()
 
         // Fetch data for hmsnr from hm-grunndata-api
         val produkter: List<Product> = GrunndataClient.hentProdukter(hmsnr)
 
         // Apply data to items
         val produkterByHmsnr = produkter.groupBy { it.hmsArtNr }
-        items.map { item ->
-            berikBytteinfo(item)
+        utlånListe.map { utlån ->
 
             // Sorted by identifier (artid, like old grunndata-api), but still get the ACTIVE one if there are higher sorted INACTIVE ones.
-            val produkt = produkterByHmsnr[item.artikkelNr]?.sortedBy { it.identifier }?.minByOrNull { it.status }
-            if (produkt == null) {
-                item
-            } else {
-                berikOrdrelinje(item, produkt)
+            val produkt = produkterByHmsnr[utlån.artikkelNr]?.sortedBy { it.identifier }?.minByOrNull { it.status }
+
+            if (produkt != null) {
+                utlån.berikOrdrelinje(produkt)
             }
+
+            utlån.berikBytteinfo()
+
+            utlån
         }
     }
 
-    private fun berikOrdrelinje(item: HjelpemiddelBruker, produkt: Product): HjelpemiddelBruker {
-        item.apply {
-            item.hmdbBeriket = true
-            item.hmdbProduktNavn = produkt.articleName
-            item.hmdbBeskrivelse = produkt.attributes.text
-            item.hmdbKategori = produkt.isoCategoryTitle
-            item.hmdbBilde = produkt.media
-                .filter { it.type == MediaType.IMAGE }
-                .minByOrNull { it.priority }
-                ?.uri?.let {
-                    "https://finnhjelpemiddel.nav.no/imageproxy/400d/$it"
-                }
-            item.hmdbURL = produkt.productVariantURL
-            item.hmdbKategoriKortnavn = produkt.isoCategoryTitleShort
-        }
-        return item
+    private fun UtlånMedProduktinfo.berikOrdrelinje(produkt: Product) {
+        hmdbBeriket = true
+        hmdbProduktNavn = produkt.articleName
+        hmdbBeskrivelse = produkt.attributes.text
+        hmdbKategori = produkt.isoCategoryTitle
+        hmdbBilde = produkt.media
+            .filter { it.type == MediaType.IMAGE }
+            .minByOrNull { it.priority }
+            ?.uri?.let {
+                "https://finnhjelpemiddel.nav.no/imageproxy/400d/$it"
+            }
+        hmdbURL = produkt.productVariantURL
+        hmdbKategoriKortnavn = produkt.isoCategoryTitleShort
     }
 }

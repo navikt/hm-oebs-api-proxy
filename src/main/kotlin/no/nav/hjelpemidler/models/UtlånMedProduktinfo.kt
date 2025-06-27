@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.models
 
-data class HjelpemiddelBruker(
+data class UtlånMedProduktinfo(
     val antall: String,
     val antallEnhet: String,
     val kategoriNummer: String,
@@ -23,6 +23,19 @@ data class HjelpemiddelBruker(
     var hmdbKategoriKortnavn: String? = null,
 
     // Berikede felter for bytte
+    var kanIkkeByttesGrunner: List<KanIkkeByttesGrunn>? = emptyList(),
     var kanByttes: Boolean? = null,
     var kanByttesMedBrukerpass: Boolean? = null,
 )
+
+enum class KanIkkeByttesGrunn {
+    IKKE_RIKTIG_UTLÅNSTYPE,
+    ER_FØRSTEGANGSUTLEVERT_MADRASS,
+}
+
+enum class Utlånstype(val kode: String) {
+    PERMANENT("P"),
+    TIDSBESTEMT_UTLÅN("F"),
+    KORTTIDSUTLÅN("K"),
+    UTPRØVINGSLÅN("U"),
+}
