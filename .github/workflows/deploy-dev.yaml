@@ -9,7 +9,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
-      - kanIkkeByttesGrunner
+      - brukerpassbytte-utlån-i-dev
 
 jobs:
   build:

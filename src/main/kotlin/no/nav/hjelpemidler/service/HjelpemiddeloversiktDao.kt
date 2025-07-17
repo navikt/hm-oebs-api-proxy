@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.client.GrunndataClient
 import no.nav.hjelpemidler.client.hmdb.enums.MediaType
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Product
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.database.sql.Sql
 import no.nav.hjelpemidler.models.Utlån
@@ -49,6 +50,26 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
                 innleveringsdato = row.stringOrNull("innleveringsdato"),
                 oppdatertInnleveringsdato = row.stringOrNull("oppdatert_innleveringsdato"),
             )
+        }.toMutableList().also {
+            if (Environment.current.isDev) {
+                it.add(
+                    UtlånMedProduktinfo(
+                        antall = "1",
+                        antallEnhet = "STK",
+                        kategoriNummer = "123903",
+                        kategori = "Stokker for mobility og markering",
+                        artikkelBeskrivelse = "",
+                        artikkelNr = "174378",
+                        serieNr = null,
+                        datoUtsendelse = "2021-04-14 11:02:34",
+                        ordrenummer = null,
+                        artikkelStatus = "",
+                        utlånsType = "P",
+                        innleveringsdato = null,
+                        oppdatertInnleveringsdato = null,
+                    ),
+                )
+            }
         }
 
         return berikOrdrelinjer(items)
