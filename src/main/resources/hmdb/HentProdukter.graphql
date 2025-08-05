@@ -10,6 +10,7 @@ query HentProdukter($hmsnrs: [String!]!) {
 
     isoCategoryTitle # isotittel
     isoCategoryTitleShort # isokortnavn
+    isoCategory
     productVariantURL # artikkelUrl
 
     attributes {

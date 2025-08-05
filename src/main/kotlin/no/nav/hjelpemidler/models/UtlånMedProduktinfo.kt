@@ -17,10 +17,11 @@ data class UtlånMedProduktinfo(
     var hmdbBeriket: Boolean = false,
     var hmdbProduktNavn: String? = null,
     var hmdbBeskrivelse: String? = null,
-    var hmdbKategori: String? = null,
+    var hmdbIsoKategori: String? = null, // ISO-kode
+    var hmdbKategori: String? = null, // ISO-tittel
+    var hmdbKategoriKortnavn: String? = null, // ISO-tittel kort
     var hmdbBilde: String? = null,
     var hmdbURL: String? = null,
-    var hmdbKategoriKortnavn: String? = null,
 
     // Berikede felter for bytte
     var kanIkkeByttesGrunner: List<KanIkkeByttesGrunn>? = emptyList(),

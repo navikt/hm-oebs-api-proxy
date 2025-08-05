@@ -147,5 +147,6 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             }
         hmdbURL = produkt.productVariantURL
         hmdbKategoriKortnavn = produkt.isoCategoryTitleShort
+        hmdbIsoKategori = produkt.isoCategory
     }
 }
