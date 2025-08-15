@@ -6,7 +6,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.apache.Apache
-import io.ktor.client.engine.apache.ApacheEngineConfig
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
@@ -55,7 +54,14 @@ private fun createInsecureSslContext(): SSLContext {
 class OebsApiClient(engine: HttpClientEngine) {
     private val client = createHttpClient(
         if (Environment.current.isDev) {
-            Apache.create()
+            Apache.create {
+                customizeClient {
+                    // Set insecure SSL context
+                    setSSLContext(createInsecureSslContext())
+                    // Disable hostname verification (e.g. mismatched CN/SAN)
+                    setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                }
+            }
         } else {
             engine
         },
@@ -64,17 +70,6 @@ class OebsApiClient(engine: HttpClientEngine) {
             logging {
                 logger = Logger.DEFAULT
                 level = LogLevel.BODY
-            }
-        }
-        if (Environment.current.isDev) {
-            engine {
-                (this as ApacheEngineConfig).customizeClient {
-                    // Set insecure SSL context
-                    setSSLContext(createInsecureSslContext())
-
-                    // Disable hostname verification (e.g. mismatched CN/SAN)
-                    setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
-                }
             }
         }
 
