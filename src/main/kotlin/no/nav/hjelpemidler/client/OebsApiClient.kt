@@ -28,11 +28,6 @@ import no.nav.hjelpemidler.models.OebsJsonFormat
 import no.nav.hjelpemidler.models.Ordre
 import no.nav.hjelpemidler.models.OrdreType
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
-import java.security.cert.X509Certificate
-import javax.net.ssl.HttpsURLConnection
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 private val log = KotlinLogging.logger {}
 
@@ -43,22 +38,6 @@ class OebsApiClient(engine: HttpClientEngine) {
                 logger = Logger.DEFAULT
                 level = LogLevel.BODY
             }
-        }
-        if (Environment.current.isDev) {
-            // Turn off cert verifications for jvm in dev (oebs selfsigned)
-            val trustAllCerts = arrayOf<TrustManager>(
-                object : X509TrustManager {
-                    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-                    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-                    override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-                },
-            )
-
-            val sc = SSLContext.getInstance("TLS")
-            sc.init(null, trustAllCerts, java.security.SecureRandom())
-            SSLContext.setDefault(sc)
-
-            HttpsURLConnection.setDefaultHostnameVerifier { _, _ -> true }
         }
         defaultRequest {
             header(HttpHeaders.Authorization, "Basic $apiToken")
