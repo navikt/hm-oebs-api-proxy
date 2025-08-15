@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.cio.CIOEngineConfig
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
@@ -28,6 +29,9 @@ import no.nav.hjelpemidler.models.OebsJsonFormat
 import no.nav.hjelpemidler.models.Ordre
 import no.nav.hjelpemidler.models.OrdreType
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
+import java.security.cert.X509Certificate
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 private val log = KotlinLogging.logger {}
 
@@ -37,6 +41,21 @@ class OebsApiClient(engine: HttpClientEngine) {
             logging {
                 logger = Logger.DEFAULT
                 level = LogLevel.BODY
+            }
+        }
+        if (Environment.current.isDev) {
+            // Create an "insecure" TrustManager that trusts all certificates in dev (oebs selfsigned)
+            val trustAllCerts = arrayOf<TrustManager>(
+                object : X509TrustManager {
+                    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+                    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+                    override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+                },
+            )
+            engine {
+                (this as CIOEngineConfig).https {
+                    this.trustManager = trustAllCerts[0] as X509TrustManager
+                }
             }
         }
         defaultRequest {
