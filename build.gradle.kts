@@ -27,6 +27,7 @@ dependencies {
 
     // Ktor Server
     implementation(libs.bundles.ktor.server)
+    implementation(libs.ktor.client.apache)
 
     // Database
     implementation(libs.hotlibs.database) {

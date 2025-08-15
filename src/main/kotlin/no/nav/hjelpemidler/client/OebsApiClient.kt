@@ -5,6 +5,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.apache.Apache
+import io.ktor.client.engine.apache.ApacheEngineConfig
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
@@ -28,17 +30,54 @@ import no.nav.hjelpemidler.models.OebsJsonFormat
 import no.nav.hjelpemidler.models.Ordre
 import no.nav.hjelpemidler.models.OrdreType
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
+import org.apache.http.conn.ssl.NoopHostnameVerifier
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 private val log = KotlinLogging.logger {}
 
+private fun createInsecureSslContext(): SSLContext {
+    val trustAllCerts = arrayOf<TrustManager>(
+        object : X509TrustManager {
+            override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+            override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+            override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+        },
+    )
+    return SSLContext.getInstance("TLS").apply {
+        init(null, trustAllCerts, SecureRandom())
+    }
+}
+
 class OebsApiClient(engine: HttpClientEngine) {
-    private val client = createHttpClient(engine) {
+    private val client = createHttpClient(
+        if (Environment.current.isDev) {
+            Apache.create()
+        } else {
+            engine
+        },
+    ) {
         if (!Environment.current.isProd) {
             logging {
                 logger = Logger.DEFAULT
                 level = LogLevel.BODY
             }
         }
+        if (Environment.current.isDev) {
+            engine {
+                (this as ApacheEngineConfig).customizeClient {
+                    // Set insecure SSL context
+                    setSSLContext(createInsecureSslContext())
+
+                    // Disable hostname verification (e.g. mismatched CN/SAN)
+                    setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                }
+            }
+        }
+
         defaultRequest {
             header(HttpHeaders.Authorization, "Basic $apiToken")
             contentType(ContentType.Application.Json)

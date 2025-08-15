@@ -37,34 +37,12 @@ import no.nav.hjelpemidler.models.ServiceforespørselFeil
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 import no.nav.hjelpemidler.service.NorgService
 import org.slf4j.event.Level
-import java.security.cert.X509Certificate
-import javax.net.ssl.HttpsURLConnection
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 import javax.sql.DataSource
 import kotlin.time.Duration.Companion.minutes
 
 private val log = KotlinLogging.logger {}
 
 fun main() {
-    // Turn off cert verifications for jvm in dev (oebs selfsigned)
-    if (Environment.current.isDev) {
-        val trustAllCerts = arrayOf<TrustManager>(
-            object : X509TrustManager {
-                override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-                override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-                override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-            },
-        )
-
-        val sc = SSLContext.getInstance("TLS")
-        sc.init(null, trustAllCerts, java.security.SecureRandom())
-        SSLContext.setDefault(sc)
-
-        HttpsURLConnection.setDefaultHostnameVerifier { _, _ -> true }
-    }
-
     embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
 }
 
