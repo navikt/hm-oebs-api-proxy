@@ -19,6 +19,8 @@ import no.nav.hjelpemidler.models.Brukernummer
 import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Utlån
+import java.time.LocalDate
+import kotlin.String
 
 private val log = KotlinLogging.logger {}
 
@@ -119,11 +121,23 @@ fun Route.saksbehandling(database: Database) {
                 val req = call.receive<UtlånPåArtnrOgSerienrRequest>()
                 val artnr = req.artnr
                 val serienr = req.serienr
-                val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
 
                 data class UtlånPåArtnrOgSerienrResponse(
                     val utlån: Utlån?,
                 )
+
+                val utlån = if (Environment.current.isDev) {
+                    // TODO: Fjern hardkodet utlån
+                    Utlån(
+                        fnr = "01067434656",
+                        artnr = artnr,
+                        serienr = serienr,
+                        utlånsDato = "2021-02-03",
+                        garantidato = LocalDate.now().minusMonths(serienr.takeLast(2).toLong()),
+                    )
+                } else {
+                    database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
+                }
 
                 call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
             } catch (e: Exception) {
