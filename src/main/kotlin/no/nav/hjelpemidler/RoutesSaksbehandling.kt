@@ -129,7 +129,7 @@ fun Route.saksbehandling(database: Database) {
                 val utlån = if (Environment.current.isDev) {
                     // TODO: Fjern hardkodet utlån
                     Utlån(
-                        fnr = "01067434656",
+                        fnr = "26848497710",
                         artnr = artnr,
                         serienr = serienr,
                         utlånsDato = "2021-02-03",
