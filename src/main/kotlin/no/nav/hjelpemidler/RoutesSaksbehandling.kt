@@ -125,23 +125,21 @@ fun Route.saksbehandling(database: Database) {
                     val utlån: Utlån?,
                 )
 
-                val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
+                //val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
 
-                /*
                 val utlån = if (Environment.current.isDev) {
                     // TODO: Fjern hardkodet utlån
                     Utlån(
                         fnr = "12507838047",
                         artnr = artnr,
                         serienr = serienr,
-                        opprettetDato = "2025-03-01",
-                        utlånsDato = "2025-04-01",
-                        //garantidato = LocalDate.now().minusMonths(serienr.takeLast(2).toLong()),
+                        opprettetDato = "2025-08-01",
+                        utlånsDato = "2025-09-01",
                     )
                 } else {
                     database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
                 }
-                 */
+
 
                 call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
             } catch (e: Exception) {
