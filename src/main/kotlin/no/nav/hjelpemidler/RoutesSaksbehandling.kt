@@ -19,7 +19,6 @@ import no.nav.hjelpemidler.models.Brukernummer
 import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Utlån
-import java.time.LocalDate
 import kotlin.String
 
 private val log = KotlinLogging.logger {}
