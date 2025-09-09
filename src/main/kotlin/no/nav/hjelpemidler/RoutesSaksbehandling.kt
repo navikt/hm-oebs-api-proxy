@@ -133,7 +133,7 @@ fun Route.saksbehandling(database: Database) {
                         fnr = "12507838047",
                         artnr = artnr,
                         serienr = serienr,
-                        opprettetDato = "2025-08-01",
+                        opprettetDato = "2025-08-01 00:00:00",
                         utlånsDato = "2025-09-01",
                     )
                 } else {
