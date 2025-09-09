@@ -133,7 +133,7 @@ fun Route.saksbehandling(database: Database) {
                         fnr = "12507838047",
                         artnr = artnr,
                         serienr = serienr,
-                        opprettetDato = "2025-08-01 00:00:00",
+                        opprettetDato = "2022-08-01 00:00:00",
                         utlånsDato = "2025-09-01",
                         isokode = "122303", // Elektriske rullestoler med manuell styring
                     )
