@@ -135,7 +135,7 @@ fun Route.saksbehandling(database: Database) {
                         serienr = serienr,
                         opprettetDato = "2025-08-01 00:00:00",
                         utlånsDato = "2025-09-01",
-                        isokode = "122303" // Elektriske rullestoler med manuell styring
+                        isokode = "122303", // Elektriske rullestoler med manuell styring
                     )
                 } else {
                     database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
