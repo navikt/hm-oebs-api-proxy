@@ -125,7 +125,7 @@ fun Route.saksbehandling(database: Database) {
                     val utlån: Utlån?,
                 )
 
-                //val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
+                // val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
 
                 val utlån = if (Environment.current.isDev) {
                     // TODO: Fjern hardkodet utlån
@@ -139,7 +139,6 @@ fun Route.saksbehandling(database: Database) {
                 } else {
                     database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
                 }
-
 
                 call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
             } catch (e: Exception) {
