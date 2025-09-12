@@ -104,8 +104,8 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             artnr = row.string("artikkelnummer"),
             serienr = row.string("serie_nummer"),
             utlånsDato = row.string("utlåns_dato"),
-            opprettetDato = row.string("opprettelsesdato"),
-            isokode = row.string("kategori3_nummer"),
+            opprettetDato = row.stringOrNull("opprettelsesdato"),
+            isokode = row.stringOrNull("kategori3_nummer"),
         )
     }
 
