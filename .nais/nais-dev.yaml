@@ -101,10 +101,10 @@ spec:
           namespace: teamdigihot
           cluster: dev-gcp
         - application: azure-token-generator
-          namespace: aura
+          namespace: nais
           cluster: dev-gcp
         - application: tokenx-token-generator
-          namespace: aura
+          namespace: nais
           cluster: dev-gcp
     outbound:
       rules:
