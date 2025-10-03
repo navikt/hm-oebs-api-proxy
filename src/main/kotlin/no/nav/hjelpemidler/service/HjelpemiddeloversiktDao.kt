@@ -4,10 +4,12 @@ import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.client.GrunndataClient
 import no.nav.hjelpemidler.client.hmdb.enums.MediaType
 import no.nav.hjelpemidler.client.hmdb.hentprodukter.Product
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.database.sql.Sql
 import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.models.UtlånMedProduktinfo
+import java.time.LocalDate
 
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
@@ -33,7 +35,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             """.trimIndent(),
         )
 
-        val items = tx.list(query, mapOf("fnr" to fnr)) { row ->
+        var items = tx.list(query, mapOf("fnr" to fnr)) { row ->
             UtlånMedProduktinfo(
                 antall = row.string("antall"),
                 antallEnhet = row.string("enhet"),
@@ -48,6 +50,27 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
                 utlånsType = row.stringOrNull("utlåns_type"),
                 innleveringsdato = row.stringOrNull("innleveringsdato"),
                 oppdatertInnleveringsdato = row.stringOrNull("oppdatert_innleveringsdato"),
+            )
+        }.toMutableList()
+
+        // Mocks i dev
+        if (!Environment.current.isProd && listOf("26848497710", "15084300133").contains(fnr)) {
+            items.add(
+                UtlånMedProduktinfo(
+                    antall = "1",
+                    antallEnhet = "STK",
+                    kategoriNummer = "123903",
+                    kategori = "Mobilitets- og markeringsstokker (hvite stokker)",
+                    artikkelBeskrivelse = "Lett mobilitystokk i komposittmateriale. Stokken har fem ledd og leveres med standard tupp. Mange ulike tupper kan leveres. Stokken finnes i lengde fra 90-160 cm i 5 cm intervaller.",
+                    artikkelNr = "330587",
+                    serieNr = null,
+                    datoUtsendelse = items.lastOrNull()?.datoUtsendelse ?: LocalDate.now().minusDays(30).toString(),
+                    ordrenummer = "1000",
+                    artikkelStatus = "",
+                    utlånsType = "P",
+                    innleveringsdato = null,
+                    oppdatertInnleveringsdato = null,
+                ),
             )
         }
 
