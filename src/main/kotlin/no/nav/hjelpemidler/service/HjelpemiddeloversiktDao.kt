@@ -54,7 +54,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         }.toMutableList()
 
         // Mocks i dev
-        if (!Environment.current.isProd && listOf("26848497710", "15084300133").contains(fnr)) {
+        if (!Environment.current.isProd && listOf("26848497710", "15084300133", "03847797958").contains(fnr)) {
             items.add(
                 UtlånMedProduktinfo(
                     antall = "1",

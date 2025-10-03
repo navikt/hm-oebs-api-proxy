@@ -1,7 +1,9 @@
 package no.nav.hjelpemidler.service
 
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.models.Brukerpass
+import java.time.LocalDate
 
 class BrukerpassDao(private val tx: JdbcOperations) {
     fun brukerpassForFnr(fnr: String): Brukerpass = tx.singleOrNull(
@@ -19,5 +21,20 @@ class BrukerpassDao(private val tx: JdbcOperations) {
             row.localDateOrNull("start_date"),
             row.localDateOrNull("end_date"),
         )
-    } ?: Brukerpass(brukerpass = false)
+    }.let {
+        // Mocks i dev
+        if (it?.brukerpass != true &&
+            !Environment.current.isProd &&
+            listOf("26848497710", "15084300133", "03847797958").contains(fnr)
+        ) {
+            Brukerpass(
+                brukerpass = true,
+                kontraktNummer = "1234",
+                LocalDate.now().minusYears(1),
+                LocalDate.now().plusYears(1),
+            )
+        } else {
+            it ?: Brukerpass(brukerpass = false)
+        }
+    }
 }
