@@ -126,7 +126,7 @@ spec:
     - name: OEBS_API_URL_T2
       value: http://b27apfl025.preprod.local:8070/webservices/rest/opprettordre/digihotordreontinfo/
     - name: OEBS_API_URL
-      value: "$(OEBS_API_URL_Q2)"
+      value: "$(OEBS_API_URL_T1)"
     - name: OEBS_DB_Q1
       value: oebsq1
     - name: OEBS_DB_Q2
@@ -134,7 +134,7 @@ spec:
     - name: OEBS_DB_T1
       value: oebst1
     - name: OEBS_DB
-      value: "$(OEBS_DB_Q2)"
+      value: "$(OEBS_DB_T1)"
     - name: GRUNNDATA_API_URL
       value: https://hm-grunndata-search.intern.dev.nav.no
     - name: NORG_API_URL
