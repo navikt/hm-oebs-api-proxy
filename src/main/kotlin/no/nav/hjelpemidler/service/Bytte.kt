@@ -3,9 +3,8 @@ package no.nav.hjelpemidler.service
 import no.nav.hjelpemidler.models.KanIkkeByttesGrunn
 import no.nav.hjelpemidler.models.UtlånMedProduktinfo
 import no.nav.hjelpemidler.models.Utlånstype
+import no.nav.hjelpemidler.models.tilLocalDate
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 fun UtlånMedProduktinfo.berikBytteinfo() {
     kanIkkeByttesGrunner = buildList {
@@ -24,7 +23,7 @@ fun UtlånMedProduktinfo.berikBytteinfo() {
 fun UtlånMedProduktinfo.erPermanentUtlån(): Boolean = utlånsType == Utlånstype.PERMANENT.kode
 
 fun UtlånMedProduktinfo.erGyldigTidsbestemtUtlån(): Boolean {
-    val innleveringsdato = (oppdatertInnleveringsdato ?: innleveringsdato)?.toInnleveringsdato() ?: return false
+    val innleveringsdato = (oppdatertInnleveringsdato ?: innleveringsdato)?.tilLocalDate() ?: return false
     return utlånsType == Utlånstype.TIDSBESTEMT_UTLÅN.kode && LocalDate.now() < innleveringsdato
 }
 
@@ -41,9 +40,6 @@ private fun UtlånMedProduktinfo.erFørstegangsutlevertMadrass(): Boolean {
     return kategoriNummer.take(6) == isokodeMadrass &&
         navnPåFørstegangsmadrasser.any { hjmNavn.contains(it) }
 }
-
-private val oebsDatoFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-private fun String.toInnleveringsdato(): LocalDate = LocalDateTime.parse(this, oebsDatoFormatter).toLocalDate()
 
 private val byttebareIsokoderForBrukerpass: List<String> = listOf(
     "123903", // Mobilitetsstokk

@@ -9,6 +9,7 @@ import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.database.sql.Sql
 import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.models.UtlånMedProduktinfo
+import no.nav.hjelpemidler.models.tilLocalDate
 import java.time.LocalDate
 
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
@@ -126,7 +127,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             artnr = row.string("artikkelnummer"),
             serienr = row.string("serie_nummer"),
             utlånsDato = row.string("utlåns_dato"),
-            opprettetDato = row.stringOrNull("opprettelsesdato"),
+            opprettetDato = row.stringOrNull("opprettelsesdato")?.tilLocalDate(),
             isokode = row.stringOrNull("kategori3_nummer"),
         )
     }
@@ -144,7 +145,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             artnr = row.string("artikkelnummer"),
             serienr = row.string("serie_nummer"),
             utlånsDato = row.string("utlåns_dato"),
-            opprettetDato = row.stringOrNull("opprettelsesdato"),
+            opprettetDato = row.stringOrNull("opprettelsesdato")?.tilLocalDate(),
             isokode = row.stringOrNull("kategori3_nummer"),
         )
     }
