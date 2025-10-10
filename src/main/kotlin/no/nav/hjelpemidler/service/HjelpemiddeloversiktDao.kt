@@ -112,7 +112,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
     fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? = tx.singleOrNull(
         """
-            SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato
+            SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato, opprettelsesdato, kategori3_nummer
             FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
             WHERE artikkelnummer = :artnr
               AND serie_nummer = :serienr
@@ -126,12 +126,14 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             artnr = row.string("artikkelnummer"),
             serienr = row.string("serie_nummer"),
             utlånsDato = row.string("utlåns_dato"),
+            opprettetDato = row.stringOrNull("opprettelsesdato"),
+            isokode = row.stringOrNull("kategori3_nummer"),
         )
     }
 
     fun utlånPåArtnr(artnr: String): List<Utlån> = tx.list(
         """
-            SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato  
+            SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato, opprettelsesdato, kategori3_nummer
             FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
             WHERE artikkelnummer = :artnr
         """.trimIndent(),
@@ -142,6 +144,8 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             artnr = row.string("artikkelnummer"),
             serienr = row.string("serie_nummer"),
             utlånsDato = row.string("utlåns_dato"),
+            opprettetDato = row.stringOrNull("opprettelsesdato"),
+            isokode = row.stringOrNull("kategori3_nummer"),
         )
     }
 

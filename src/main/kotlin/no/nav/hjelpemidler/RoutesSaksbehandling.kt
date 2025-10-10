@@ -19,6 +19,7 @@ import no.nav.hjelpemidler.models.Brukernummer
 import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.Utlån
+import kotlin.String
 
 private val log = KotlinLogging.logger {}
 
@@ -119,11 +120,15 @@ fun Route.saksbehandling(database: Database) {
                 val req = call.receive<UtlånPåArtnrOgSerienrRequest>()
                 val artnr = req.artnr
                 val serienr = req.serienr
-                val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
 
                 data class UtlånPåArtnrOgSerienrResponse(
                     val utlån: Utlån?,
                 )
+
+                val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
+                if (Environment.current.isDev) {
+                    log.info { "utlån: $utlån" }
+                }
 
                 call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
             } catch (e: Exception) {
