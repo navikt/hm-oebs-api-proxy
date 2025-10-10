@@ -104,7 +104,7 @@ spec:
     - name: OEBS_BRUKER_ID
       value: "81760"
     - name: OEBS_API_URL
-      value: http://oebs.adeo.no/webservices/rest/opprettordre/digihotordreontinfo/
+      value: https://oebs.adeo.no/webservices/rest/opprettordre/digihotordreontinfo/
     - name: OEBS_DB
       value: oebsp
     - name: GRUNNDATA_API_URL

@@ -50,8 +50,12 @@ fun Application.module() {
     TILLAT_SYNTETISKE_FØDSELSNUMRE = !Environment.current.isProd
 
     log.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}" }
-    log.info { "Kobler til database: ${Configuration.OEBS_DB} med url: '${Configuration.OEBS_DB_JDBC_URL}'" }
     log.info { "Tillater syntetiske fødelsnumre: $TILLAT_SYNTETISKE_FØDSELSNUMRE" }
+    if (!Environment.current.isProd) {
+        log.info { "Kobler til database: ${Configuration.OEBS_DB} med url: '${Configuration.OEBS_DB_JDBC_URL}', bruker: ${Configuration.OEBS_DB_USERNAME}" }
+    } else {
+        log.info { "Kobler til database: ${Configuration.OEBS_DB} med url: '${Configuration.OEBS_DB_JDBC_URL}'" }
+    }
 
     /*
     monitor.subscribe(ApplicationStarted) {
