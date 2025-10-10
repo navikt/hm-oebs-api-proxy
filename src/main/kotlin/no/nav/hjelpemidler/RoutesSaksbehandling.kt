@@ -130,23 +130,6 @@ fun Route.saksbehandling(database: Database) {
                     log.info { "utlån: $utlån" }
                 }
 
-                /*
-                val utlån = if (Environment.current.isDev) {
-                    // TODO: Fjern hardkodet utlån
-                    Utlån(
-                        fnr = "12507838047",
-                        artnr = artnr,
-                        serienr = serienr,
-                        opprettetDato = "2022-08-01 00:00:00",
-                        utlånsDato = "2025-09-01",
-                        isokode = "122303", // Elektriske rullestoler med manuell styring
-                    )
-                } else {
-                    database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
-                }
-
-                 */
-
                 call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
             } catch (e: Exception) {
                 log.error(e) { "Noe gikk feil med sjekk av utlån på artnr og serienr" }
