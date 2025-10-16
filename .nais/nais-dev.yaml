@@ -42,6 +42,8 @@ spec:
         mountPath: /secrets/oebsq2/credentials
       - kvPath: oracle/data/dev/config/oebsq2
         mountPath: /secrets/oebsq2/config
+      - kvPath: secret/data/team-oebs/digihot
+        mountPath: /secrets/oebs/
   ingresses:
     - https://hm-oebs-api-proxy.dev-fss-pub.nais.io
   azure:

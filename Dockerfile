@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/java21-debian12:nonroot
+FROM gcr.io/distroless/java21-debian12:debug-nonroot
 WORKDIR /app
 COPY build/libs/hm-oebs-api-proxy-all.jar app.jar
 ENV TZ="Europe/Oslo"
