@@ -25,25 +25,29 @@ spec:
     requests:
       cpu: 50m
       memory: 600Mi
-  envFrom:
-    - secret: hm-oebs-api-proxy-secret
   vault:
     enabled: true
     paths:
-      - kvPath: oracle/data/dev/creds/oebst1-dhotuser
-        mountPath: /secrets/oebst1/credentials
-      - kvPath: oracle/data/dev/config/oebst1
-        mountPath: /secrets/oebst1/config
-      - kvPath: oracle/data/dev/creds/oebsq1-dhotuser
-        mountPath: /secrets/oebsq1/credentials
-      - kvPath: oracle/data/dev/config/oebsq1
-        mountPath: /secrets/oebsq1/config
-      - kvPath: oracle/data/dev/creds/oebsq2-dhotuser
-        mountPath: /secrets/oebsq2/credentials
-      - kvPath: oracle/data/dev/config/oebsq2
-        mountPath: /secrets/oebsq2/config
-      - kvPath: secret/data/team-oebs/digihot
-        mountPath: /secrets/oebs/
+      # Q1
+      - kvPath: secret/team-oebs/digihot/dev/Q1/apps-user
+        mountPath: /secrets/q1/oebs/apps-user
+      - kvPath: secret/team-oebs/digihot/dev/Q1/db-user
+        mountPath: /secrets/q1/oebs/db-user
+      # Q2
+      - kvPath: secret/team-oebs/digihot/dev/Q2/apps-user
+        mountPath: /secrets/q2/oebs/apps-user
+      - kvPath: secret/team-oebs/digihot/dev/Q2/db-user
+        mountPath: /secrets/q2/oebs/db-user
+      # T1
+      - kvPath: secret/team-oebs/digihot/dev/T1/apps-user
+        mountPath: /secrets/t1/oebs/apps-user
+      - kvPath: secret/team-oebs/digihot/dev/T1/db-user
+        mountPath: /secrets/t1/oebs/db-user
+      # U1
+      - kvPath: secret/team-oebs/digihot/dev/U1/apps-user
+        mountPath: /secrets/u1/oebs/apps-user
+      - kvPath: secret/team-oebs/digihot/dev/U1/db-user
+        mountPath: /secrets/u1/oebs/db-user
   ingresses:
     - https://hm-oebs-api-proxy.dev-fss-pub.nais.io
   azure:
@@ -114,29 +118,12 @@ spec:
           namespace: nais-system
       external:
         - host: hm-grunndata-search.intern.dev.nav.no
-        - host: b27apfl027.preprod.local
-        - host: b27apfl028.preprod.local
+        - host: norg2.dev.intern.nav.no
   env:
     - name: OEBS_BRUKER_ID
       value: "81400"
-    - name: OEBS_API_URL_Q1
-      value: http://b27apfl027.preprod.local:8088/webservices/rest/opprettordre/digihotordreontinfo/
-    - name: OEBS_API_URL_Q2
-      value: https://oebsq.preprod.local/webservices/rest/opprettordre/digihotordreontinfo/
-    - name: OEBS_API_URL_T1
-      value: http://d26apfl001.test.local:8086/webservices/rest/opprettordre/digihotordreontinfo/
-    - name: OEBS_API_URL_T2
-      value: http://b27apfl025.preprod.local:8070/webservices/rest/opprettordre/digihotordreontinfo/
-    - name: OEBS_API_URL
-      value: "$(OEBS_API_URL_Q2)"
-    - name: OEBS_DB_Q1
-      value: oebsq1
-    - name: OEBS_DB_Q2
-      value: oebsq2
-    - name: OEBS_DB_T1
-      value: oebst1
-    - name: OEBS_DB
-      value: "$(OEBS_DB_Q2)"
+    - name: OEBS_MILJO
+      value: "q2"
     - name: GRUNNDATA_API_URL
       value: https://hm-grunndata-search.intern.dev.nav.no
     - name: NORG_API_URL

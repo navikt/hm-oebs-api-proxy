@@ -52,9 +52,9 @@ fun Application.module() {
     log.info { "Gjeldende miljø: ${Environment.current}, tier: ${Environment.current.tier}" }
     log.info { "Tillater syntetiske fødelsnumre: $TILLAT_SYNTETISKE_FØDSELSNUMRE" }
     if (!Environment.current.isProd) {
-        log.info { "Kobler til database: ${Configuration.OEBS_DB} med url: '${Configuration.OEBS_DB_JDBC_URL}', bruker: ${Configuration.OEBS_DB_USERNAME}" }
+        log.info { "Kobler til database: ${Configuration.OEBS_MILJO} med url: '${Configuration.OEBS_DB_JDBC_URL}', bruker: ${Configuration.OEBS_DB_USERNAME}" }
     } else {
-        log.info { "Kobler til database: ${Configuration.OEBS_DB} med url: '${Configuration.OEBS_DB_JDBC_URL}'" }
+        log.info { "Kobler til database: ${Configuration.OEBS_MILJO} med url: '${Configuration.OEBS_DB_JDBC_URL}'" }
     }
 
     /*

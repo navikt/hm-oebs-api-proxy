@@ -81,6 +81,7 @@ class OebsApiClient(engine: HttpClientEngine) {
     }
 
     private val apiUrl = Configuration.OEBS_API_URL
+    private val apiOrdreEndpoint = "${apiUrl.trimEnd('/')}/webservices/rest/opprettordre/digihotordreontinfo/"
     private val apiToken = Configuration.OEBS_API_TOKEN
 
     suspend fun opprettOrdre(request: BestillingsordreRequest): String {
@@ -109,8 +110,7 @@ class OebsApiClient(engine: HttpClientEngine) {
     }
 
     suspend fun ping(): Boolean {
-        if (!apiUrl.contains("digihotordreontinfo")) throw Exception("Denne pingfunksjonen skriver om til ugyldig url for å gjøre en readonly test av api mot oebs, hvis denne exception treffer betyr det at appen har vært endret på uten at denne funksjonen er fikset!")
-        val apiUrl404 = apiUrl.replace("digihotordreontinfo", "digihotordreontinf")
+        val apiUrl404 = apiOrdreEndpoint.replace("digihotordreontinfo", "digihotordreontinf")
 
         data class ISGServiceFault(
             @JsonProperty("Code")
@@ -148,7 +148,7 @@ class OebsApiClient(engine: HttpClientEngine) {
 
     private suspend fun httpPostRequest(
         bestilling: Ordre,
-    ): HttpResponse = client.post(apiUrl) {
+    ): HttpResponse = client.post(apiOrdreEndpoint) {
         setBody(InputParameters(OebsJsonFormat(bestilling)))
     }
 
