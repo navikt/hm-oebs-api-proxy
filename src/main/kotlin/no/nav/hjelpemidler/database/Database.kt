@@ -22,33 +22,18 @@ class Database(private val dataSource: DataSource) : Closeable {
         dataSource.connection.use { it.isValid(10) }
     }
 
-    suspend fun testView(schema: String, view: String): Boolean = transactionAsync(dataSource) { tx ->
-        tx.single(
-            """
-            SELECT CASE 
-                WHEN EXISTS (
-                    SELECT 1
-                    FROM all_objects o
-                    JOIN all_tab_privs p
-                        ON o.owner = p.owner AND o.object_name = p.table_name
-                    WHERE 
-                        o.object_type = 'VIEW'
-                        AND o.owner = UPPER(:schemaName)
-                        AND o.object_name = UPPER(:viewName)
-                        AND p.privilege = 'SELECT'
-                        AND p.grantee IN (USER, 'PUBLIC')
-                )
-                THEN 'YES'
-                ELSE 'NO'
-            END AS is_view_selectable
-            FROM dual
-            """.trimIndent(),
-            mapOf(
-                "schemaName" to schema,
-                "viewName" to view,
-            ),
-        ) { row ->
-            row.boolean("is_view_selectable")
+    suspend fun testView(schema: String, view: String): Boolean = withContext(Dispatchers.IO) {
+        val regex = Regex("^[a-zA-Z0-9_]+$")
+        if (!regex.matches(schema)) throw RuntimeException("Invalid schema: $schema")
+        if (!regex.matches(view)) throw RuntimeException("Invalid view: $view")
+        dataSource.connection.use { conn ->
+            val sql = "SELECT 1 FROM $schema.$view WHERE ROWNUM = 1"
+            runCatching {
+                conn.createStatement().use { stmt ->
+                    stmt.executeQuery(sql)
+                }
+                true
+            }.getOrElse { false }
         }
     }
 
