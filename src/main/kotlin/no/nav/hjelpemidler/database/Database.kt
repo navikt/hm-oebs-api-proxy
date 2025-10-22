@@ -41,7 +41,7 @@ class Database(private val dataSource: DataSource) : Closeable {
                 THEN 'YES'
                 ELSE 'NO'
             END AS is_view_selectable
-            FROM dual;
+            FROM dual
             """.trimIndent(),
             mapOf(
                 "schemaName" to schema,
