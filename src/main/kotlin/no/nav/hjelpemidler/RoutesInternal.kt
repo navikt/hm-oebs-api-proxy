@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.engine.cio.CIO
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
@@ -39,8 +40,8 @@ fun Route.internal(database: Database) {
     }
 
     post("/internal/ping-oebs-rest-api") {
-        val oebsApiClient = OebsApiClient(CIO.create())
         val log = KotlinLogging.logger {}
+        val oebsApiClient = OebsApiClient(CIO.create())
         log.info { "Kaller OEBS rest-api ping" }
         val success = oebsApiClient.ping()
         log.info { "Etter kall mot OEBS rest-api ping" }
@@ -50,5 +51,20 @@ fun Route.internal(database: Database) {
         } else {
             call.respond(HttpStatusCode.InternalServerError, "OEBS did not return expected result.")
         }
+    }
+
+    post("/internal/test-oebs-dblink-view") {
+        val log = KotlinLogging.logger {}
+        data class Request(
+            val schema: String,
+            val views: List<String>,
+        )
+        val req = call.receive<Request>()
+        val results = mutableMapOf<String, Boolean>()
+        for (view in req.views) {
+            log.info { "test-oebs-dblink-view: Sjekker ${req.schema}/$view" }
+            results[view] = database.testView(req.schema, view)
+        }
+        call.respond(results)
     }
 }

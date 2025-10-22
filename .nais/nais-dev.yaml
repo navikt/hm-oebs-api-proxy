@@ -123,7 +123,7 @@ spec:
     - name: OEBS_BRUKER_ID
       value: "81400"
     - name: OEBS_MILJO
-      value: "q1"
+      value: "q2"
     - name: GRUNNDATA_API_URL
       value: https://hm-grunndata-search.intern.dev.nav.no
     - name: NORG_API_URL
