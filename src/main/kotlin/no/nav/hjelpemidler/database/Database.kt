@@ -25,20 +25,27 @@ class Database(private val dataSource: DataSource) : Closeable {
     suspend fun testView(schema: String, view: String): Boolean = transactionAsync(dataSource) { tx ->
         tx.single(
             """
-            SELECT EXISTS (
-                SELECT 1
-                FROM information_schema.views v
-                WHERE 
-                    v.table_schema = :schemaName
-                    AND v.table_name = :tableName
-                    AND has_table_privilege(
-                        quote_ident(v.table_schema) || '.' || quote_ident(v.table_name), 'SELECT'
-                    )
-            ) AS is_view_selectable;
+            SELECT CASE 
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM all_objects o
+                    JOIN all_tab_privs p
+                        ON o.owner = p.owner AND o.object_name = p.table_name
+                    WHERE 
+                        o.object_type = 'VIEW'
+                        AND o.owner = UPPER(:schemaName)
+                        AND o.object_name = UPPER(:viewName)
+                        AND p.privilege = 'SELECT'
+                        AND p.grantee IN (USER, 'PUBLIC')
+                )
+                THEN 'YES'
+                ELSE 'NO'
+            END AS is_view_selectable
+            FROM dual;
             """.trimIndent(),
             mapOf(
                 "schemaName" to schema,
-                "tableName" to view,
+                "viewName" to view,
             ),
         ) { row ->
             row.boolean("is_view_selectable")
