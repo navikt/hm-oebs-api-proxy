@@ -18,6 +18,7 @@ import no.nav.hjelpemidler.models.Brukernummer
 import no.nav.hjelpemidler.models.Brukerpass
 import no.nav.hjelpemidler.models.TittelForHmsNr
 import no.nav.hjelpemidler.models.Utlån
+import no.nav.hjelpemidler.models.UtlånMedProduktinfo
 import no.nav.hjelpemidler.service.Lagerstatus
 
 fun Route.internal(database: Database) {
@@ -66,7 +67,7 @@ fun Route.internal(database: Database) {
             val enhetsNavn: String?,
         )
         data class Response(
-            val utlån: List<Utlån>,
+            val utlån: List<UtlånMedProduktinfo>,
             val brukernummer: Brukernummer?,
             val tittelForHmsnr: TittelForHmsNr?,
             val brukerpass: Brukerpass?,
@@ -82,7 +83,7 @@ fun Route.internal(database: Database) {
         call.respond(
             database.transaction {
                 Response(
-                    hjelpemiddeloversiktDao.utlånPåArtnr(hmsnr),
+                    hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr),
                     brukernummerDao.hentBrukernummer(Fødselsnummer(fnr)),
                     tittelForHmsnrDao.hentTittelForHmsnr(hmsnr),
                     brukerpassDao.brukerpassForFnr(fnr),
