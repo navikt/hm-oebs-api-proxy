@@ -52,19 +52,4 @@ fun Route.internal(database: Database) {
             call.respond(HttpStatusCode.InternalServerError, "OEBS did not return expected result.")
         }
     }
-
-    post("/internal/test-oebs-dblink-view") {
-        val log = KotlinLogging.logger {}
-        data class Request(
-            val schema: String,
-            val views: List<String>,
-        )
-        val req = call.receive<Request>()
-        val results = mutableMapOf<String, Boolean>()
-        for (view in req.views) {
-            log.info { "test-oebs-dblink-view: Sjekker ${req.schema}/$view" }
-            results[view] = database.testView(req.schema, view)
-        }
-        call.respond(results)
-    }
 }
