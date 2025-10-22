@@ -12,7 +12,13 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.client.OebsApiClient
 import no.nav.hjelpemidler.database.Database
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.metrics.Prometheus
+import no.nav.hjelpemidler.models.Brukernummer
+import no.nav.hjelpemidler.models.Brukerpass
+import no.nav.hjelpemidler.models.TittelForHmsNr
+import no.nav.hjelpemidler.models.Utlån
+import no.nav.hjelpemidler.service.Lagerstatus
 
 fun Route.internal(database: Database) {
     get("/isalive") {
@@ -51,5 +57,42 @@ fun Route.internal(database: Database) {
         } else {
             call.respond(HttpStatusCode.InternalServerError, "OEBS did not return expected result.")
         }
+    }
+
+    post("/internal/test-oebs-dblink-view") {
+        data class Request(
+            val hmsnr: String?,
+            val fnr: String?,
+            val enhetsNavn: String?,
+        )
+        data class Response(
+            val utlån: List<Utlån>,
+            val brukernummer: Brukernummer?,
+            val tittelForHmsnr: TittelForHmsNr?,
+            val brukerpass: Brukerpass?,
+            val lagerstatus: List<Lagerstatus>,
+        )
+
+        val req = call.receive<Request>()
+
+        val hmsnr = req.hmsnr ?: "014112"
+        val fnr = req.fnr ?: "26848497710"
+        val enhetsNavn = req.enhetsNavn
+
+        call.respond(
+            database.transaction {
+                Response(
+                    hjelpemiddeloversiktDao.utlånPåArtnr(hmsnr),
+                    brukernummerDao.hentBrukernummer(Fødselsnummer(fnr)),
+                    tittelForHmsnrDao.hentTittelForHmsnr(hmsnr),
+                    brukerpassDao.brukerpassForFnr(fnr),
+                    if (enhetsNavn == null) {
+                        lagerDao.hentLagerstatus(hmsnr)
+                    } else {
+                        listOfNotNull(lagerDao.hentLagerstatusForSentral(hmsnr, enhetsNavn))
+                    },
+                )
+            },
+        )
     }
 }
