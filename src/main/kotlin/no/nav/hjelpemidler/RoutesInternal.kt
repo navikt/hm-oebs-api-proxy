@@ -17,7 +17,6 @@ import no.nav.hjelpemidler.metrics.Prometheus
 import no.nav.hjelpemidler.models.Brukernummer
 import no.nav.hjelpemidler.models.Brukerpass
 import no.nav.hjelpemidler.models.TittelForHmsNr
-import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.models.UtlånMedProduktinfo
 import no.nav.hjelpemidler.service.Lagerstatus
 
