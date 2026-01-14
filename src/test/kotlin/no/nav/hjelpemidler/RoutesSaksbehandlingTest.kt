@@ -14,6 +14,7 @@ import no.nav.hjelpemidler.database.toQueryParameters
 import no.nav.hjelpemidler.database.transactionAsync
 import no.nav.hjelpemidler.models.Resultat
 import no.nav.hjelpemidler.models.Serviceforespørsel
+import no.nav.hjelpemidler.models.SfArtikkel
 import no.nav.hjelpemidler.models.Stønadsklasse
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 import kotlin.test.Test
@@ -22,7 +23,7 @@ class RoutesSaksbehandlingTest {
     @Test
     fun `Adresse finnes, tar med artikler`() = testApplication {
         val fnr = "19127428657"
-        val artikkel = Serviceforespørsel.Artikkel("1", "1")
+        val artikkel = SfArtikkel("1", "1")
 
         opprettSF(fnr, artikkel)
 
@@ -34,7 +35,7 @@ class RoutesSaksbehandlingTest {
     @Test
     fun `Adresse mangler, tar ikke med artikler`() = testApplication {
         val fnr = "01987654321"
-        val artikkel = Serviceforespørsel.Artikkel("2", "1")
+        val artikkel = SfArtikkel("2", "1")
 
         opprettSF(fnr, artikkel)
 
@@ -46,7 +47,7 @@ class RoutesSaksbehandlingTest {
     @Test
     fun `Adresse ikke aktiv, tar ikke med artikler`() = testApplication {
         val fnr = "01011121314"
-        val artikkel = Serviceforespørsel.Artikkel("3", "1")
+        val artikkel = SfArtikkel("3", "1")
 
         opprettSF(fnr, artikkel)
 
@@ -56,7 +57,7 @@ class RoutesSaksbehandlingTest {
     }
 }
 
-private suspend fun TestContext.opprettSF(fnr: String, artikkel: Serviceforespørsel.Artikkel? = null) {
+private suspend fun TestContext.opprettSF(fnr: String, artikkel: SfArtikkel? = null) {
     client.post("/opprettSF") {
         contentType(ContentType.Application.Json)
         setBody(

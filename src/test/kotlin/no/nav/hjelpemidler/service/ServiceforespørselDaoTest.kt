@@ -5,6 +5,7 @@ import kotlinx.coroutines.test.runTest
 import no.nav.hjelpemidler.database.testTransaction
 import no.nav.hjelpemidler.models.Resultat
 import no.nav.hjelpemidler.models.Serviceforespørsel
+import no.nav.hjelpemidler.models.SfArtikkel
 import no.nav.hjelpemidler.models.Stønadsklasse
 import kotlin.test.Test
 
@@ -21,8 +22,8 @@ class ServiceforespørselDaoTest {
                     referansenummer = "1",
                     problemsammendrag = "1; terskeleliminator",
                     artikler = listOf(
-                        Serviceforespørsel.Artikkel(hmsnr = "1", antall = "1"),
-                        Serviceforespørsel.Artikkel(hmsnr = "2", antall = "1"),
+                        SfArtikkel(hmsnr = "1", antall = "1"),
+                        SfArtikkel(hmsnr = "2", antall = "1"),
                     ),
                 ),
             )

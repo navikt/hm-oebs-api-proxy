@@ -10,9 +10,15 @@ data class Serviceforespørsel(
     val jobId: String = "-1",
     val problemsammendrag: String? = null,
     val forsendelsesinfo: String? = null,
-    val artikler: List<Artikkel>? = null,
+    val artikler: List<SfArtikkel>? = null,
+    val notat: Notat? = null,
 ) {
-    data class Artikkel(override val hmsnr: String, override val antall: String) : no.nav.hjelpemidler.models.Artikkel
+
+    data class Notat(val notatType: NotatType = NotatType.DAGBOK, val notatInfo: String, val notatInfoDet: String? = null)
+}
+
+enum class NotatType() {
+    DAGBOK,
 }
 
 enum class Stønadsklasse(val stønadsklasse: String) {

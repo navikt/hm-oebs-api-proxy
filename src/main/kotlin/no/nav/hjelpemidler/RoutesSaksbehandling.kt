@@ -18,8 +18,8 @@ import no.nav.hjelpemidler.models.BestillingsordreRequest
 import no.nav.hjelpemidler.models.Brukernummer
 import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.Serviceforespørsel
+import no.nav.hjelpemidler.models.ServiceforespørselRequest
 import no.nav.hjelpemidler.models.Utlån
-import kotlin.String
 
 private val log = KotlinLogging.logger {}
 
@@ -42,23 +42,38 @@ fun Route.saksbehandling(database: Database) {
 
         post("/opprettSF") {
             try {
-                val serviceforespørsel = call.receive<Serviceforespørsel>()
+                val sfRequest = call.receive<ServiceforespørselRequest>()
                 database.transaction {
-                    val personinformasjon = personinformasjonDao.hentPersoninformasjon(serviceforespørsel.fødselsnummer)
+                    val personinformasjon = personinformasjonDao.hentPersoninformasjon(sfRequest.fødselsnummer)
                         .filter(Personinformasjon::aktiv)
                         .filterNot { it.bostedsadresse.adresse.isBlank() || it.bostedsadresse.adresse == "." }
-                    serviceforespørselDao.opprettServiceforespørsel(
-                        when {
-                            personinformasjon.isEmpty() -> {
-                                log.warn { "Bruker har ingen aktive adresser i OEBS, tar ikke med kostnadslinjer i serviceforespørsel" }
-                                serviceforespørsel.copy(artikler = null)
-                            }
 
-                            else -> serviceforespørsel
-                        },
+                    val sf = when {
+                        personinformasjon.isEmpty() -> {
+                            log.warn { "Bruker har ingen aktive adresser i OEBS, tar ikke med kostnadslinjer i serviceforespørsel" }
+                            sfRequest.copy(artikler = null)
+                        }
+
+                        else -> sfRequest
+                    }
+
+                    val serviceforespørsel = Serviceforespørsel(
+                        fødselsnummer = sf.fødselsnummer,
+                        navn = sf.navn,
+                        stønadsklasse = sf.stønadsklasse,
+                        resultat = sf.resultat,
+                        referansenummer = sf.referansenummer,
+                        problemsammendrag = sf.problemsammendrag,
+                        forsendelsesinfo = sf.forsendelsesinfo,
+                        artikler = sf.artikler,
+                        notat = sf.notat?.let { Serviceforespørsel.Notat(notatInfo = it) },
+                    )
+
+                    serviceforespørselDao.opprettServiceforespørsel(
+                        serviceforespørsel,
                     )
                 }
-                log.info { "Serviceforespørsel for sakId: ${serviceforespørsel.referansenummer} opprettet, hjelpemidler: ${serviceforespørsel.artikler}" }
+                log.info { "Serviceforespørsel for sakId: ${sfRequest.referansenummer} opprettet, hjelpemidler: ${sfRequest.artikler}" }
                 call.respond(HttpStatusCode.Created)
             } catch (e: Exception) {
                 log.error(e) { "Noe gikk feil med opprettelse av serviceforespørsel" }

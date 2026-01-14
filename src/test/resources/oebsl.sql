@@ -162,6 +162,7 @@ CREATE TABLE IF NOT EXISTS apps.xxrtv_cs_digihot_sf_opprett
     saksblokk            VARCHAR2(255),
     beskrivelse          VARCHAR2(255),
     json_artikkelinfo_in TEXT,
+    json_notatinfo_in    TEXT,
 
     PRIMARY KEY (id)
 );
