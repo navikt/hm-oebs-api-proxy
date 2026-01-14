@@ -17,7 +17,7 @@ data class Serviceforespørsel(
     data class Notat(val notatType: NotatType = NotatType.DAGBOK, val notatInfo: String, val notatInfoDet: String? = null)
 }
 
-enum class NotatType() {
+enum class NotatType {
     DAGBOK,
 }
 
