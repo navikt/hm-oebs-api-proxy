@@ -2,7 +2,6 @@ package no.nav.hjelpemidler.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotliquery.Parameter
-import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.ServiceforespørselFeil
@@ -12,67 +11,37 @@ private val log = KotlinLogging.logger {}
 
 class ServiceforespørselDao(private val tx: JdbcOperations) {
     fun opprettServiceforespørsel(sf: Serviceforespørsel): Int {
-        // Midlertidig workaround for å teste nytt felt i OeBS i test. Duplisert kode kan fjernes når feltet json_notatinfo_in er i prod.
-        if (!Environment.current.isProd) {
-            log.info { "Tester ny insert på SF med notatinfo feltet. Bare i dev. SF: $sf" }
-            return tx.update(
-                """
+        log.info { "Tester ny insert på SF med notatinfo feltet. Bare i dev. SF: $sf" }
+        return tx.update(
+            """
                 INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
                 (id, fnr, navn, stonadsklass, sakstype, resultat, sfdato, referansenummer, kilde, processed, last_update_date,
                  last_updated_by, creation_date, created_by, job_id, saksblokk, beskrivelse, json_artikkelinfo_in, json_notatinfo_in )
                 VALUES (apps.xxrtv_cs_digihot_sf_opprett_s.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, SYSDATE,
                         :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X', :beskrivelse, :artikler, :notat )
-                """.trimIndent(),
-                mapOf(
-                    "fnr" to sf.fødselsnummer,
-                    "navn" to sf.navn,
-                    "stonadsklasse" to sf.stønadsklasse.name,
-                    "sakstype" to "S",
-                    "resultat" to sf.resultat.name,
-                    "referansenummer" to sf.referansenummer,
-                    "kilde" to sf.kilde,
-                    "processed" to "N",
-                    "oppdatertAv" to no.nav.hjelpemidler.Configuration.OEBS_BRUKER_ID,
-                    "jobId" to -1,
-                    "beskrivelse" to Parameter<String?>(sf.problemsammendrag, String::class.java),
-                    "artikler" to when {
-                        sf.artikler.isNullOrEmpty() -> Parameter<String?>(null, String::class.java)
-                        else -> jsonMapper.writeValueAsString(sf.artikler)
-                    },
-                    "notat" to when {
-                        sf.notat == null -> Parameter<String?>(null, String::class.java)
-                        else -> jsonMapper.writeValueAsString(sf.notat)
-                    },
-                ),
-            ).actualRowCount
-        } else {
-            return tx.update(
-                """
-                INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
-                (id, fnr, navn, stonadsklass, sakstype, resultat, sfdato, referansenummer, kilde, processed, last_update_date,
-                 last_updated_by, creation_date, created_by, job_id, saksblokk, beskrivelse, json_artikkelinfo_in)
-                VALUES (apps.xxrtv_cs_digihot_sf_opprett_s.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, SYSDATE,
-                        :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X', :beskrivelse, :artikler)
-                """.trimIndent(),
-                mapOf(
-                    "fnr" to sf.fødselsnummer,
-                    "navn" to sf.navn,
-                    "stonadsklasse" to sf.stønadsklasse.name,
-                    "sakstype" to "S",
-                    "resultat" to sf.resultat.name,
-                    "referansenummer" to sf.referansenummer,
-                    "kilde" to sf.kilde,
-                    "processed" to "N",
-                    "oppdatertAv" to no.nav.hjelpemidler.Configuration.OEBS_BRUKER_ID,
-                    "jobId" to -1,
-                    "beskrivelse" to Parameter<String?>(sf.problemsammendrag, String::class.java),
-                    "artikler" to when {
-                        sf.artikler.isNullOrEmpty() -> Parameter<String?>(null, String::class.java)
-                        else -> jsonMapper.writeValueAsString(sf.artikler)
-                    },
-                ),
-            ).actualRowCount
-        }
+            """.trimIndent(),
+            mapOf(
+                "fnr" to sf.fødselsnummer,
+                "navn" to sf.navn,
+                "stonadsklasse" to sf.stønadsklasse.name,
+                "sakstype" to "S",
+                "resultat" to sf.resultat.name,
+                "referansenummer" to sf.referansenummer,
+                "kilde" to sf.kilde,
+                "processed" to "N",
+                "oppdatertAv" to no.nav.hjelpemidler.Configuration.OEBS_BRUKER_ID,
+                "jobId" to -1,
+                "beskrivelse" to Parameter<String?>(sf.problemsammendrag, String::class.java),
+                "artikler" to when {
+                    sf.artikler.isNullOrEmpty() -> Parameter<String?>(null, String::class.java)
+                    else -> jsonMapper.writeValueAsString(sf.artikler)
+                },
+                "notat" to when {
+                    sf.notat == null -> Parameter<String?>(null, String::class.java)
+                    else -> jsonMapper.writeValueAsString(sf.notat)
+                },
+            ),
+        ).actualRowCount
     }
 
     fun finnFeilendeServiceforespørsler(): List<ServiceforespørselFeil> = tx.list(
