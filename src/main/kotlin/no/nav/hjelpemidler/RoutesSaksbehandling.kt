@@ -40,31 +40,6 @@ fun Route.saksbehandling(database: Database) {
             }
         }
 
-        fun fjernDuplikater(problemsammendrag: String?): String {
-            if (problemsammendrag.isNullOrBlank()) {
-                return problemsammendrag ?: ""
-            }
-
-            val deler = problemsammendrag.split(";")
-            val hovedDel = deler.first()
-            val restDel = deler.drop(1).joinToString(";")
-
-            val unikeElementer = hovedDel.split(",")
-                .map { it.trim() }
-                .filter { it.isNotEmpty() }
-                .distinct()
-                .joinToString(", ")
-
-            return if (restDel.isNotEmpty()) {
-                val nyttProblemsammendrag = "$unikeElementer;$restDel"
-                log.info { "Fjerner duplikater i problemsammendrag opprinnelig $problemsammendrag ny $nyttProblemsammendrag" }
-
-                nyttProblemsammendrag
-            } else {
-                unikeElementer
-            }
-        }
-
         post("/opprettSF") {
             try {
                 val sfRequest = call.receive<ServiceforespørselRequest>()
@@ -88,7 +63,7 @@ fun Route.saksbehandling(database: Database) {
                         stønadsklasse = sf.stønadsklasse,
                         resultat = sf.resultat,
                         referansenummer = sf.referansenummer,
-                        problemsammendrag = fjernDuplikater(sf.problemsammendrag),
+                        problemsammendrag = sf.problemsammendrag,
                         forsendelsesinfo = sf.forsendelsesinfo,
                         artikler = sf.artikler,
                         notat = sf.notat?.let { Serviceforespørsel.Notat(notatInfo = it) },
