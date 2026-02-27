@@ -14,7 +14,7 @@ import java.io.Closeable
 import javax.sql.DataSource
 
 class Database(private val dataSource: DataSource) : Closeable {
-    suspend fun <T> transaction(block: DaoProvider.() -> T): T = transactionAsync(dataSource) {
+    suspend fun <T> transaction(block: DaoProvider.() -> T): T = transaction(dataSource) {
         DaoProvider(it).block()
     }
 

@@ -9,9 +9,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.hjelpemidler.database.Row
-import no.nav.hjelpemidler.database.toMap
 import no.nav.hjelpemidler.database.toQueryParameters
-import no.nav.hjelpemidler.database.transactionAsync
+import no.nav.hjelpemidler.database.transaction
 import no.nav.hjelpemidler.models.Resultat
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.SfArtikkel
@@ -73,13 +72,13 @@ private suspend fun TestContext.opprettSF(fnr: String, artikkel: SfArtikkel? = n
     } shouldHaveStatus HttpStatusCode.Created
 }
 
-private suspend fun TestContext.hentServiceforespørsler(fnr: String): List<Map<String, Any?>> = transactionAsync(dataSource) {
+private suspend fun TestContext.hentServiceforespørsler(fnr: String): List<Map<String, Any?>> = transaction(dataSource) {
     it.list(
         """
             SELECT * FROM apps.xxrtv_cs_digihot_sf_opprett
             WHERE fnr = :fnr
         """.trimIndent(),
         fnr.toQueryParameters("fnr"),
-        Row::toMap,
+        Row::asMap,
     )
 }

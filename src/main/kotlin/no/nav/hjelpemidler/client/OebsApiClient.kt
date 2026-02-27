@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
-import io.ktor.client.engine.apache.Apache
+import io.ktor.client.engine.apache5.Apache5
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
@@ -29,37 +29,30 @@ import no.nav.hjelpemidler.models.OebsJsonFormat
 import no.nav.hjelpemidler.models.Ordre
 import no.nav.hjelpemidler.models.OrdreType
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
-import org.apache.http.conn.ssl.NoopHostnameVerifier
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier
+import org.apache.hc.client5.http.ssl.TrustAllStrategy
+import org.apache.hc.core5.ssl.SSLContextBuilder
 
 private val log = KotlinLogging.logger {}
-
-private fun createInsecureSslContext(): SSLContext {
-    val trustAllCerts = arrayOf<TrustManager>(
-        object : X509TrustManager {
-            override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-            override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-            override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-        },
-    )
-    return SSLContext.getInstance("TLS").apply {
-        init(null, trustAllCerts, SecureRandom())
-    }
-}
 
 class OebsApiClient(engine: HttpClientEngine) {
     private val client = createHttpClient(
         if (Environment.current.isDev) {
-            Apache.create {
-                customizeClient {
-                    // Set insecure SSL context
-                    setSSLContext(createInsecureSslContext())
-                    // Disable hostname verification (e.g. mismatched CN/SAN)
-                    setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+            Apache5.create {
+                // Trust all certificates
+                sslContext = SSLContextBuilder()
+                    .loadTrustMaterial(null, TrustAllStrategy.INSTANCE)
+                    .build()
+
+                configureConnectionManager {
+                    setTlsStrategy(
+                        DefaultClientTlsStrategy(
+                            this@create.sslContext,
+                            // Disable hostname verification (e.g. mismatched CN/SAN)
+                            NoopHostnameVerifier.INSTANCE,
+                        ),
+                    )
                 }
             }
         } else {
@@ -95,17 +88,17 @@ class OebsApiClient(engine: HttpClientEngine) {
                 shippinginstructions = request.shippinginstructions,
                 ferdigstill = request.ferdigstillOrdre.toString(),
             )
-        log.info { "Kaller OEBS-API, url: $apiUrl" }
+        log.info { "Kaller OeBS-API, url: $apiUrl" }
         val response = httpPostRequest(bestilling)
         if (response.status == HttpStatusCode.OK) {
             val responseBody = response.body<Map<String, Map<String, String>>>()
-            log.info { "Fikk svar fra OEBS: $responseBody" }
-            return "Ordreopprettelse sendt til OEBS: ${responseBody["OutputParameters"]?.get("P_RETUR_MELDING")}"
+            log.info { "Fikk svar fra OeBS: $responseBody" }
+            return "Ordreopprettelse sendt til OeBS: ${responseBody["OutputParameters"]?.get("P_RETUR_MELDING")}"
         }
 
         val responseBody = runCatching { response.bodyAsText() }.getOrNull()
         error(
-            "Feil under kall til OEBS-API, status: ${response.status}, body: $responseBody",
+            "Feil under kall til OeBS-API, status: ${response.status}, body: $responseBody",
         )
     }
 
@@ -136,11 +129,11 @@ class OebsApiClient(engine: HttpClientEngine) {
                 jsonMapper.readValue<Response>(responseBody)
             }.getOrNull()?.isgServiceFault?.code == "ISG_INVALID_FUNCTION"
 
-            log.info { "Ping mot OEBS rest-apiet (kall mot ugyldig uri) resultat: status: ${response.status}, success=$success, body: $responseBody" }
+            log.info { "Ping mot OeBS API-et (kall mot ugyldig uri) resultat -  status: ${response.status}, success: $success, body: $responseBody" }
 
             return success
         }.onFailure { e ->
-            log.error(e) { "Exception oppstod mens vi kjørte ping mot OEBS rest-apiet" }
+            log.error(e) { "Exception oppstod mens vi kjørte ping mot OeBS API-et" }
         }
 
         return false

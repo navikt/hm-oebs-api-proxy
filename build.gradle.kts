@@ -27,7 +27,7 @@ dependencies {
 
     // Ktor Server
     implementation(libs.bundles.ktor.server)
-    implementation(libs.ktor.client.apache)
+    implementation(libs.ktor.client.apache5)
 
     // Database
     implementation(libs.hotlibs.database) {
@@ -60,6 +60,12 @@ spotless {
 }
 
 java { toolchain { languageVersion.set(JavaLanguageVersion.of(21)) } }
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
+    }
+}
 
 @Suppress("UnstableApiUsage")
 testing {
@@ -101,4 +107,7 @@ val graphqlIntrospectSchema by tasks.getting(GraphQLIntrospectSchemaTask::class)
     outputFile.set(file("src/main/resources/hmdb/schema.graphqls"))
 }
 
-tasks.shadowJar { mergeServiceFiles() }
+tasks.shadowJar {
+    mergeServiceFiles()
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}

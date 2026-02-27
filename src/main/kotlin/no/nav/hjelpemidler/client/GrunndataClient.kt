@@ -23,6 +23,7 @@ object GrunndataClient {
                 }
 
                 response.data != null -> response.data?.products ?: emptyList()
+
                 else -> emptyList()
             }
         } catch (e: Exception) {

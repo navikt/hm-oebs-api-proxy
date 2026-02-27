@@ -1,8 +1,8 @@
 package no.nav.hjelpemidler.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotliquery.Parameter
 import no.nav.hjelpemidler.database.JdbcOperations
+import no.nav.hjelpemidler.database.parameterOf
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.ServiceforespørselFeil
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
@@ -29,13 +29,13 @@ class ServiceforespørselDao(private val tx: JdbcOperations) {
             "processed" to "N",
             "oppdatertAv" to no.nav.hjelpemidler.Configuration.OEBS_BRUKER_ID,
             "jobId" to -1,
-            "beskrivelse" to Parameter<String?>(sf.problemsammendrag, String::class.java),
+            "beskrivelse" to parameterOf(sf.problemsammendrag),
             "artikler" to when {
-                sf.artikler.isNullOrEmpty() -> Parameter<String?>(null, String::class.java)
+                sf.artikler.isNullOrEmpty() -> parameterOf<String>(null)
                 else -> jsonMapper.writeValueAsString(sf.artikler)
             },
             "notat" to when {
-                sf.notat == null -> Parameter<String?>(null, String::class.java)
+                sf.notat == null -> parameterOf<String>(null)
                 else -> jsonMapper.writeValueAsString(sf.notat)
             },
         ),
