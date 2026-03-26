@@ -32,7 +32,16 @@ class ServiceforespørselDao(private val tx: JdbcOperations) {
             "beskrivelse" to parameterOf(sf.problemsammendrag),
             "artikler" to when {
                 sf.artikler.isNullOrEmpty() -> parameterOf<String>(null)
-                else -> jsonMapper.writeValueAsString(sf.artikler)
+
+                else -> {
+                    // Map forsendelsesinfo/utleveringsmerknad  til hver artikkel slik at dette vises pr kostnadslinje på SF
+                    val artiklerMedShippingInstructions = if (!sf.forsendelsesinfo.isNullOrBlank()) {
+                        sf.artikler.map { it.copy(shippinginstructions = sf.forsendelsesinfo) }
+                    } else {
+                        sf.artikler
+                    }
+                    jsonMapper.writeValueAsString(artiklerMedShippingInstructions)
+                }
             },
             "notat" to when {
                 sf.notat == null -> parameterOf<String>(null)
