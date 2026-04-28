@@ -64,7 +64,7 @@ fun Route.saksbehandling(database: Database) {
                         resultat = sf.resultat,
                         referansenummer = sf.referansenummer,
                         problemsammendrag = sf.problemsammendrag,
-                        forsendelsesinfo = sf.forsendelsesinfo,
+                        forsendelsesinfo = sf.forsendelsesinfo?.trim()?.removeSuffix("."),
                         artikler = sf.artikler,
                         notat = sf.notat?.let { Serviceforespørsel.Notat(notatInfo = it) },
                     )
