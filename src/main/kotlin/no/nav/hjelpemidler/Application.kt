@@ -61,9 +61,7 @@ fun Application.module() {
     monitor.subscribe(ApplicationStarted) {
         loggFeilendeServiceforespørsler()
     }
-     */
-
-     
+     */     
 
     installAuthentication()
     installRouting(
