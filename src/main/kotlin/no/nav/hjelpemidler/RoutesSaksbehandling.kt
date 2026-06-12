@@ -20,6 +20,7 @@ import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.ServiceforespørselRequest
 import no.nav.hjelpemidler.models.Utlån
+import no.nav.hjelpemidler.models.UtlånMedSerienr
 
 private val log = KotlinLogging.logger {}
 
@@ -132,20 +133,51 @@ fun Route.saksbehandling(database: Database) {
                     val serienr: String,
                 )
 
+                data class UtlånResponse(
+                    val utlån: UtlånMedSerienr?,
+                )
+
                 val req = call.receive<UtlånPåArtnrOgSerienrRequest>()
                 val artnr = req.artnr
                 val serienr = req.serienr
-
-                data class UtlånPåArtnrOgSerienrResponse(
-                    val utlån: Utlån?,
-                )
 
                 val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
                 if (Environment.current.isDev) {
                     log.info { "utlån: $utlån" }
                 }
 
-                call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
+                call.respond(UtlånResponse(utlån))
+            } catch (e: Exception) {
+                log.error(e) { "Noe gikk feil med sjekk av utlån på artnr og serienr" }
+                call.respond(HttpStatusCode.InternalServerError, e)
+            }
+        }
+
+        post("/utlanBrukernrArtnr") {
+            try {
+                data class UtlånPåArtnrOgBrukernrRequest(
+                    val artnr: String,
+                    val brukernr: String,
+                )
+                data class UtlånResponse(
+                    val utlån: List<Utlån>,
+                )
+
+                val req = call.receive<UtlånPåArtnrOgBrukernrRequest>()
+                val artnr = req.artnr
+                val brukernr = req.brukernr
+
+                val fnr = database.transaction { brukernummerDao.hentFødselsnummer(brukernr) }
+                if (Environment.current.isDev) {
+                    log.info { "Fødselsnr: $fnr" }
+                }
+
+                val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgFødselsnr(artnr, fnr.value) }
+                if (Environment.current.isDev) {
+                    log.info { "utlån: $utlån" }
+                }
+
+                call.respond(UtlånResponse(utlån))
             } catch (e: Exception) {
                 log.error(e) { "Noe gikk feil med sjekk av utlån på artnr og serienr" }
                 call.respond(HttpStatusCode.InternalServerError, e)

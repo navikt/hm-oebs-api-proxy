@@ -9,7 +9,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
-      - garantiDato
+      - DelbestillingUtenSerienr
 
 jobs:
   build:
