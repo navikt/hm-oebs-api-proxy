@@ -179,7 +179,7 @@ fun Route.saksbehandling(database: Database) {
 
                 call.respond(UtlånResponse(utlån))
             } catch (e: Exception) {
-                log.error(e) { "Noe gikk feil med sjekk av utlån på artnr og serienr" }
+                log.error(e) { "Noe gikk feil med sjekk av utlån på artnr og brukernr" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }
