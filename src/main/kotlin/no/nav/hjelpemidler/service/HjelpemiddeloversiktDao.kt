@@ -135,12 +135,11 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
     fun utlånPåArtnrOgFødselsnr(artnr: String, fnr: String): List<Utlån> = tx.list(
         """
-            SELECT fnr, artikkelnummer,  utlåns_dato, opprettelsesdato, kategori3_nummer
+            SELECT fnr, serie_nummer, artikkelnummer,  utlåns_dato, opprettelsesdato, kategori3_nummer
             FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
             WHERE artikkelnummer = :artnr
               AND fnr = :fnr
             ORDER BY utlåns_dato DESC
-            FETCH NEXT 1 ROW ONLY
         """.trimIndent(),
         mapOf("artnr" to artnr, "fnr" to fnr),
     ) { row ->
