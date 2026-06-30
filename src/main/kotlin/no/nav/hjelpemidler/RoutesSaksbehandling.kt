@@ -8,6 +8,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.client.OebsApiClient
 import no.nav.hjelpemidler.configuration.Environment
@@ -100,6 +101,17 @@ fun Route.saksbehandling(database: Database) {
             }
         }
 
+        get("/getFodselsnummer/{brukernummer}") {
+            val brukernummer = call.parameters["brukernummer"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Brukernr mangler",
+            )
+            val fnr = database.transaction {
+                brukernummerDao.hentFødselsnummer(brukernummer)
+            }
+            call.respond(fnr)
+        }
+
         post("/getHjelpemiddelOversikt") {
             val fnr = call.receiveFødselsnummer()
             val hjelpemiddeloversikt = database.transaction {
@@ -159,6 +171,7 @@ fun Route.saksbehandling(database: Database) {
                     val artnr: String,
                     val brukernr: String,
                 )
+
                 data class UtlånResponse(
                     val utlån: List<Utlån>,
                 )
