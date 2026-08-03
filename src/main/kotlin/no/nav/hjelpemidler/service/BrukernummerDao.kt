@@ -18,7 +18,7 @@ class BrukernummerDao(private val tx: JdbcOperations) {
         Brukernummer(row.string("bruker_nummer"))
     }
 
-    fun hentBrukernumre(fnr: Set<Fødselsnummer>): Map<Fødselsnummer, Brukernummer?> {
+    fun hentBrukernumre(fnr: Set<Fødselsnummer>): Map<Fødselsnummer, String?> {
         if (fnr.isEmpty()) return emptyMap()
 
         val schema = Configuration.OEBS_DB_USERNAME
@@ -36,16 +36,18 @@ class BrukernummerDao(private val tx: JdbcOperations) {
             fnr,
         ) { mapOf("fnr" to it) }
 
-        return tx.list(
-            """
-                SELECT t1.fnr, t2.bruker_nummer
-                FROM $temporaryTableName t1
-                    LEFT JOIN apps.xxrtv_digihot_oebs_adr_fnr_v t2
-                        ON t1.fnr = t2.fnr
-            """.trimIndent(),
-            mapOf("fnr" to fnr),
-        ) { row ->
-            row.fødselsnummer("fnr") to row.stringOrNull("bruker_nummer")?.let(::Brukernummer)
-        }.toMap()
+        return tx
+            .list(
+                """
+                    SELECT t1.fnr, t2.bruker_nummer
+                    FROM $temporaryTableName t1
+                        LEFT JOIN apps.xxrtv_digihot_oebs_adr_fnr_v t2
+                            ON t1.fnr = t2.fnr
+                """.trimIndent(),
+                mapOf("fnr" to fnr),
+            ) { row ->
+                row.fødselsnummer("fnr") to row.stringOrNull("bruker_nummer")
+            }
+            .toMap()
     }
 }
