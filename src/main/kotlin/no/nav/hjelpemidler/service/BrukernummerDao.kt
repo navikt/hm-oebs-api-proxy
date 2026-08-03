@@ -32,7 +32,7 @@ class BrukernummerDao(private val tx: JdbcOperations) {
             """.trimIndent(),
         )
         tx.batch(
-            "INSERT INTO \$temporarytablename (fnr) VALUES (:fnr)",
+            "INSERT INTO $temporaryTableName (fnr) VALUES (:fnr)",
             fnr,
         ) { mapOf("fnr" to it) }
 
