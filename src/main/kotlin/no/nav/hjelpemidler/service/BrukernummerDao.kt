@@ -39,8 +39,8 @@ class BrukernummerDao(private val tx: JdbcOperations) {
         return tx.list(
             """
                 SELECT t1.fnr, t2.bruker_nummer
-                FROM $temporaryTableName AS t1
-                    LEFT JOIN apps.xxrtv_digihot_oebs_adr_fnr_v AS t2
+                FROM $temporaryTableName t1
+                    LEFT JOIN apps.xxrtv_digihot_oebs_adr_fnr_v t2
                         ON t1.fnr = t2.fnr
             """.trimIndent(),
             mapOf("fnr" to fnr),
