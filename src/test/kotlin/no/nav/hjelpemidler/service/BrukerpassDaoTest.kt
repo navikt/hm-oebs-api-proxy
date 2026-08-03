@@ -5,9 +5,9 @@ import kotlinx.coroutines.test.runTest
 import no.nav.hjelpemidler.database.testTransaction
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.domain.person.år
+import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.Month
-import kotlin.test.Test
 
 class BrukerpassDaoTest {
     @Test

@@ -7,7 +7,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import no.nav.hjelpemidler.models.BestillingsordreRequest
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 class OebsApiClientTest {
     @Test

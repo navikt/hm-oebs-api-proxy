@@ -7,7 +7,7 @@ import no.nav.hjelpemidler.models.Resultat
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.SfArtikkel
 import no.nav.hjelpemidler.models.Stønadsklasse
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 class ServiceforespørselDaoTest {
     @Test

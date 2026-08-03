@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import no.nav.hjelpemidler.database.testTransaction
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 class BrukernummerDaoTest {
     @Test
