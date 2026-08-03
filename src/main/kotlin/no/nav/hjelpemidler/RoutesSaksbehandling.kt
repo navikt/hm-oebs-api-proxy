@@ -15,7 +15,6 @@ import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.ktor.receiveFødselsnummer
 import no.nav.hjelpemidler.models.BestillingsordreRequest
-import no.nav.hjelpemidler.models.Brukernummer
 import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.ServiceforespørselRequest
@@ -89,14 +88,18 @@ fun Route.saksbehandling(database: Database) {
 
         post("/getBrukernummer") {
             val fnr = call.receiveFødselsnummer()
-            val hentBrukernummer: Brukernummer? = database.transaction {
-                brukernummerDao.hentBrukernummer(fnr)
+            val brukernummer = database.transaction { brukernummerDao.hentBrukernummer(fnr) }
+            if (brukernummer == null) {
+                call.respond(status = HttpStatusCode.NotFound, "Bruker ikke funnet i OeBS")
+            } else {
+                call.respond(brukernummer)
             }
+        }
 
-            when (hentBrukernummer) {
-                null -> call.respond(status = HttpStatusCode.NotFound, "Bruker ikke funnet i OEBS")
-                else -> call.respond(hentBrukernummer)
-            }
+        post("/getBrukernumre") {
+            val fnr = call.receive<Set<Fødselsnummer>>()
+            val brukernumre = database.transaction { brukernummerDao.hentBrukernumre(fnr) }
+            call.respond(brukernumre)
         }
 
         post("/getHjelpemiddelOversikt") {
