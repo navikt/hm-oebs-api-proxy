@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.database.parameterOf
 import no.nav.hjelpemidler.models.Serviceforespørsel
@@ -9,16 +10,23 @@ import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 
 private val log = KotlinLogging.logger {}
 
-class ServiceforespørselDao(private val tx: JdbcOperations) {
-    fun opprettServiceforespørsel(sf: Serviceforespørsel): Int = tx.update(
-        """
+class ServiceforespørselDao(
+    private val tx: JdbcOperations,
+    private val isDev: Boolean = Environment.current.isDev,
+) {
+    fun opprettServiceforespørsel(sf: Serviceforespørsel): Int {
+        val extraColumns = if (isDev) ", kontakt_opplysninger" else ""
+        val extraValues = if (isDev) ", :kontaktOpplysninger" else ""
+
+        val sql = """
                 INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
                 (id, fnr, navn, stonadsklass, sakstype, resultat, sfdato, referansenummer, kilde, processed, last_update_date,
-                 last_updated_by, creation_date, created_by, job_id, saksblokk, beskrivelse, json_artikkelinfo_in, json_notatinfo_in )
+                 last_updated_by, creation_date, created_by, job_id, saksblokk, beskrivelse, json_artikkelinfo_in, json_notatinfo_in$extraColumns )
                 VALUES (apps.xxrtv_cs_digihot_sf_opprett_s.nextval, :fnr, :navn, :stonadsklasse, :sakstype, :resultat, SYSDATE,
-                        :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X', :beskrivelse, :artikler, :notat )
-        """.trimIndent(),
-        mapOf(
+                        :referansenummer, :kilde, :processed, SYSDATE, :oppdatertAv, SYSDATE, :oppdatertAv, :jobId, 'X', :beskrivelse, :artikler, :notat$extraValues )
+        """.trimIndent()
+
+        val params = mutableMapOf(
             "fnr" to sf.fødselsnummer,
             "navn" to sf.navn,
             "stonadsklasse" to sf.stønadsklasse.name,
@@ -47,8 +55,16 @@ class ServiceforespørselDao(private val tx: JdbcOperations) {
                 sf.notat == null -> parameterOf<String>(null)
                 else -> jsonMapper.writeValueAsString(sf.notat)
             },
-        ),
-    ).actualRowCount
+        )
+        if (isDev) {
+            params["kontaktOpplysninger"] = """
+                Bestilt av: Formidler Formidlersen, tlf: 11 11 11 11.
+                Kontakt ved levering: Annen Annensen, tlf: 22 22 22 22
+            """.trimIndent()
+        }
+
+        return tx.update(sql, params).actualRowCount
+    }
 
     fun finnFeilendeServiceforespørsler(): List<ServiceforespørselFeil> = tx.list(
         """
