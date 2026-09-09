@@ -1,7 +1,6 @@
 package no.nav.hjelpemidler.client
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
@@ -33,6 +32,7 @@ import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier
 import org.apache.hc.client5.http.ssl.TrustAllStrategy
 import org.apache.hc.core5.ssl.SSLContextBuilder
+import tools.jackson.module.kotlin.readValue
 
 private val log = KotlinLogging.logger {}
 
