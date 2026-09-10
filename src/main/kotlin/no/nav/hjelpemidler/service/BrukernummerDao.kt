@@ -6,6 +6,7 @@ import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.models.Brukernummer
 
 class BrukernummerDao(private val tx: JdbcOperations) {
+
     fun hentBrukernummer(fnr: Fødselsnummer): Brukernummer? = tx.singleOrNull(
         """
             SELECT bruker_nummer
@@ -49,5 +50,17 @@ class BrukernummerDao(private val tx: JdbcOperations) {
                 row.fødselsnummer("fnr") to row.stringOrNull("bruker_nummer")
             }
             .toMap()
+    }
+
+    fun hentFødselsnummer(brukernr: String): Fødselsnummer = tx.single(
+        """
+            SELECT fnr
+            FROM apps.xxrtv_digihot_oebs_adr_fnr_v
+            WHERE bruker_nummer = :brukernr
+            FETCH NEXT 1 ROW ONLY
+        """.trimIndent(),
+        mapOf("brukernr" to brukernr),
+    ) { row ->
+        Fødselsnummer(row.string("fnr"))
     }
 }

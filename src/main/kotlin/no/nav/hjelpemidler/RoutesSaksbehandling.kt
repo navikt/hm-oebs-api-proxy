@@ -8,6 +8,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.client.OebsApiClient
 import no.nav.hjelpemidler.configuration.Environment
@@ -19,6 +20,7 @@ import no.nav.hjelpemidler.models.Personinformasjon
 import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.ServiceforespørselRequest
 import no.nav.hjelpemidler.models.Utlån
+import no.nav.hjelpemidler.models.UtlånMedSerienr
 
 private val log = KotlinLogging.logger {}
 
@@ -102,6 +104,17 @@ fun Route.saksbehandling(database: Database) {
             call.respond(brukernumre)
         }
 
+        get("/getFodselsnummer/{brukernummer}") {
+            val brukernummer = call.parameters["brukernummer"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                "Brukernr mangler",
+            )
+            val fnr = database.transaction {
+                brukernummerDao.hentFødselsnummer(brukernummer)
+            }
+            call.respond(fnr)
+        }
+
         post("/getHjelpemiddelOversikt") {
             val fnr = call.receiveFødselsnummer()
             val hjelpemiddeloversikt = database.transaction {
@@ -135,22 +148,54 @@ fun Route.saksbehandling(database: Database) {
                     val serienr: String,
                 )
 
+                data class UtlånResponse(
+                    val utlån: UtlånMedSerienr?,
+                )
+
                 val req = call.receive<UtlånPåArtnrOgSerienrRequest>()
                 val artnr = req.artnr
                 val serienr = req.serienr
-
-                data class UtlånPåArtnrOgSerienrResponse(
-                    val utlån: Utlån?,
-                )
 
                 val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgSerienr(artnr, serienr) }
                 if (Environment.current.isDev) {
                     log.info { "utlån: $utlån" }
                 }
 
-                call.respond(UtlånPåArtnrOgSerienrResponse(utlån))
+                call.respond(UtlånResponse(utlån))
             } catch (e: Exception) {
                 log.error(e) { "Noe gikk feil med sjekk av utlån på artnr og serienr" }
+                call.respond(HttpStatusCode.InternalServerError, e)
+            }
+        }
+
+        post("/utlanBrukernrArtnr") {
+            try {
+                data class UtlånPåArtnrOgBrukernrRequest(
+                    val artnr: String,
+                    val brukernr: String,
+                )
+
+                data class UtlånResponse(
+                    val utlån: List<Utlån>,
+                )
+
+                val req = call.receive<UtlånPåArtnrOgBrukernrRequest>()
+                val artnr = req.artnr
+                val brukernr = req.brukernr
+
+                val fnr = database.transaction { brukernummerDao.hentFødselsnummer(brukernr) }
+                if (Environment.current.isDev) {
+                    log.info { "Fødselsnr: $fnr" }
+                }
+
+                val utlån = database.transaction { hjelpemiddeloversiktDao.utlånPåArtnrOgFødselsnr(artnr, fnr.value) }
+                if (Environment.current.isDev) {
+                    log.info { "utlån: $utlån" }
+                }
+
+                call.respond(UtlånResponse(utlån))
+            } catch (e: Exception) {
+                log.error(e) { "Noe gikk feil med sjekk av utlån på artnr og brukernr" }
                 call.respond(HttpStatusCode.InternalServerError, e)
             }
         }

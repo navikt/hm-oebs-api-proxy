@@ -10,6 +10,7 @@ import no.nav.hjelpemidler.database.sql.Sql
 import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.models.UtlånForKommuneApi
 import no.nav.hjelpemidler.models.UtlånMedProduktinfo
+import no.nav.hjelpemidler.models.UtlånMedSerienr
 import no.nav.hjelpemidler.models.tilLocalDate
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -164,7 +165,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         )
     }
 
-    fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): Utlån? = tx.singleOrNull(
+    fun utlånPåArtnrOgSerienr(artnr: String, serienr: String): UtlånMedSerienr? = tx.singleOrNull(
         """
             SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato, opprettelsesdato, kategori3_nummer
             FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
@@ -175,7 +176,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         """.trimIndent(),
         mapOf("artnr" to artnr, "serienr" to serienr),
     ) { row ->
-        Utlån(
+        UtlånMedSerienr(
             fnr = row.string("fnr"),
             artnr = row.string("artikkelnummer"),
             serienr = row.string("serie_nummer"),
@@ -185,7 +186,27 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         )
     }
 
-    fun utlånPåArtnr(artnr: String): List<Utlån> = tx.list(
+    fun utlånPåArtnrOgFødselsnr(artnr: String, fnr: String): List<Utlån> = tx.list(
+        """
+            SELECT fnr, serie_nummer, artikkelnummer,  utlåns_dato, opprettelsesdato, kategori3_nummer
+            FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+            WHERE artikkelnummer = :artnr
+              AND fnr = :fnr
+            ORDER BY utlåns_dato DESC
+        """.trimIndent(),
+        mapOf("artnr" to artnr, "fnr" to fnr),
+    ) { row ->
+        Utlån(
+            fnr = row.string("fnr"),
+            artnr = row.string("artikkelnummer"),
+            serienr = row.stringOrNull("serie_nummer"),
+            utlånsDato = row.string("utlåns_dato"),
+            opprettetDato = row.stringOrNull("opprettelsesdato")?.tilLocalDate(),
+            isokode = row.stringOrNull("kategori3_nummer"),
+        )
+    }
+
+    fun utlånPåArtnr(artnr: String): List<UtlånMedSerienr> = tx.list(
         """
             SELECT fnr, artikkelnummer, serie_nummer, utlåns_dato, opprettelsesdato, kategori3_nummer
             FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
@@ -193,7 +214,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         """.trimIndent(),
         mapOf("artnr" to artnr),
     ) { row ->
-        Utlån(
+        UtlånMedSerienr(
             fnr = row.string("fnr"),
             artnr = row.string("artikkelnummer"),
             serienr = row.string("serie_nummer"),
