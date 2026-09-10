@@ -2,7 +2,7 @@ package no.nav.hjelpemidler.models
 
 import java.time.LocalDate
 
-class Utlån(
+data class Utlån(
     val fnr: String,
     val artnr: String,
     val serienr: String?,
