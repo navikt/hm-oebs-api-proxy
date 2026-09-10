@@ -10,5 +10,5 @@ object Prometheus {
     val oebsDbAvailable: AtomicInteger = registry.gauge(
         "hm_oebs_api_proxy_oebs_db_available",
         AtomicInteger(0),
-    )!!
+    )
 }

@@ -4,7 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.callid.CALL_ID_DEFAULT_DICTIONARY
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
-import io.ktor.serialization.jackson.JacksonConverter
+import io.ktor.serialization.jackson3.JacksonConverter
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.ApplicationStopping
@@ -120,6 +120,7 @@ fun Application.installRouting(dataSource: DataSource) {
         internal(database)
         hjelpemiddelsiden(database)
         saksbehandling(database)
+        kommuneApi(database)
         felles(database, norgService)
     }
 }

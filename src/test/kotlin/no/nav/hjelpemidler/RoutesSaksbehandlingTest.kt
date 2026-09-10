@@ -16,7 +16,7 @@ import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.SfArtikkel
 import no.nav.hjelpemidler.models.Stønadsklasse
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 class RoutesSaksbehandlingTest {
     @Test

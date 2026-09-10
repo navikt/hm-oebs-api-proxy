@@ -59,7 +59,7 @@ spotless {
     }
 }
 
-java { toolchain { languageVersion.set(JavaLanguageVersion.of(21)) } }
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 
 kotlin {
     compilerOptions {
@@ -67,29 +67,30 @@ kotlin {
     }
 }
 
-@Suppress("UnstableApiUsage")
 testing {
     suites {
-        val test by getting(JvmTestSuite::class) {
-            useKotlinTest(libs.versions.kotlin.asProvider())
-            dependencies {
-                implementation(libs.hotlibs.test)
-                implementation(libs.kotest.assertions.ktor)
-                implementation(libs.ktor.server.test.host)
-                implementation(libs.hotlibs.database) {
-                    capabilities {
-                        requireCapability("no.nav.hjelpemidler:database-h2")
+        @Suppress("UnstableApiUsage")
+        val test =
+            named<JvmTestSuite>("test") {
+                useJUnitJupiter(libs.versions.junit)
+                dependencies {
+                    implementation(libs.hotlibs.test)
+                    implementation(libs.kotest.assertions.ktor)
+                    implementation(libs.ktor.server.test.host)
+                    implementation(libs.hotlibs.database) {
+                        capabilities {
+                            requireCapability("no.nav.hjelpemidler:database-h2")
+                        }
+                    }
+                }
+                targets.configureEach {
+                    testTask {
+                        testLogging {
+                            events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
+                        }
                     }
                 }
             }
-            targets.configureEach {
-                testTask {
-                    testLogging {
-                        events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -101,11 +102,12 @@ graphql {
     }
 }
 
-val graphqlIntrospectSchema by tasks.getting(GraphQLIntrospectSchemaTask::class) {
-    endpoint.set("https://hm-grunndata-search.intern.dev.nav.no/graphql")
-    // endpoint.set("http://localhost:8880/graphql")
-    outputFile.set(file("src/main/resources/hmdb/schema.graphqls"))
-}
+val graphqlIntrospectSchema =
+    tasks.named<GraphQLIntrospectSchemaTask>("graphqlIntrospectSchema") {
+        endpoint.set("https://hm-grunndata-search.intern.dev.nav.no/graphql")
+        // endpoint.set("http://localhost:8880/graphql")
+        outputFile.set(file("src/main/resources/hmdb/schema.graphqls"))
+    }
 
 tasks.shadowJar {
     mergeServiceFiles()

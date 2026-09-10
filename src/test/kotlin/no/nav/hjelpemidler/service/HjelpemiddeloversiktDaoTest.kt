@@ -5,11 +5,11 @@ import no.nav.hjelpemidler.models.UtlånMedProduktinfo
 import no.nav.hjelpemidler.models.Utlånstype
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import kotlin.test.Test
 
 class HjelpemiddeloversiktDaoTest {
     @Test
