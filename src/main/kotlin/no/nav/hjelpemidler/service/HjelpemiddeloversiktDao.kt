@@ -8,9 +8,11 @@ import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.database.sql.Sql
 import no.nav.hjelpemidler.models.Utlån
+import no.nav.hjelpemidler.models.UtlånForKommuneApi
 import no.nav.hjelpemidler.models.UtlånMedProduktinfo
 import no.nav.hjelpemidler.models.tilLocalDate
 import java.time.LocalDate
+import kotlin.String
 
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
@@ -93,6 +95,52 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         }
 
         return berikOrdrelinjer(items)
+    }
+
+    fun hentHjelpemiddeloversiktForKommuneApi(fnr: String): List<UtlånForKommuneApi> {
+        val query = Sql(
+            """
+                SELECT
+                    artikkelnummer,
+                    artikkel_beskrivelse,
+                    serie_nummer,
+                    antall,
+                    enhet,
+                    kategori3_nummer,
+                    utlåns_dato,
+                    installasjons_addresse,
+                    installasjons_kommune,
+                    installasjons_postnummer,
+                    installasjons_by,
+                    bosteds_addresse,
+                    bosteds_kommune,
+                    bosteds_postnummer,
+                    bosteds_by
+                FROM apps.xxrtv_digihot_hjm_utlan_fnr_v
+                WHERE fnr = :fnr
+                ORDER BY utlåns_dato DESC
+            """.trimIndent(),
+        )
+
+        return tx.list(query, mapOf("fnr" to fnr)) { row ->
+            UtlånForKommuneApi(
+                artikkelnr = row.string("artikkelnummer"),
+                artikkelBeskrivelse = row.string("artikkel_beskrivelse"),
+                serienr = row.string("serie_nummer"),
+                antall = row.string("antall"),
+                antallEnhet = row.string("enhet"),
+                isokategori = row.string("kategori3_nummer"),
+                datoUtsendelse = row.string("utlåns_dato"),
+                installasjonsAddresse = row.string("installasjons_addresse"),
+                installasjonsKommune = row.string("installasjons_kommune"),
+                installasjonsPostnummer = row.string("installasjons_postnummer"),
+                installasjonsBy = row.string("installasjons_by"),
+                bostedsAddresse = row.string("bosteds_addresse"),
+                bostedsKommune = row.string("bosteds_kommune"),
+                bostedsPostnummer = row.string("bosteds_postnummer"),
+                bostedsBy = row.string("bosteds_by"),
+            )
+        }
     }
 
     fun utlånPåIsokode(fnr: String, isokode: String): List<UtlånPåIsokode> = tx.list(

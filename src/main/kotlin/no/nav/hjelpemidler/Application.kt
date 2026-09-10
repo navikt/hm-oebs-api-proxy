@@ -120,6 +120,7 @@ fun Application.installRouting(dataSource: DataSource) {
         internal(database)
         hjelpemiddelsiden(database)
         saksbehandling(database)
+        kommuneApi(database)
         felles(database, norgService)
     }
 }
