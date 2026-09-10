@@ -12,7 +12,8 @@ import no.nav.hjelpemidler.models.UtlånForKommuneApi
 import no.nav.hjelpemidler.models.UtlånMedProduktinfo
 import no.nav.hjelpemidler.models.tilLocalDate
 import java.time.LocalDate
-import kotlin.String
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
 
@@ -123,22 +124,26 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         )
 
         return tx.list(query, mapOf("fnr" to fnr)) { row ->
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val dt = row.stringOrNull("utlåns_dato")?.let {
+                LocalDateTime.parse(it, formatter)
+            }
             UtlånForKommuneApi(
                 artikkelnr = row.string("artikkelnummer"),
                 artikkelBeskrivelse = row.string("artikkel_beskrivelse"),
-                serienr = row.string("serie_nummer"),
+                serienr = row.stringOrNull("serie_nummer"),
                 antall = row.string("antall"),
                 antallEnhet = row.string("enhet"),
                 isokategori = row.string("kategori3_nummer"),
-                datoUtsendelse = row.string("utlåns_dato"),
-                installasjonsAddresse = row.string("installasjons_addresse"),
-                installasjonsKommune = row.string("installasjons_kommune"),
-                installasjonsPostnummer = row.string("installasjons_postnummer"),
-                installasjonsBy = row.string("installasjons_by"),
-                bostedsAddresse = row.string("bosteds_addresse"),
-                bostedsKommune = row.string("bosteds_kommune"),
-                bostedsPostnummer = row.string("bosteds_postnummer"),
-                bostedsBy = row.string("bosteds_by"),
+                utlånsDato = dt,
+                installasjonAdresse = row.stringOrNull("installasjons_addresse"),
+                installasjonKommune = row.stringOrNull("installasjons_kommune"),
+                installasjonPostnummer = row.stringOrNull("installasjons_postnummer"),
+                installasjonBy = row.stringOrNull("installasjons_by"),
+                bostedsAdresse = row.stringOrNull("bosteds_addresse"),
+                bostedsKommune = row.stringOrNull("bosteds_kommune"),
+                bostedsPostnummer = row.stringOrNull("bosteds_postnummer"),
+                bostedsBy = row.stringOrNull("bosteds_by"),
             )
         }
     }
