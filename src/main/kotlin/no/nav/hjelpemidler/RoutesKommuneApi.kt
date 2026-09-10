@@ -19,7 +19,7 @@ fun Route.kommuneApi(database: Database) {
     // Authenticated database proxy requests
     authenticate("aad") {
         route("/kommune-api") {
-            post("/getHjelpemiddelOversikt") {
+            post("/utlansoversikt") {
                 val fnr = call.receiveFødselsnummer()
                 val hjelpemiddeloversikt = database.transaction {
                     hjelpemiddeloversiktDao.hentHjelpemiddeloversiktForKommuneApi(fnr.value)
