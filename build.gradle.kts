@@ -1,19 +1,6 @@
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLIntrospectSchemaTask
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
-buildscript {
-    dependencies {
-        constraints {
-            // Transitive avhengigheter fra Gradle-plugins (shadow via ktor, graphql) med kjente sårbarheter.
-            classpath("org.apache.logging.log4j:log4j-core:2.25.5")
-            classpath("org.apache.logging.log4j:log4j-api:2.25.5")
-            classpath("org.codehaus.plexus:plexus-utils:4.0.3")
-            classpath("com.fasterxml.jackson.core:jackson-core:2.21.8")
-            classpath("com.fasterxml.jackson.core:jackson-databind:2.21.8")
-        }
-    }
-}
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
