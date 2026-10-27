@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
-    <logger name="io.ktor.server.auth" level="TRACE" />
-    <logger name="com.auth0" level="DEBUG" />
+    <logger name="io.ktor.server.auth" level="INFO" />
+    <logger name="com.auth0" level="INFO" />
 </included>
