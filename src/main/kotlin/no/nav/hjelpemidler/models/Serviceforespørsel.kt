@@ -12,6 +12,7 @@ data class Serviceforespørsel(
     val forsendelsesinfo: String? = null,
     val artikler: List<SfArtikkel>? = null,
     val notat: Notat? = null,
+    val kontaktopplysninger: String? = null,
 ) {
 
     data class Notat(val notatType: NotatType = NotatType.DAGBOK, val notatInfo: String, val notatInfoDet: String? = null)

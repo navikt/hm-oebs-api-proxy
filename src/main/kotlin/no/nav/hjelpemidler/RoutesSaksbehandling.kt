@@ -68,6 +68,7 @@ fun Route.saksbehandling(database: Database) {
                         forsendelsesinfo = sf.forsendelsesinfo?.trim()?.removeSuffix("."),
                         artikler = sf.artikler,
                         notat = sf.notat?.let { Serviceforespørsel.Notat(notatInfo = it) },
+                        kontaktopplysninger = sf.kontaktopplysninger
                     )
 
                     serviceforespørselDao.opprettServiceforespørsel(

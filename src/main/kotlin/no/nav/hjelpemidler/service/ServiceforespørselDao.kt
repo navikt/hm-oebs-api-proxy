@@ -56,11 +56,9 @@ class ServiceforespørselDao(
                 else -> jsonMapper.writeValueAsString(sf.notat)
             },
         )
-        if (isDev) {
-            params["kontaktOpplysninger"] = """
-                Bestilt av: Formidler Formidlersen, tlf: 11 11 11 11.
-                Kontakt ved levering: Annen Annensen, tlf: 22 22 22 22
-            """.trimIndent()
+        if (isDev && sf.kontaktopplysninger != null) {
+            log.info { "Legger til kontaktopplysninger for SF: ${sf.kontaktopplysninger}" }
+            params["kontaktOpplysninger"] = sf.kontaktopplysninger
         }
 
         return tx.update(sql, params).actualRowCount

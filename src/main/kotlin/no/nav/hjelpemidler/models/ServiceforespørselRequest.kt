@@ -10,4 +10,5 @@ data class ServiceforespørselRequest(
     val forsendelsesinfo: String? = null,
     val artikler: List<SfArtikkel>? = null,
     val notat: String? = null,
+    val kontaktopplysninger: String? = null,
 )
