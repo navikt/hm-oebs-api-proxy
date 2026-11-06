@@ -56,9 +56,8 @@ class ServiceforespørselDao(
                 else -> jsonMapper.writeValueAsString(sf.notat)
             },
         )
-        if (isDev && sf.kontaktopplysninger != null) {
-            log.info { "Legger til kontaktopplysninger for SF: ${sf.kontaktopplysninger}" }
-            params["kontaktOpplysninger"] = sf.kontaktopplysninger
+        if (isDev) {
+            params["kontaktOpplysninger"] = parameterOf<String>(sf.kontaktopplysninger)
         }
 
         log.info { "Oppretter SF: $sql params: $params ko: ${sf.kontaktopplysninger}" }
