@@ -57,7 +57,7 @@ class ServiceforespørselDao(
             },
         )
         if (isDev) {
-            params["kontaktOpplysninger"] = parameterOf<String>(sf.kontaktopplysninger)
+            params["kontaktOpplysninger"] = sf.kontaktopplysninger ?: parameterOf<String>(null)
         }
 
         log.info { "Oppretter SF: $sql params: $params ko: ${sf.kontaktopplysninger}" }
