@@ -61,6 +61,8 @@ class ServiceforespørselDao(
             params["kontaktOpplysninger"] = sf.kontaktopplysninger
         }
 
+        log.info { "Oppretter SF: $sql params: $params ko: ${sf.kontaktopplysninger}" }
+
         return tx.update(sql, params).actualRowCount
     }
 
