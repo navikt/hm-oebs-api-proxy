@@ -58,6 +58,8 @@ fun Route.saksbehandling(database: Database) {
                         else -> sfRequest
                     }
 
+                    log.info { "SF i opprett SF: $sf" }
+
                     val serviceforespørsel = Serviceforespørsel(
                         fødselsnummer = sf.fødselsnummer,
                         navn = sf.navn,
