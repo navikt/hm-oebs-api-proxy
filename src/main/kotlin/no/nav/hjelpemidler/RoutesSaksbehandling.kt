@@ -44,6 +44,9 @@ fun Route.saksbehandling(database: Database) {
         post("/opprettSF") {
             try {
                 val sfRequest = call.receive<ServiceforespørselRequest>()
+
+                log.info { "SF request: $sfRequest" }
+
                 database.transaction {
                     val personinformasjon = personinformasjonDao.hentPersoninformasjon(sfRequest.fødselsnummer)
                         .filter(Personinformasjon::aktiv)

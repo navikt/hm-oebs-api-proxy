@@ -16,7 +16,7 @@ class ServiceforespørselDao(
 ) {
     fun opprettServiceforespørsel(sf: Serviceforespørsel): Int {
         val extraColumns = if (isDev) ", kontakt_opplysninger" else ""
-        val extraValues = if (isDev) ", :kontaktOpplysninger" else ""
+        val extraValues = if (isDev) ", :kontaktopplysninger" else ""
 
         val sql = """
                 INSERT INTO apps.xxrtv_cs_digihot_sf_opprett
@@ -57,7 +57,7 @@ class ServiceforespørselDao(
             },
         )
         if (isDev) {
-            params["kontaktOpplysninger"] = sf.kontaktopplysninger ?: parameterOf<String>(null)
+            params["kontaktopplysninger"] = sf.kontaktopplysninger ?: parameterOf<String>(null)
         }
 
         log.info { "Oppretter SF: $sql params: $params ko: ${sf.kontaktopplysninger}" }

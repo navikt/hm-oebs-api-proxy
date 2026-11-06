@@ -31,13 +31,13 @@ class ServiceforespørselDaoTest {
     fun `Skal kun sette kontaktopplysninger i dev`() {
         val (devSql, devParams) = fangOpprettelse(isDev = true)
         devSql shouldContain "json_notatinfo_in, kontakt_opplysninger"
-        devSql shouldContain ":notat, :kontaktOpplysninger"
-        devParams shouldContain ("kontaktOpplysninger" to "Navn Navnesen, telefon: 11111111")
+        devSql shouldContain ":notat, :kontaktopplysninger"
+        devParams shouldContain ("kontaktopplysninger" to "Navn Navnesen, telefon: 11111111")
 
         val (prodSql, prodParams) = fangOpprettelse(isDev = false)
         prodSql shouldNotContain "kontakt_opplysninger"
-        prodSql shouldNotContain ":kontaktOpplysninger"
-        prodParams.containsKey("kontaktOpplysninger") shouldBe false
+        prodSql shouldNotContain ":kontaktopplysninger"
+        prodParams.containsKey("kontaktopplysninger") shouldBe false
     }
 
     private fun fangOpprettelse(isDev: Boolean): Pair<String, Map<String, Any?>> {
