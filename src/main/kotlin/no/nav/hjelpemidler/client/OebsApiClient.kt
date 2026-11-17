@@ -33,10 +33,11 @@ import org.apache.hc.client5.http.ssl.NoopHostnameVerifier
 import org.apache.hc.client5.http.ssl.TrustAllStrategy
 import org.apache.hc.core5.ssl.SSLContextBuilder
 import tools.jackson.module.kotlin.readValue
+import java.io.Closeable
 
 private val log = KotlinLogging.logger {}
 
-class OebsApiClient(engine: HttpClientEngine) {
+class OebsApiClient(engine: HttpClientEngine) : Closeable {
     private val client = createHttpClient(
         if (Environment.current.isDev) {
             Apache5.create {
@@ -137,6 +138,10 @@ class OebsApiClient(engine: HttpClientEngine) {
         }
 
         return false
+    }
+
+    override fun close() {
+        client.close()
     }
 
     private suspend fun httpPostRequest(

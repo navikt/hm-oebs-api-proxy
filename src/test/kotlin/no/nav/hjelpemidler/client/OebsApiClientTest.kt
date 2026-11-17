@@ -19,7 +19,6 @@ class OebsApiClientTest {
                 headersOf("Content-Type", "application/json"),
             )
         }
-
         val client = OebsApiClient(engine)
 
         val result = client.opprettOrdre(

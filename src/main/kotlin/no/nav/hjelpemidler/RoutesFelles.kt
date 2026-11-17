@@ -3,20 +3,26 @@ package no.nav.hjelpemidler
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.application
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
+import no.nav.hjelpemidler.server.ktor.security.AuthenticationProviderName
 import no.nav.hjelpemidler.service.NorgService
 
 private val log = KotlinLogging.logger {}
 
-fun Route.felles(database: Database, norgService: NorgService) {
-    authenticate("aad") {
+fun Route.felles() {
+    val database: Database by application.dependencies
+    val norgService: NorgService by application.dependencies
+
+    authenticate(AuthenticationProviderName.ENTRA_ID) {
         post("/hent-brukerpass") {
             data class FnrDto(
                 val fnr: Fødselsnummer,
@@ -28,7 +34,7 @@ fun Route.felles(database: Database, norgService: NorgService) {
         }
     }
 
-    authenticate("tokenX", "aad") {
+    authenticate(AuthenticationProviderName.ENTRA_ID, AuthenticationProviderName.TOKEN_X) {
         get("/brukerpass") {
             val fnr = call.pid
 
@@ -121,7 +127,7 @@ fun Route.felles(database: Database, norgService: NorgService) {
                 val error: String,
             )
 
-            val enhetNavn = norgService.hentEnhetNavnForEnhetnr(enhetnr)
+            val enhetNavn = norgService.hentNavnForEnhet(enhetnr)
                 ?: error("Fant ikke enhetNavn for enhetnr $enhetnr")
 
             val lagerstatus = database.transaction {

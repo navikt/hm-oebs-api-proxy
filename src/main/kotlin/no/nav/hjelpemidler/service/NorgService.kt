@@ -1,17 +1,19 @@
 package no.nav.hjelpemidler.service
 
-import no.nav.hjelpemidler.client.NorgClient
+import no.nav.hjelpemidler.norg.NorgArbeidsfordelingRequest
+import no.nav.hjelpemidler.norg.NorgClient
 
 class NorgService(private val norgClient: NorgClient) {
     suspend fun hentEnhetNavn(kommunenummer: String): String? {
-        val enhetNr = norgClient.hentArbeidsfordelingenheter(kommunenummer).first().enhetNr
-        return hentEnhetNavnForEnhetnr(enhetNr)
+        val enhet = norgClient.hentArbeidsfordeling(NorgArbeidsfordelingRequest(geografiskOmråde = kommunenummer))
+            .firstOrNull() ?: return null
+        return hentNavnForEnhet(enhet.nummer.value)
     }
 
-    fun hentEnhetNavnForEnhetnr(enhetNr: String): String? = lagerMap[enhetNr.takeLast(2)]
+    fun hentNavnForEnhet(nummer: String): String? = lagerMap[nummer.takeLast(2)]
 }
 
-val lagerMap: Map<String, String> = mapOf(
+private val lagerMap: Map<String, String> = mapOf(
     "01" to "*01 Østfold",
     "02" to "*03 Oslo",
     "03" to "*03 Oslo",

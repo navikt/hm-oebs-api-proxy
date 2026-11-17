@@ -2,15 +2,15 @@ package no.nav.hjelpemidler
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.callid.CALL_ID_DEFAULT_DICTIONARY
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.apache5.Apache5
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.jackson3.JacksonConverter
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.ApplicationStopping
 import io.ktor.server.application.install
 import io.ktor.server.auth.authentication
-import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
 import io.ktor.server.netty.Netty
@@ -19,22 +19,32 @@ import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.callid.generate
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.di.dependencies
+import io.ktor.server.plugins.di.provide
 import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.request.uri
 import io.ktor.server.routing.routing
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import no.nav.hjelpemidler.client.NorgClient
+import no.nav.hjelpemidler.client.GrunndataClient
+import no.nav.hjelpemidler.client.OebsApiClient
+import no.nav.hjelpemidler.collections.enumSetOf
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.database.Oracle
 import no.nav.hjelpemidler.database.createDataSource
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.domain.person.TILLAT_SYNTETISKE_FØDSELSNUMRE
+import no.nav.hjelpemidler.http.openid.IdentityProvider
+import no.nav.hjelpemidler.http.openid.Texas
+import no.nav.hjelpemidler.http.openid.TexasClient
 import no.nav.hjelpemidler.metrics.Prometheus
-import no.nav.hjelpemidler.models.ServiceforespørselFeil
+import no.nav.hjelpemidler.norg.NorgClient
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
+import no.nav.hjelpemidler.server.ktor.security.AutentisertInnbygger
+import no.nav.hjelpemidler.server.ktor.security.AuthenticationProviderName
+import no.nav.hjelpemidler.server.ktor.security.authenticatedPrincipal
+import no.nav.hjelpemidler.server.ktor.security.texas
+import no.nav.hjelpemidler.service.HjelpemiddeloversiktService
 import no.nav.hjelpemidler.service.NorgService
 import org.slf4j.event.Level
 import javax.sql.DataSource
@@ -57,24 +67,46 @@ fun Application.module() {
         log.info { "Kobler til database: ${Configuration.OEBS_MILJO} med url: '${Configuration.OEBS_DB_JDBC_URL}'" }
     }
 
-    /*
-    monitor.subscribe(ApplicationStarted) {
-        loggFeilendeServiceforespørsler()
-    }
-     */
+    dependencies {
+        provide<HttpClientEngine> { Apache5.create() }
+        provide<Texas> { TexasClient(engine = resolve()) }
 
-    installAuthentication()
-    installRouting(
-        createDataSource(Oracle) {
-            jdbcUrl = Configuration.OEBS_DB_JDBC_URL
-            username = Configuration.OEBS_DB_USERNAME
-            password = Configuration.OEBS_DB_PASSWORD
-            connectionTimeout = 1.minutes.inWholeMilliseconds
-        },
-    )
+        provide<DataSource> {
+            createDataSource(Oracle) {
+                jdbcUrl = Configuration.OEBS_DB_JDBC_URL
+                username = Configuration.OEBS_DB_USERNAME
+                password = Configuration.OEBS_DB_PASSWORD
+                connectionTimeout = 1.minutes.inWholeMilliseconds
+            }
+        }
+        provide(::Database)
+
+        provide { GrunndataClient(engine = resolve()) }
+        provide { NorgClient(engine = resolve()) }
+        provide { OebsApiClient(engine = resolve()) }
+
+        provide(::HjelpemiddeloversiktService)
+        provide(::NorgService)
+    }
+
+    val texas: Texas by dependencies
+    authentication {
+        texas(
+            texas,
+            name = AuthenticationProviderName.ENTRA_ID,
+            identityProviders = enumSetOf(IdentityProvider.ENTRA_ID),
+        )
+        texas(
+            texas,
+            name = AuthenticationProviderName.TOKEN_X,
+            identityProviders = enumSetOf(IdentityProvider.TOKEN_X),
+        )
+    }
+
+    installRouting()
 }
 
-fun Application.installRouting(dataSource: DataSource) {
+fun Application.installRouting() {
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(jsonMapper))
     }
@@ -106,22 +138,12 @@ fun Application.installRouting(dataSource: DataSource) {
         registry = Prometheus.registry
     }
 
-    val database = Database(dataSource)
-
-    monitor.subscribe(ApplicationStopping) {
-        database.close()
-        monitor.unsubscribe(ApplicationStopping) {}
-    }
-
-    val norgClient = NorgClient()
-    val norgService = NorgService(norgClient)
-
     routing {
-        internal(database)
-        hjelpemiddelsiden(database)
-        saksbehandling(database)
-        kommuneApi(database)
-        felles(database, norgService)
+        internal()
+        hjelpemiddelsiden()
+        saksbehandling()
+        kommuneApi()
+        felles()
     }
 }
 
@@ -129,15 +151,4 @@ fun Application.installRouting(dataSource: DataSource) {
  * pid-claim fra pålogging med ID-porten
  */
 val ApplicationCall.pid: Fødselsnummer
-    get() = authentication.principal<JWTPrincipal>()
-        ?.getClaim("pid", Fødselsnummer::class) ?: error("Token mangler pid-claim")
-
-private fun loggFeilendeServiceforespørsler() = runBlocking(Dispatchers.IO) {
-    log.info { "Henter feilende serviceforespørsler" }
-    val serviceforespørselFeil =
-        emptyList<ServiceforespørselFeil>() // ServiceforespørselFeilDao().finnFeilendeServiceforespørsler()
-    log.info { "Antall feilende serviceforespørsler: ${serviceforespørselFeil.size}" }
-    serviceforespørselFeil.forEach {
-        log.info { "Feilende serviceforespørsel: $it" }
-    }
-}
+    get() = (authenticatedPrincipal() as? AutentisertInnbygger)?.fnr ?: error("Token mangler pid-claim")

@@ -126,5 +126,5 @@ spec:
       value: "q1"
     - name: GRUNNDATA_API_URL
       value: https://hm-grunndata-search.intern.dev.nav.no
-    - name: NORG_API_URL
+    - name: NORG_API_BASE_URL
       value: https://norg2.dev.intern.nav.no/norg2/api/v1

@@ -1,9 +1,5 @@
 package no.nav.hjelpemidler.service
 
-import kotlinx.coroutines.runBlocking
-import no.nav.hjelpemidler.client.GrunndataClient
-import no.nav.hjelpemidler.client.hmdb.enums.MediaType
-import no.nav.hjelpemidler.client.hmdb.hentprodukter.Product
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.database.JdbcOperations
 import no.nav.hjelpemidler.database.sql.Sql
@@ -17,7 +13,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
-
     fun hentHjelpemiddeloversikt(fnr: String): List<UtlånMedProduktinfo> {
         val query = Sql(
             """
@@ -40,7 +35,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             """.trimIndent(),
         )
 
-        var items = tx.list(query, mapOf("fnr" to fnr)) { row ->
+        val hjelpemiddeloversikt = tx.list(query, mapOf("fnr" to fnr)) { row ->
             UtlånMedProduktinfo(
                 antall = row.string("antall"),
                 antallEnhet = row.string("enhet"),
@@ -59,8 +54,8 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         }.toMutableList()
 
         // Mocks i dev
-        if (!Environment.current.isProd && listOf("26848497710", "15084300133", "03847797958").contains(fnr)) {
-            items.add(
+        if (!Environment.current.isProd && fnr in setOf("26848497710", "15084300133", "03847797958")) {
+            hjelpemiddeloversikt.add(
                 UtlånMedProduktinfo(
                     antall = "1",
                     antallEnhet = "STK",
@@ -69,7 +64,8 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
                     artikkelBeskrivelse = "Mobilitetsstokk med to sensorer. Den ene sensoren peker frem og ned, den andre skrått oppover. Stokken gir tilbakemelding om hindringer fra bakkeplan til over hodehøyde. Denne gis som vibrasjon i to knapper på håndtaket. Innstillinger for rekkevidde tilpasset inne- og utebruk. Stokken er sammenleggbar og fås i ulike lengder fra 110 cm til 150 cm.",
                     artikkelNr = "265940",
                     serieNr = null,
-                    datoUtsendelse = items.lastOrNull()?.datoUtsendelse ?: LocalDate.now().minusDays(30).toString(),
+                    datoUtsendelse = hjelpemiddeloversikt.lastOrNull()?.datoUtsendelse ?: LocalDate.now().minusDays(30)
+                        .toString(),
                     ordrenummer = "1001",
                     artikkelStatus = "",
                     utlånsType = "P",
@@ -77,7 +73,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
                     oppdatertInnleveringsdato = null,
                 ),
             )
-            items.add(
+            hjelpemiddeloversikt.add(
                 UtlånMedProduktinfo(
                     antall = "1",
                     antallEnhet = "STK",
@@ -86,7 +82,8 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
                     artikkelBeskrivelse = "Lett mobilitystokk i komposittmateriale. Stokken har fem ledd og leveres med standard tupp. Mange ulike tupper kan leveres. Stokken finnes i lengde fra 90-160 cm i 5 cm intervaller.",
                     artikkelNr = "330587",
                     serieNr = null,
-                    datoUtsendelse = items.lastOrNull()?.datoUtsendelse ?: LocalDate.now().minusDays(31).toString(),
+                    datoUtsendelse = hjelpemiddeloversikt.lastOrNull()?.datoUtsendelse ?: LocalDate.now().minusDays(31)
+                        .toString(),
                     ordrenummer = "1000",
                     artikkelStatus = "",
                     utlånsType = "P",
@@ -96,7 +93,7 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
             )
         }
 
-        return berikOrdrelinjer(items)
+        return hjelpemiddeloversikt
     }
 
     fun hentHjelpemiddeloversiktForKommuneApi(fnr: String): List<UtlånForKommuneApi> {
@@ -228,44 +225,4 @@ class HjelpemiddeloversiktDao(private val tx: JdbcOperations) {
         val kategoriNummer: String,
         val datoUtsendelse: String,
     )
-
-    private fun berikOrdrelinjer(utlånListe: List<UtlånMedProduktinfo>): List<UtlånMedProduktinfo> = runBlocking {
-        // Unique set of hmsnr to fetch data for
-        val hmsnr = utlånListe.filter { it.artikkelNr.isNotEmpty() }.map { it.artikkelNr }.toSet()
-
-        // Fetch data for hmsnr from hm-grunndata-api
-        val produkter: List<Product> = GrunndataClient.hentProdukter(hmsnr)
-
-        // Apply data to items
-        val produkterByHmsnr = produkter.groupBy { it.hmsArtNr }
-        utlånListe.map { utlån ->
-
-            // Sorted by identifier (artid, like old grunndata-api), but still get the ACTIVE one if there are higher sorted INACTIVE ones.
-            val produkt = produkterByHmsnr[utlån.artikkelNr]?.sortedBy { it.identifier }?.minByOrNull { it.status }
-
-            if (produkt != null) {
-                utlån.berikOrdrelinje(produkt)
-            }
-
-            utlån.berikBytteinfo()
-
-            utlån
-        }
-    }
-
-    private fun UtlånMedProduktinfo.berikOrdrelinje(produkt: Product) {
-        hmdbBeriket = true
-        hmdbProduktNavn = produkt.articleName
-        hmdbBeskrivelse = produkt.attributes.text
-        hmdbKategori = produkt.isoCategoryTitle
-        hmdbBilde = produkt.media
-            .filter { it.type == MediaType.IMAGE }
-            .minByOrNull { it.priority }
-            ?.uri?.let {
-                "https://finnhjelpemiddel.nav.no/imageproxy/400d/$it"
-            }
-        hmdbURL = produkt.productVariantURL
-        hmdbKategoriKortnavn = produkt.isoCategoryTitleShort
-        hmdbIsoKategori = produkt.isoCategory
-    }
 }

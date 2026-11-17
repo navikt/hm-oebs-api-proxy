@@ -1,13 +1,14 @@
 package no.nav.hjelpemidler
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.client.engine.cio.CIO
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.application
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.client.OebsApiClient
@@ -18,9 +19,14 @@ import no.nav.hjelpemidler.models.Brukernummer
 import no.nav.hjelpemidler.models.Brukerpass
 import no.nav.hjelpemidler.models.TittelForHmsNr
 import no.nav.hjelpemidler.models.UtlånMedProduktinfo
+import no.nav.hjelpemidler.service.HjelpemiddeloversiktService
 import no.nav.hjelpemidler.service.Lagerstatus
 
-fun Route.internal(database: Database) {
+fun Route.internal() {
+    val database: Database by application.dependencies
+    val oebsApiClient: OebsApiClient by application.dependencies
+    val hjelpemiddeloversiktService: HjelpemiddeloversiktService by application.dependencies
+
     get("/isalive") {
         // Let's check if the database has been closed
         if (database.isClosed) {
@@ -47,7 +53,6 @@ fun Route.internal(database: Database) {
 
     post("/internal/ping-oebs-rest-api") {
         val log = KotlinLogging.logger {}
-        val oebsApiClient = OebsApiClient(CIO.create())
         log.info { "Kaller OEBS rest-api ping" }
         val success = oebsApiClient.ping()
         log.info { "Etter kall mot OEBS rest-api ping" }
@@ -79,14 +84,15 @@ fun Route.internal(database: Database) {
         val fnr = req.fnr ?: "26848497710"
         val enhetsNavn = req.enhetsNavn
 
+        val hjelpemiddeloversikt = hjelpemiddeloversiktService.hentHjelpemiddeloversikt(fnr)
         call.respond(
             database.transaction {
                 Response(
-                    hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr),
-                    brukernummerDao.hentBrukernummer(Fødselsnummer(fnr)),
-                    tittelForHmsnrDao.hentTittelForHmsnr(hmsnr),
-                    brukerpassDao.brukerpassForFnr(fnr),
-                    if (enhetsNavn == null) {
+                    utlån = hjelpemiddeloversikt,
+                    brukernummer = brukernummerDao.hentBrukernummer(Fødselsnummer(fnr)),
+                    tittelForHmsnr = tittelForHmsnrDao.hentTittelForHmsnr(hmsnr),
+                    brukerpass = brukerpassDao.brukerpassForFnr(fnr),
+                    lagerstatus = if (enhetsNavn == null) {
                         lagerDao.hentLagerstatus(hmsnr)
                     } else {
                         listOfNotNull(lagerDao.hentLagerstatusForSentral(hmsnr, enhetsNavn))

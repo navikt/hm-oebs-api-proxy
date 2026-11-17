@@ -1,13 +1,14 @@
 package no.nav.hjelpemidler
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.client.engine.cio.CIO
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.request.receive
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.application
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.client.OebsApiClient
@@ -21,14 +22,18 @@ import no.nav.hjelpemidler.models.Serviceforespørsel
 import no.nav.hjelpemidler.models.ServiceforespørselRequest
 import no.nav.hjelpemidler.models.Utlån
 import no.nav.hjelpemidler.models.UtlånMedSerienr
+import no.nav.hjelpemidler.server.ktor.security.AuthenticationProviderName
+import no.nav.hjelpemidler.service.HjelpemiddeloversiktService
 
 private val log = KotlinLogging.logger {}
 
-private val oebsApiClient = OebsApiClient(CIO.create())
+fun Route.saksbehandling() {
+    val database: Database by application.dependencies
+    val oebsApiClient: OebsApiClient by application.dependencies
+    val hjelpemiddeloversiktService: HjelpemiddeloversiktService by application.dependencies
 
-fun Route.saksbehandling(database: Database) {
     // Authenticated database proxy requests
-    authenticate("aad") {
+    authenticate(AuthenticationProviderName.ENTRA_ID) {
         post("/opprettOrdre") {
             try {
                 val bestilling = call.receive<BestillingsordreRequest>()
@@ -123,9 +128,7 @@ fun Route.saksbehandling(database: Database) {
 
         post("/getHjelpemiddelOversikt") {
             val fnr = call.receiveFødselsnummer()
-            val hjelpemiddeloversikt = database.transaction {
-                hjelpemiddeloversiktDao.hentHjelpemiddeloversikt(fnr.value)
-            }
+            val hjelpemiddeloversikt = hjelpemiddeloversiktService.hentHjelpemiddeloversikt(fnr.value)
             call.respond(hjelpemiddeloversikt)
         }
 

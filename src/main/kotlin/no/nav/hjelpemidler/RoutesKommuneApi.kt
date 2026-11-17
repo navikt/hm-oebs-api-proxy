@@ -1,23 +1,24 @@
 package no.nav.hjelpemidler
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.client.engine.cio.CIO
 import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.application
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import no.nav.hjelpemidler.client.OebsApiClient
 import no.nav.hjelpemidler.database.Database
 import no.nav.hjelpemidler.ktor.receiveFødselsnummer
+import no.nav.hjelpemidler.server.ktor.security.AuthenticationProviderName
 
 private val log = KotlinLogging.logger {}
 
-private val oebsApiClient = OebsApiClient(CIO.create())
+fun Route.kommuneApi() {
+    val database: Database by application.dependencies
 
-fun Route.kommuneApi(database: Database) {
     // Authenticated database proxy requests
-    authenticate("aad") {
+    authenticate(AuthenticationProviderName.ENTRA_ID) {
         route("/kommune-api") {
             post("/utlansoversikt") {
                 val fnr = call.receiveFødselsnummer()

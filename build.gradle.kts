@@ -33,13 +33,18 @@ dependencies {
     implementation(libs.hotlibs.core)
     implementation(libs.hotlibs.http)
     implementation(libs.hotlibs.logging)
+    implementation(libs.hotlibs.norg)
     implementation(libs.hotlibs.serialization)
+    implementation(libs.hotlibs.server)
 
     // Metrics
     implementation(libs.micrometer.registry.prometheus)
 
     // Ktor Server
     implementation(libs.bundles.ktor.server)
+    implementation(libs.ktor.server.di)
+
+    // Ktor Client
     implementation(libs.ktor.client.apache5)
 
     // Database
